@@ -4,6 +4,10 @@ pydantic>=2.6
 pydantic-settings>=2.2
 anthropic>=0.40
 httpx>=0.27
+# 内置网站抓取(BuiltinCrawler)
+beautifulsoup4>=4.12
+lxml>=5.0
+markdownify>=0.11
 # 代理环境(SOCKS)需要: pip install "httpx[socks]"
 # dev
 pytest>=8.0

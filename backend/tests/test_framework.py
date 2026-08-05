@@ -32,7 +32,7 @@ def test_unknown_crawler_raises():
 
 
 def test_build_services_wires_pluggables():
-    svc = build_services(Settings(provider="mock", search_provider="mock"))
+    svc = build_services(Settings(provider="mock", search_provider="mock", crawler="stub", repomap="stub"))
     assert svc.llm.provider.name == "mock"
     assert svc.search.name == "mock"
     assert svc.crawler.name == "stub"
@@ -67,7 +67,7 @@ def test_graceful_degradation_on_crawler_failure():
     store = InMemoryJobStore()
     job = store.create(AnalysisRequest(website_url="https://x.example",
                                        github_url="https://github.com/x/y"))
-    settings = Settings(provider="mock", search_provider="mock", crawler="firecrawl")
+    settings = Settings(provider="mock", search_provider="mock", crawler="firecrawl", repomap="stub")
     Pipeline(settings).run(job)
     assert job.status is JobStatus.DONE               # 没有崩, 跑完了
     assert any("site_analysis" in d for d in job.degradations)

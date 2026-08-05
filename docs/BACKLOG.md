@@ -20,7 +20,7 @@
 
 ## E1 · 网站分析器 `site_analyzer` ★ [并行]
 依赖：`SiteFacts` 契约（已定）
-- [ ] **E1-1** ★ 接一个主抓取器（Firecrawl 或 Crawl4AI），实现 `_crawl()`：首页/功能/价格/文档/关于 + sitemap → 干净 markdown — DoD：真实 URL 能拿到结构化 markdown
+- [x] **E1-1** ★ 内置抓取器已实现（`BuiltinCrawler`: httpx+bs4+markdownify, 抓首页+关键页, 已真实验证）; Firecrawl/Crawl4AI 增强(JS 渲染)留后续
 - [ ] **E1-2** ★ 把 `extract_site` 的 SYSTEM/prompt 打磨到"区分营销文案 vs 实际功能" — DoD：10 个真实站点抽取准确率人工评 ≥80%
 - [ ] **E1-3** `requires_login` 检测：命中时降置信度并提示补充演示视频/截图/测试账号
 - [ ] **E1-4** ⏳ 客观指标：Lighthouse / Core Web Vitals 注入 `objective_metrics`
@@ -28,7 +28,7 @@
 
 ## E2 · GitHub 分析器 `github_analyzer` ★ [并行]
 依赖：`RepoFacts` 契约（已定）
-- [ ] **E2-1** ★ 实现 `_build_repo_map()`：借鉴 **Aider Repo Map**（提取关键类/函数/调用，图排序控 token）；或先用 GitIngest/Repomix 兜底 — DoD：中型仓库 repo map ≤ 2K token 且覆盖关键模块
+- [x] **E2-1** ★ 内置 repo map 已实现（`BuiltinRepoMapper`: git clone --depth 1 + 文件树/README/配置, 已真实验证）; Aider 图排序增强留后续
 - [ ] **E2-2** ★ 定向读取：按疑问只读 3–6 个关键文件（入口/API/数据模型）— DoD：总上下文可控在预算内
 - [ ] **E2-3** ★ 活跃度：stars/forks/最近提交/release（GitHub API，公开仓库免 OAuth）
 - [ ] **E2-4** 许可与合规：读取 license；OAuth 权限范围评估（见 `TODO.md`）
@@ -81,7 +81,7 @@
 
 ## E9 · Provider / 成本层 [并行]
 依赖：`LLMProvider` 接口（已定）
-- [ ] **E9-1** ⏳ `DeepSeekProvider` / `QwenProvider`（`make_provider` 注册即可，其余零改动）
+- [x] **E9-1** DeepSeek/Qwen 已接（`OpenAICompatibleProvider` + JSON 修复循环）; **DeepSeek v4 真实端到端验证通过**
 - [ ] **E9-2** ★ 真实 token/成本核算（从各 provider 的 usage 累加到 `CostMeter`）
 - [ ] **E9-3** 缓存落地：`cache.py` 接进 analyzers（按内容 hash 命中）
 - [ ] **E9-4** 重试/降级：某源失败时优雅降级并在报告里标注

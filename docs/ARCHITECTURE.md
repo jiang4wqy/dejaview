@@ -59,10 +59,10 @@ facts = site_analyzer.analyze(req, svc) # 模块只从 svc 取自己要的
 
 | 能力 | 接口 | 默认 | 真实实现(注册即用) | 任务 |
 |---|---|---|---|---|
-| LLM | `providers/base.LLMProvider` | `mock` | `claude`(已写)· `deepseek`/`qwen`(OpenAI 兼容,已写待验证) | E9-1 |
+| LLM | `providers/base.LLMProvider` | `deepseek` | `claude` · `qwen`(OpenAI 兼容) · `mock`; **DeepSeek v4 已验证** | E9 |
 | 搜索 | `providers/search_client.SearchClient` | `mock` | **`github`(已实现)** · `tavily`(stub) | E4-2~5 |
-| 抓取 | `providers/crawler.Crawler` | `stub` | `firecrawl` · `crawl4ai`(stub) | E1-1 |
-| repo map | `providers/repomap.RepoMapper` | `stub` | `aider` · `gitingest`(stub) | E2-1 |
+| 抓取 | `providers/crawler.Crawler` | **`builtin`(已实现)** | `firecrawl` · `crawl4ai`(stub) | E1 |
+| repo map | `providers/repomap.RepoMapper` | **`builtin`(已实现)** | `aider` · `gitingest`(stub) | E2 |
 | 任务存储 | `jobs.JobStore` | `InMemory` | Redis/Postgres(TODO) | E10-1 |
 | 缓存 | `cache.Cache` | 磁盘 JSON(可关) | Redis 等 | E9-3 |
 

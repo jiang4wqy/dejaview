@@ -6,10 +6,10 @@
 
 | 位置 | 现状 | 换成 | 对应任务 |
 |---|---|---|---|
-| `pipeline/site_analyzer.py::_crawl` | 返回占位字符串 | Firecrawl / Crawl4AI | E1-1 |
-| `pipeline/github_analyzer.py::_build_repo_map` | 返回占位字符串 | Aider Repo Map / GitIngest / Repomix | E2-1 |
-| `providers/search_client.py` | mock 固定池(默认); **GitHub 搜索已实现** | Tavily / 中文社区(stub) | E4-2 / E4-4 / E4-5 |
-| `providers/llm_router.py::MockProvider` | 读 fixtures | Claude（已写）/ DeepSeek / Qwen | E9-1 |
+| `providers/crawler.py` | **builtin 已实现**(httpx+bs4+markdownify) | Firecrawl/Crawl4AI(JS 渲染增强) | E1 |
+| `providers/repomap.py` | **builtin 已实现**(git clone --depth 1) | Aider 图排序增强 | E2 |
+| `providers/search_client.py` | mock + **GitHub 已实现** | Tavily / 中文社区(stub) | E4-2 / E4-4 / E4-5 |
+| `providers/*_provider.py` | mock/claude/**deepseek(v4 已验证)**/qwen | 更多国内模型 | E9 |
 | `jobs.py::store`（内存） | 进程内字典 | Redis / Postgres | E10-1 |
 | `main.py` 后台线程 | `threading.Thread` | 任务队列（Celery/RQ/Arq） | E10-2 |
 | `cache.py` | 已实现但未接入 analyzers | 按内容 hash 命中 | E9-3 |
@@ -29,7 +29,8 @@
 - mock 的 `verify_candidate` 是**静态返回**（所有候选同一关系），真实实现要逐个深读。
 - `CostMeter.input/output_tokens` 在 mock 下为 0；真实 provider 需从 usage 累加（E9-2）。
 - `orchestrator` 用后台线程，进程重启会丢 Job（E10）。
-- 前端未跑 `npm install`（磁盘限制），拿到后需 `npm install` 才能起（见 `frontend/README.md`）。
+- 前端已 `npm install` + `npm run build` 通过；本无头环境未做真实浏览器点击验证(以 build 通过 + API 契约 curl 端到端验证兜底)。
+- 内置抓取器不执行 JS（SPA 站点首页可能内容偏少）；需要时切 Firecrawl/Crawl4AI(E1 增强)。
 - 在 **SOCKS 代理**后，httpx 需 `pip install "httpx[socks]"`，否则 `search=github` 会优雅降级为空（urllib/curl 自带 SOCKS 支持，httpx 不带）。
 
 ## 合规 / 安全边界（开发前必须澄清）

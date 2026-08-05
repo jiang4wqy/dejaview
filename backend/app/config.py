@@ -6,8 +6,14 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# 让 backend/.env 里的非 DEJAVIEW_ 变量(DEEPSEEK_API_KEY / GITHUB_TOKEN 等)也进 os.environ,
+# 供各 provider 的 os.getenv 读取。不覆盖已有环境变量。
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 
 class Settings(BaseSettings):

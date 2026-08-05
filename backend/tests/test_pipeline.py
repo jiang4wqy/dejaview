@@ -16,7 +16,8 @@ from app.pipeline.orchestrator import Pipeline  # noqa: E402
 
 
 def _mock_settings(**kw) -> Settings:
-    return Settings(provider="mock", search_provider="mock", **kw)
+    # 显式钉住 stub/mock, 保证测试离线且不受 backend/.env 影响
+    return Settings(provider="mock", search_provider="mock", crawler="stub", repomap="stub", **kw)
 
 
 def _run(**req_kwargs):

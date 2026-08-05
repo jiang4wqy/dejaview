@@ -61,34 +61,31 @@ dejaview/
 │   │   ├── fixtures/mocks.py  ← mock 数据(零成本跑通)
 │   │   └── main.py            ← FastAPI 端点
 │   ├── scripts/run_pipeline.py← CLI:端到端跑通
-│   └── tests/                 ← pytest 14 个(含"毒舌不新增结论"不变量 + 框架层)
+│   └── tests/                 ← pytest 20 个(不变量 + 框架 + 内置 provider)
 └── frontend/                  ← Next.js(提交→进度→报告, 认真/毒舌切换, 点开证据)
 ```
 
 ## 快速开始
 
-**后端（零成本、无需任何 key）：**
+一键（需 `python3` + `node`）：
 
 ```bash
-cd backend
-python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt
-./.venv/bin/python scripts/run_pipeline.py      # 端到端跑通并打印认真版+毒舌版
-./.venv/bin/python -m pytest                     # 14 个测试(流水线 + 框架层)
-./.venv/bin/uvicorn app.main:app --reload        # 起 API: http://localhost:8000/docs
+make install     # 装前后端依赖(venv + npm)
+make dev         # 同时起后端(:8000) + 前端(:3000)
+make test        # 后端测试(20 个)
 ```
 
-切到真实 Claude：`export DEJAVIEW_PROVIDER=claude` 并配置 `ANTHROPIC_API_KEY`。
-分层默认 Haiku(提取)/Sonnet(判断)/Opus(裁判)，均可用环境变量覆盖，见 `backend/.env.example`。
+**离线零成本**（默认，无需任何 key）：直接 `make dev`，前端提交后走 mock，秒出认真版/毒舌版报告。
 
-**前端：**
+**真实模式**（推荐）：`cp backend/.env.example backend/.env`，填 DeepSeek key（或 Claude/Qwen）。即用**真实 DeepSeek + 内置抓取 + git clone + GitHub 搜索**分析真实项目。命令行跑一次：
 
 ```bash
-cd frontend && npm install && npm run dev       # http://localhost:3000
+cd backend && ./.venv/bin/python scripts/run_pipeline.py \
+  --website https://gitingest.com --github https://github.com/cyclotruc/gitingest
 ```
 
 ## 现状
 
-- ✅ 后端框架可运行：7 模块流水线 + 编排 + 成本闸门 + 成本计量，mock 端到端跑通，14 测试通过。
-- ✅ 底层框架完善：依赖注入容器（Services）、LLM/抓取/repomap/搜索/存储全部可插拔、错误优雅降级、成本/阶段观测、pydantic-settings 配置、集中提示词。
-- ⏳ 真实能力（抓取 / repo map / 真实搜索 / 国内模型 / 前端联调 / 持久化）是**留给团队认领**的部分，
-  已在 [`docs/BACKLOG.md`](docs/BACKLOG.md) 按模块拆好，接口已固定，可并行开发。
+- ✅ **基本可运行**：真实模式端到端跑通 —— 真实 DeepSeek(v4) + 内置网站抓取 + `git clone` 仓库理解 + 真实 GitHub 搜索，对真实项目产出证据化的认真版/毒舌版报告；前端 `npm run build` 通过、API 契约端到端验证。
+- ✅ 底层框架完善：依赖注入容器（Services）、LLM/抓取/repomap/搜索/存储全部可插拔、错误优雅降级、成本/阶段观测、pydantic-settings 配置、集中提示词；20 测试通过。
+- ⏳ 后续（见 [`docs/BACKLOG.md`](docs/BACKLOG.md)）：生产部署、Job 持久化、更多搜索源（中文社区）、Firecrawl/Aider 增强、评测集。

@@ -49,6 +49,7 @@ FINGERPRINT_SYSTEM = (
     "你是项目指纹合成器。把网站事实、仓库事实、作者声明合并成一张可核验的项目卡。"
     " 重点比较'作者声称'与'实际证据'的差异, 有冲突写进 conflicts, 不确定写进 unknowns。"
     " observed_differentiators 里 proven=false 表示只是宣称、尚无证据。信息不足就降低 confidence。"
+    " 用简体中文填写各字段(证据引用可保留原文)。"
 )
 
 
@@ -118,6 +119,7 @@ def judge_duplication(fp: ProjectFingerprint, verified: list[VerifiedCandidate])
 FACTLAYER_SYSTEM = (
     "你是事实层合成器。基于指纹、竞品、重复度裁判, 产出优点/问题/改进建议, 每条带证据; "
     " 改进按 impact 与 cost 标注并排序。只陈述有依据的结论 —— 毒舌版会复用这批结论, 不允许再新增。"
+    " findings / improvements 的 title 与 detail 用简体中文(证据 quote 可保留原文)。"
 )
 
 
@@ -135,11 +137,12 @@ def synthesize_factlayer(fp: ProjectFingerprint, verdict: DuplicationVerdict,
 # ─────────────────────────── 报告渲染 ───────────────────────────
 SERIOUS_SYSTEM = (
     "你是认真的项目分析师。基于给定事实层写报告: 优势、问题、竞品借鉴、改进优先级。"
-    " 客观、可执行。只用给定的事实, 不臆造。"
+    " 客观、可执行。只用给定的事实, 不臆造。用简体中文撰写 headline 与 body_markdown。"
 )
 ROAST_SYSTEM = (
     "你是毒舌的项目锐评者。基于**完全相同**的事实层, 用犀利刻薄的语气写。"
     " 可以尖锐, 但每一句都必须对应给定事实; 不得新增未列出的攻击; 只锐评项目, 不攻击开发者本人。"
+    " 用简体中文撰写 headline 与 body_markdown。"
 )
 
 
