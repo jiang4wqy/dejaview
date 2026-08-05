@@ -47,17 +47,21 @@ dejaview/
 ├── README.md                  ← 本文件
 ├── docs/
 │   ├── DESIGN.md              ← 完整设计:原则/流程/模块契约/借鉴分工/MVP边界/验收
+│   ├── ARCHITECTURE.md        ← 底层框架:DI 容器 / 可插拔点 / 错误降级 / 观测 ★
 │   ├── BACKLOG.md             ← 可拆分任务清单(团队认领用) ★
 │   └── TODO.md                ← 明确暂缓项 / 已知限制 / 合规边界 / 当前 stub 清单
 ├── backend/                   ← Python(FastAPI) 确定性流水线  ← 已可运行(mock)
 │   ├── app/
 │   │   ├── models/schemas.py  ← 数据契约(所有模块的地基) ★
-│   │   ├── providers/         ← llm_router(可插拔,默认 Claude 分层) / search_client
-│   │   ├── pipeline/          ← 7 个模块 + orchestrator
+│   │   ├── services.py        ← 依赖注入容器 Services ★
+│   │   ├── config/logging/errors/prompts.py  ← 配置 / 日志 / 异常 / 提示词
+│   │   ├── providers/         ← LLM(mock/claude/deepseek/qwen)·抓取·repomap·搜索(全可插拔)
+│   │   ├── pipeline/          ← 7 个模块 + orchestrator(降级/计时/成本闸门)
+│   │   ├── jobs.py  cache.py  ← JobStore 抽象 / 内容 hash 缓存
 │   │   ├── fixtures/mocks.py  ← mock 数据(零成本跑通)
 │   │   └── main.py            ← FastAPI 端点
 │   ├── scripts/run_pipeline.py← CLI:端到端跑通
-│   └── tests/                 ← pytest(含"毒舌不新增结论"不变量测试)
+│   └── tests/                 ← pytest 14 个(含"毒舌不新增结论"不变量 + 框架层)
 └── frontend/                  ← Next.js(提交→进度→报告, 认真/毒舌切换, 点开证据)
 ```
 
@@ -69,7 +73,7 @@ dejaview/
 cd backend
 python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt
 ./.venv/bin/python scripts/run_pipeline.py      # 端到端跑通并打印认真版+毒舌版
-./.venv/bin/python -m pytest                     # 8 个测试
+./.venv/bin/python -m pytest                     # 14 个测试(流水线 + 框架层)
 ./.venv/bin/uvicorn app.main:app --reload        # 起 API: http://localhost:8000/docs
 ```
 
@@ -84,7 +88,7 @@ cd frontend && npm install && npm run dev       # http://localhost:3000
 
 ## 现状
 
-- ✅ 后端框架可运行：7 模块流水线 + 编排 + 成本闸门 + 成本计量，mock 端到端跑通，8 测试通过。
-- ✅ provider / search 均为可插拔接口，默认 Claude 分层 + mock。
+- ✅ 后端框架可运行：7 模块流水线 + 编排 + 成本闸门 + 成本计量，mock 端到端跑通，14 测试通过。
+- ✅ 底层框架完善：依赖注入容器（Services）、LLM/抓取/repomap/搜索/存储全部可插拔、错误优雅降级、成本/阶段观测、pydantic-settings 配置、集中提示词。
 - ⏳ 真实能力（抓取 / repo map / 真实搜索 / 国内模型 / 前端联调 / 持久化）是**留给团队认领**的部分，
   已在 [`docs/BACKLOG.md`](docs/BACKLOG.md) 按模块拆好，接口已固定，可并行开发。

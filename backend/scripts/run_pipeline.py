@@ -61,7 +61,12 @@ def main() -> None:
             ev = f.evidence[0].locator if f.evidence else "(无证据)"
             print(f"    - [{f.severity}] {f.title}  ← 证据: {ev}")
 
-    print(f"\n=== 成本 ===\n  {job.cost.model_dump()}")
+    c = job.cost
+    print(f"\n=== 成本 / 观测 ===")
+    print(f"  LLM 调用: {c.llm_calls} | 搜索 query: {c.search_queries} | 总耗时: {c.seconds}s")
+    print(f"  各阶段耗时: {c.stage_seconds}")
+    if job.degradations:
+        print(f"  降级记录: {job.degradations}")
 
     # 核心不变量自检: 毒舌版 findings 全部来自统一事实层
     fact_ids = {f.id for f in r.issues} | {f.id for f in r.strengths}

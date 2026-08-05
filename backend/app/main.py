@@ -66,7 +66,7 @@ def confirm_fingerprint(job_id: str, fingerprint: ProjectFingerprint) -> Job:
 
     def _resume() -> None:
         # 用已累计的 cost 播种 meter, 让成本连续
-        Pipeline(settings, on_progress=_persist, meter=job.cost.model_copy()).resume(job, fingerprint)
+        Pipeline(settings, on_progress=_persist, meter=job.cost.model_copy(deep=True)).resume(job, fingerprint)
         store.put(job)
 
     threading.Thread(target=_resume, daemon=True).start()

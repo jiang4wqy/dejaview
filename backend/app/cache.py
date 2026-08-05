@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-from typing import Optional
+from typing import Callable, Optional
 
 
 class Cache:
@@ -38,3 +38,12 @@ class Cache:
         path = os.path.join(self.dir, f"{key}.json")
         with open(path, "w", encoding="utf-8") as f:
             json.dump(value, f, ensure_ascii=False, indent=2, default=str)
+
+    def get_or_compute(self, key: str, compute: Callable[[], dict]) -> dict:
+        """命中则返回缓存, 否则计算并写入。cache_dir 为空时退化为直接计算。"""
+        hit = self.get(key)
+        if hit is not None:
+            return hit
+        value = compute()
+        self.set(key, value)
+        return value

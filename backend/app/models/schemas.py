@@ -122,6 +122,19 @@ class KeyPage(BaseModel):
     title: str = ""
 
 
+class CrawlResult(BaseModel):
+    """Crawler 的原始产物 —— 喂给 site_analyzer 的抽取步骤(抓取=零 token)。"""
+    url: str = ""
+    reachable: bool = True
+    requires_login: bool = False
+    title: str = ""
+    description: str = ""
+    markdown: str = ""                 # 抓取后的干净 markdown(核心)
+    pages: list[KeyPage] = Field(default_factory=list)
+    screenshots: list[str] = Field(default_factory=list)
+    note: str = ""
+
+
 class SiteFacts(BaseModel):
     """site_analyzer 的输出。抓取 = 零 token 结构化提取; 仅在需要时喂给模型。"""
     url: Optional[str] = None
@@ -158,6 +171,17 @@ class RepoActivity(BaseModel):
     last_commit_at: Optional[datetime] = None
     recent_release: str = ""
     commit_frequency: str = ""   # active | moderate | stale
+
+
+class RepoMapResult(BaseModel):
+    """RepoMapper 的原始产物 —— 喂给 github_analyzer 的抽取步骤(低 token 仓库理解)。"""
+    url: str = ""
+    reachable: bool = True
+    map_text: str = ""                 # repo map(Aider 风格, 图排序控 token 预算)
+    tree: list[str] = Field(default_factory=list)
+    readme: str = ""
+    key_files: list[str] = Field(default_factory=list)
+    note: str = ""
 
 
 class RepoFacts(BaseModel):
@@ -347,10 +371,13 @@ class CostMeter(BaseModel):
     output_tokens: int = 0
     search_queries: int = 0
     seconds: float = 0.0
+    stage_seconds: dict[str, float] = Field(default_factory=dict)   # 每阶段耗时
 
 
 class Job(BaseModel):
     id: str
+    schema_version: str = "0.1"
+    content_hash: str = ""        # 请求内容 hash, 供去重 / 版本重检(改版后重新检测)
     status: JobStatus = JobStatus.QUEUED
     stage: Stage = Stage.SUBMITTED
     progress: float = 0.0
@@ -364,4 +391,5 @@ class Job(BaseModel):
     result: Optional[AnalysisResult] = None
     reports: dict[str, Report] = Field(default_factory=dict)  # tone.value -> Report
     cost: CostMeter = Field(default_factory=CostMeter)
+    degradations: list[str] = Field(default_factory=list)  # 降级记录: 某步失败但流水线继续
     error: str = ""

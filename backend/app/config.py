@@ -1,31 +1,49 @@
-"""运行配置。
+"""运行配置(pydantic-settings)。
 
-默认 provider = "mock" —— 零成本、无需任何 API key 就能跑通整条流水线。
-切到真实 Claude: 设 DEJAVIEW_PROVIDER=claude 并配置 ANTHROPIC_API_KEY (或 `ant auth login`)。
+所有配置走 `DEJAVIEW_` 前缀的环境变量, 也可放 backend/.env(见 .env.example)。
+默认 provider = "mock" —— 零成本、无需任何 API key 就能端到端跑通。
 """
 from __future__ import annotations
 
-import os
+from functools import lru_cache
 
-from pydantic import BaseModel
-
-
-class Settings(BaseModel):
-    # provider: "mock" | "claude"  (架构 provider 无关, 这里只定默认值)
-    provider: str = os.getenv("DEJAVIEW_PROVIDER", "mock")
-
-    # Claude 分层: 便宜步骤走小模型, 贵步骤走强模型。全部可用环境变量覆盖。
-    model_cheap: str = os.getenv("DEJAVIEW_MODEL_CHEAP", "claude-haiku-4-5")       # 提取 / 结构化
-    model_standard: str = os.getenv("DEJAVIEW_MODEL_STANDARD", "claude-sonnet-5")  # 判断 / 验证
-    model_strong: str = os.getenv("DEJAVIEW_MODEL_STRONG", "claude-opus-4-8")      # 难例 / 裁判
-
-    # search: "mock" | "tavily" | "firecrawl" | "bing" ...  (真实实现见 TODO.md)
-    search_provider: str = os.getenv("DEJAVIEW_SEARCH", "mock")
-
-    cache_dir: str = os.getenv("DEJAVIEW_CACHE_DIR", "")   # 空 = 关闭磁盘缓存
-    max_candidates_deep_read: int = int(os.getenv("DEJAVIEW_MAX_DEEP_READ", "5"))
-    max_queries: int = int(os.getenv("DEJAVIEW_MAX_QUERIES", "8"))
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="DEJAVIEW_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        protected_namespaces=(),   # 允许 model_* 字段名
+    )
+
+    # ---- LLM provider: mock | claude | deepseek | qwen (架构 provider 无关) ----
+    provider: str = "mock"
+    # Claude 分层默认值(便宜步骤走小模型, 全部可覆盖)
+    model_cheap: str = "claude-haiku-4-5"       # 提取 / 结构化
+    model_standard: str = "claude-sonnet-5"     # 判断 / 验证
+    model_strong: str = "claude-opus-4-8"       # 难例 / 裁判
+    llm_retries: int = 2
+
+    # ---- OpenAI 兼容端点(DeepSeek / Qwen 都兼容) ----
+    deepseek_base_url: str = "https://api.deepseek.com/v1"
+    deepseek_api_key_env: str = "DEEPSEEK_API_KEY"
+    qwen_base_url: str = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    qwen_api_key_env: str = "DASHSCOPE_API_KEY"
+
+    # ---- 抓取 / repo map / 搜索 执行端(均可插拔) ----
+    crawler: str = "stub"          # stub | firecrawl | crawl4ai
+    repomap: str = "stub"          # stub | gitingest | aider
+    search_provider: str = "mock"  # mock | tavily | github | firecrawl
+
+    # ---- 其它 ----
+    cache_dir: str = ""            # 空 = 关闭磁盘缓存
+    max_candidates_deep_read: int = 5
+    max_queries: int = 8
+
+
+@lru_cache
 def get_settings() -> Settings:
     return Settings()
