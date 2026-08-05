@@ -120,10 +120,13 @@ class Pipeline:
     # ---- 阶段 4-7: 搜索 → 验证 → 裁判 → 事实层 → 渲染 ----
     def _finish(self, job: Job, fp: ProjectFingerprint) -> Job:
         job.pending_fingerprint = None
+        # 搜索/验证失败可降级(honest: 本轮没召回到候选), 不至于整单失败
         candidates = self._stage(job, Stage.SEARCH, 0.50,
-                                 lambda: search_mod.find(fp, self.svc))
+                                 lambda: search_mod.find(fp, self.svc),
+                                 critical=False, fallback=list) or []
         verified = self._stage(job, Stage.VERIFY, 0.65,
-                               lambda: verify_mod.verify_candidates(candidates, fp, self.svc))
+                               lambda: verify_mod.verify_candidates(candidates, fp, self.svc),
+                               critical=False, fallback=list) or []
         verdict = self._stage(job, Stage.JUDGE, 0.80,
                               lambda: judge_mod.judge(fp, verified, self.svc))
         result = self._stage(job, Stage.FACTLAYER, 0.90,

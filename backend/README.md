@@ -25,6 +25,11 @@ export DEJAVIEW_PROVIDER=claude   ANTHROPIC_API_KEY=sk-ant-...
 
 配置全走 `DEJAVIEW_` 前缀环境变量(pydantic-settings),见 `.env.example`。
 
+**真实搜索**(已实现):`DEJAVIEW_SEARCH_PROVIDER=github` —— 免 key 可用,设 `GITHUB_TOKEN` 提额;代理环境需 `pip install "httpx[socks]"`。例:
+```bash
+DEJAVIEW_SEARCH_PROVIDER=github GITHUB_TOKEN=ghp_xxx ./.venv/bin/python scripts/run_pipeline.py
+```
+
 ## 目录
 
 ```

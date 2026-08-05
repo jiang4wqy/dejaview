@@ -36,7 +36,13 @@ class Settings(BaseSettings):
     # ---- 抓取 / repo map / 搜索 执行端(均可插拔) ----
     crawler: str = "stub"          # stub | firecrawl | crawl4ai
     repomap: str = "stub"          # stub | gitingest | aider
-    search_provider: str = "mock"  # mock | tavily | github | firecrawl
+    search_provider: str = "mock"  # mock | tavily | github
+
+    # 搜索端配置
+    github_token_env: str = "GITHUB_TOKEN"   # 可选; 有则提高 GitHub 搜索速率(30/分 vs 10/分)
+    github_per_query: int = 5
+    search_timeout: float = 15.0
+    tavily_api_key_env: str = "TAVILY_API_KEY"
 
     # ---- 其它 ----
     cache_dir: str = ""            # 空 = 关闭磁盘缓存

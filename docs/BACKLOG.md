@@ -44,7 +44,7 @@
 依赖：`ProjectFingerprint` 契约、`SearchClient` 接口（已定）
 - [ ] **E4-1** ★ query 生成打磨：同用户+同任务 / 同输入输出不同实现 / 同机制不同人群，中英文+同义词
 - [ ] **E4-2** ★ 接真实搜索：先接 1 个（Tavily 或 Firecrawl search 或 Bing）实现 `SearchClient` — DoD：真实召回 20–30 候选
-- [ ] **E4-3** ★ GitHub 搜索源（repos/topics）
+- [x] **E4-3** ★ GitHub 搜索源（repos, 按 star）—— 已实现: `DEJAVIEW_SEARCH_PROVIDER=github`（免 key, 可选 GITHUB_TOKEN 提额）
 - [ ] **E4-4** Product Hunt / AlternativeTo / G2 源
 - [ ] **E4-5** 中文社区源（V2EX「分享创造」/ 少数派 / 掘金）
 - [ ] **E4-6** 召回去重与初排（浅读 20–30，交给 verify 深读前 3–5）

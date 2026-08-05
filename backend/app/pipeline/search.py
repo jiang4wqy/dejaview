@@ -7,6 +7,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 from app import prompts
+from app.errors import SearchError
 from app.models.schemas import CandidateRef, ProjectFingerprint
 from app.providers.llm_router import ModelTier
 from app.services import Services
@@ -25,7 +26,12 @@ def find(fingerprint: ProjectFingerprint, svc: Services) -> list[CandidateRef]:
     out: list[CandidateRef] = []
     for q in qs.queries[: svc.settings.max_queries]:
         svc.meter.search_queries += 1
-        for cand in svc.search.search(q):
+        try:
+            hits = svc.search.search(q)
+        except SearchError as e:
+            svc.log.warning("搜索 query 失败, 跳过: %s", e)   # 单个 query 失败不影响其它
+            continue
+        for cand in hits:
             key = (cand.name.strip().lower(), cand.url.strip().lower())
             if key in seen:
                 continue

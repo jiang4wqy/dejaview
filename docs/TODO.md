@@ -8,7 +8,7 @@
 |---|---|---|---|
 | `pipeline/site_analyzer.py::_crawl` | 返回占位字符串 | Firecrawl / Crawl4AI | E1-1 |
 | `pipeline/github_analyzer.py::_build_repo_map` | 返回占位字符串 | Aider Repo Map / GitIngest / Repomix | E2-1 |
-| `providers/search_client.py::MockSearchClient` | 返回固定候选池 | Tavily / Firecrawl / GitHub / 中文社区 | E4-2~E4-5 |
+| `providers/search_client.py` | mock 固定池(默认); **GitHub 搜索已实现** | Tavily / 中文社区(stub) | E4-2 / E4-4 / E4-5 |
 | `providers/llm_router.py::MockProvider` | 读 fixtures | Claude（已写）/ DeepSeek / Qwen | E9-1 |
 | `jobs.py::store`（内存） | 进程内字典 | Redis / Postgres | E10-1 |
 | `main.py` 后台线程 | `threading.Thread` | 任务队列（Celery/RQ/Arq） | E10-2 |
@@ -30,6 +30,7 @@
 - `CostMeter.input/output_tokens` 在 mock 下为 0；真实 provider 需从 usage 累加（E9-2）。
 - `orchestrator` 用后台线程，进程重启会丢 Job（E10）。
 - 前端未跑 `npm install`（磁盘限制），拿到后需 `npm install` 才能起（见 `frontend/README.md`）。
+- 在 **SOCKS 代理**后，httpx 需 `pip install "httpx[socks]"`，否则 `search=github` 会优雅降级为空（urllib/curl 自带 SOCKS 支持，httpx 不带）。
 
 ## 合规 / 安全边界（开发前必须澄清）
 
