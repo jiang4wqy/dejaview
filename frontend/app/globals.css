@@ -1383,8 +1383,27 @@ h1.verdict {
 }
 @keyframes sheen { 0%,100%{left:-40%} 55%{left:120%} }
 
+/* 滚动逐段浮现 */
+[data-reveal] { transition: opacity .55s cubic-bezier(.2,.7,.2,1), transform .55s cubic-bezier(.2,.7,.2,1); }
+.pre-reveal { opacity: 0; transform: translateY(24px); }
+.pre-reveal.revealed { opacity: 1; transform: none; }
+/* 表盘呼吸光晕 */
+.dial .val { animation: dialPulse 3.2s ease-in-out infinite; }
+@keyframes dialPulse {
+  0%,100% { filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent) 55%, transparent)); }
+  50% { filter: drop-shadow(0 0 18px color-mix(in srgb, var(--accent) 90%, transparent)); }
+}
+/* 核心总结边框呼吸 */
+.summary { animation: sumBreathe 4.5s ease-in-out infinite; }
+@keyframes sumBreathe {
+  0%,100% { border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); }
+  50% { border-color: color-mix(in srgb, var(--accent) 72%, var(--line)); box-shadow: 0 0 26px color-mix(in srgb, var(--accent) 14%, transparent); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .fx-spot, .summary::before, .stamp.in::after, .fold[open] .fold-body { animation: none !important; }
+  .fx-spot, .summary::before, .stamp.in::after, .fold[open] .fold-body,
+  .dial .val, .summary { animation: none !important; }
+  .pre-reveal { opacity: 1 !important; transform: none !important; }
 }
 .home-flow {
   display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px;

@@ -342,7 +342,7 @@ function Fold({ title, hint, defaultOpen = false, children }: {
   title: string; hint?: string; defaultOpen?: boolean; children: ReactNode;
 }) {
   return (
-    <details className="fold" open={defaultOpen}>
+    <details className="fold" data-reveal open={defaultOpen}>
       <summary className="fold-sum">
         <span className="fold-chev" aria-hidden="true">▸</span>
         <span className="fold-title">{title}</span>
@@ -454,6 +454,36 @@ export default function ReportView({ job }: { job: Job }) {
       if (iv) clearInterval(iv);
     };
   }, [pct]);
+
+  // 报告落地：砸一发本世界特效
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      if (tone === "roast") window.__djBurst?.(window.innerWidth / 2, 170);
+      else window.__djGold?.();
+    }, 480);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 滚动时逐段浮现
+  useEffect(() => {
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || typeof IntersectionObserver === "undefined") return;
+    const els = Array.from(document.querySelectorAll<HTMLElement>(".dv [data-reveal]"));
+    els.forEach((el) => el.classList.add("pre-reveal"));
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("revealed");
+            io.unobserve(e.target);
+          }
+        }),
+      { threshold: 0.1, rootMargin: "0px 0px -6% 0px" },
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
   const report: Report | undefined = reports[tone] ?? reports.serious ?? reports.roast;
   if (!report) {
