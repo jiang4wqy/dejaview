@@ -52,9 +52,17 @@ class Settings(BaseSettings):
     search_timeout: float = 15.0
     tavily_api_key_env: str = "TAVILY_API_KEY"
 
-    # ---- 任务存储: memory(默认) | redis(持久化) ----
+    # ---- 抓取端配置 ----
+    chrome_path: str = ""                       # crawler=browser; 空=自动探测(ms-playwright/puppeteer/系统)
+    firecrawl_api_key_env: str = "FIRECRAWL_API_KEY"   # crawler=firecrawl
+    crawl_timeout: int = 30
+
+    # ---- 任务存储: memory(默认) | redis | sql(sqlite/postgres) ----
     jobstore: str = "memory"
     redis_url: str = "redis://localhost:6379/0"
+    sql_url: str = "sqlite:///dejaview_jobs.db"   # jobstore=sql; Postgres 用 postgresql://...
+    # ---- 任务执行: thread(默认后台线程) | rq(Redis 队列 + worker) ----
+    queue: str = "thread"
 
     # ---- 其它 ----
     cache_dir: str = ""            # 空 = 关闭磁盘缓存

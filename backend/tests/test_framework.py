@@ -94,3 +94,16 @@ def test_redis_jobstore_roundtrip():
     store.put(got)
     assert store.get(job.id).error == "boom"
     assert store.get("nonexistent") is None
+
+
+def test_sql_jobstore_roundtrip(tmp_path):
+    """SqlJobStore 用 SQLite 做往返 + upsert 测试(Postgres 走同一实现)。"""
+    from app.jobs import SqlJobStore
+    store = SqlJobStore(url=f"sqlite:///{tmp_path}/jobs.db")
+    job = store.create(AnalysisRequest(website_url="https://a.example"))
+    got = store.get(job.id)
+    assert got is not None and got.id == job.id
+    got.error = "e2"
+    store.put(got)   # upsert -> 更新
+    assert store.get(job.id).error == "e2"
+    assert store.get("missing") is None

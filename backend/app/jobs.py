@@ -81,13 +81,47 @@ class RedisJobStore(JobStore):
         self._r.set(self._key(job.id), job.model_dump_json(), ex=self._ttl)
 
 
+class SqlJobStore(JobStore):
+    """SQL 持久化(SQLite / Postgres via DSN)。单表存 Job 的 JSON, 可移植 upsert。"""
+
+    def __init__(self, url: str = "sqlite:///dejaview_jobs.db") -> None:
+        from sqlalchemy import Column, MetaData, String, Table, Text, create_engine
+        self._engine = create_engine(url, future=True)
+        md = MetaData()
+        self._t = Table("dejaview_jobs", md,
+                        Column("id", String(32), primary_key=True),
+                        Column("data", Text, nullable=False))
+        md.create_all(self._engine)
+
+    def create(self, request: AnalysisRequest) -> Job:
+        job = _new_job(request)
+        self.put(job)
+        return job
+
+    def get(self, job_id: str) -> Job | None:
+        from sqlalchemy import select
+        with self._engine.connect() as c:
+            row = c.execute(select(self._t.c.data).where(self._t.c.id == job_id)).first()
+        return Job.model_validate_json(row[0]) if row else None
+
+    def put(self, job: Job) -> None:
+        from sqlalchemy import insert, update
+        data = job.model_dump_json()
+        with self._engine.begin() as c:  # UPDATE 命中就更新, 否则 INSERT(sqlite/pg 通用)
+            r = c.execute(update(self._t).where(self._t.c.id == job.id).values(data=data))
+            if r.rowcount == 0:
+                c.execute(insert(self._t).values(id=job.id, data=data))
+
+
 def make_job_store(settings: Settings) -> JobStore:
     if settings.jobstore == "redis":
         return RedisJobStore(url=settings.redis_url)
+    if settings.jobstore in ("sql", "postgres"):
+        return SqlJobStore(url=settings.sql_url)
     if settings.jobstore == "memory":
         return InMemoryJobStore()
     from app.errors import ConfigError
-    raise ConfigError(f"未知 jobstore: {settings.jobstore!r} (可选 memory|redis)")
+    raise ConfigError(f"未知 jobstore: {settings.jobstore!r} (可选 memory|redis|sql)")
 
 
 # 进程内默认单例(CLI / 测试用); 服务端 main.py 会按配置 make_job_store

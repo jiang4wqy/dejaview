@@ -8,6 +8,7 @@ backend/.venv/
 .cache/
 dejaview_cache/
 reports/
+*.db
 
 # ── env / secrets (永远不要提交 token) ──
 .env

@@ -13,10 +13,14 @@ dependencies = [
     "beautifulsoup4>=4.12",
     "lxml>=5.0",
     "markdownify>=0.11",
+    "redis>=5.0",
+    "rq>=1.16",
+    "sqlalchemy>=2.0",
+    "psycopg2-binary>=2.9",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "fakeredis>=2.20"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

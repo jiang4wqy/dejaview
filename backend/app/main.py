@@ -11,15 +11,13 @@ MVP: 用后台线程 + 内存 JobStore 跑; 生产应换任务队列 (见 docs/T
 """
 from __future__ import annotations
 
-import threading
-
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.jobs import make_job_store
 from app.models.schemas import AnalysisRequest, Job, JobStatus, ProjectFingerprint, Report
-from app.pipeline.orchestrator import Pipeline
+from app.queue import submit_resume, submit_run
 
 app = FastAPI(title="DejaView API", version="0.1.0")
 app.add_middleware(
@@ -29,23 +27,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-store = make_job_store(get_settings())   # memory | redis(由 DEJAVIEW_JOBSTORE 决定)
-
-
-def _persist(job: Job) -> None:
-    store.put(job)
+store = make_job_store(get_settings())   # memory | redis | sql(由 DEJAVIEW_JOBSTORE 决定)
 
 
 @app.post("/api/analyze")
 def analyze(request: AnalysisRequest) -> dict:
     job = store.create(request)
-    settings = get_settings()
-
-    def _run() -> None:
-        Pipeline(settings, on_progress=_persist).run(job)
-        store.put(job)
-
-    threading.Thread(target=_run, daemon=True).start()
+    submit_run(get_settings(), store, job)   # thread 或 rq(由 DEJAVIEW_QUEUE 决定)
     return {"job_id": job.id}
 
 
@@ -64,14 +52,7 @@ def confirm_fingerprint(job_id: str, fingerprint: ProjectFingerprint) -> Job:
         raise HTTPException(status_code=404, detail="job not found")
     if job.status is not JobStatus.AWAIT_CONFIRM:
         raise HTTPException(status_code=409, detail=f"job not awaiting confirm (status={job.status.value})")
-    settings = get_settings()
-
-    def _resume() -> None:
-        # 用已累计的 cost 播种 meter, 让成本连续
-        Pipeline(settings, on_progress=_persist, meter=job.cost.model_copy(deep=True)).resume(job, fingerprint)
-        store.put(job)
-
-    threading.Thread(target=_resume, daemon=True).start()
+    submit_resume(get_settings(), store, job, fingerprint)
     job.status = JobStatus.RUNNING
     store.put(job)
     return job

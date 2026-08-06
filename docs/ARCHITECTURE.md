@@ -61,9 +61,9 @@ facts = site_analyzer.analyze(req, svc) # 模块只从 svc 取自己要的
 |---|---|---|---|---|
 | LLM | `providers/base.LLMProvider` | `deepseek` | `claude` · `qwen`(OpenAI 兼容) · `mock`; **DeepSeek v4 已验证** | E9 |
 | 搜索 | `providers/search_client.SearchClient` | `composite` | **`github`·`v2ex`·`juejin` 已实现** · `mock` · `tavily`(stub) | E4 |
-| 抓取 | `providers/crawler.Crawler` | **`builtin`(已实现)** | `firecrawl` · `crawl4ai`(stub) | E1 |
+| 抓取 | `providers/crawler.Crawler` | **`builtin` · `browser`(JS 渲染) 已实现** | `firecrawl`(需 key) | E1 |
 | repo map | `providers/repomap.RepoMapper` | **`builtin`(已实现)** | `aider` · `gitingest`(stub) | E2 |
-| 任务存储 | `jobs.JobStore` | `InMemory` | **`Redis`(已实现)** · Postgres(TODO) | E10 |
+| 任务存储 | `jobs.JobStore` | `InMemory` | **`Redis` · `SQL`(SQLite/Postgres) 已实现** + RQ 队列 | E10 |
 | 缓存 | `cache.Cache` | 磁盘 JSON(可关) | Redis 等 | E9-3 |
 
 每个都有一个 `make_xxx(settings)` 注册表函数,未知值抛 `ConfigError`。
