@@ -1402,6 +1402,21 @@ body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-even
   transition: color .2s, border-color .2s;
 }
 .topbar-restart:hover { color: var(--accent); border-color: var(--accent); }
+/* 返回（退一步）按钮 */
+.splash-back {
+  position: fixed; top: 72px; left: 20px; z-index: 5;
+  font-family: var(--mono, monospace); font-size: 13px; color: #c9c0dc;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.16);
+  padding: 7px 14px; border-radius: 999px; cursor: pointer; transition: color .2s, border-color .2s;
+}
+.splash-back:hover { color: #fff; border-color: rgba(255,255,255,.45); }
+.home-back {
+  display: inline-block; margin: 2px 0 10px;
+  font-family: var(--mono); font-size: 13px; color: var(--muted);
+  background: transparent; border: 1px solid var(--line);
+  padding: 7px 14px; border-radius: 999px; cursor: pointer; transition: color .2s, border-color .2s;
+}
+.home-back:hover { color: var(--accent); border-color: var(--accent); }
 
 /* ---- 特效层 ---- */
 .fx-confetti { position: fixed; inset: 0; z-index: 9990; pointer-events: none; }

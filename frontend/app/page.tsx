@@ -37,7 +37,7 @@ const EXAMPLES = [
 
 export default function HomePage() {
   const router = useRouter();
-  const { tone, ready, seenIntro } = useTone();
+  const { tone, ready, seenIntro, reset } = useTone();
 
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
@@ -102,6 +102,9 @@ export default function HomePage() {
 
   return (
     <div className="home">
+      <button type="button" className="home-back" onClick={reset}>
+        ← 换个审判官
+      </button>
       <section className="home-hero">
         <span className="home-kicker rise">{hero.kicker}</span>
         <h1 className="home-title rise" style={{ animationDelay: ".05s" }}>

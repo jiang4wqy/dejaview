@@ -13,7 +13,7 @@ declare global {
 }
 
 export default function WorldGate() {
-  const { setTone } = useTone();
+  const { setTone, backToIntro } = useTone();
 
   function choose(t: Tone, e: React.MouseEvent) {
     // 入场特效：毒舌撒彩带（在点击处炸开），镀金金光扫屏
@@ -25,6 +25,9 @@ export default function WorldGate() {
 
   return (
     <div className="gate">
+      <button type="button" className="splash-back" onClick={backToIntro}>
+        ← 返回介绍
+      </button>
       <div className="gate-head">
         <span className="gate-kicker">DEJAVIEW · 证据化项目锐评</span>
         <h1 className="gate-title">选择你的审判官</h1>

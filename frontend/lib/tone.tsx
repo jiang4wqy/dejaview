@@ -21,6 +21,7 @@ type ToneCtx = {
   seenIntro: boolean; // 是否看过项目介绍页
   setTone: (t: Tone) => void;
   enterIntro: () => void; // 从介绍页进入 → 选择审判官
+  backToIntro: () => void; // 从大门退回介绍页（退一步）
   reset: () => void; // 回到开场重新选审判官（保留已看过介绍）
   restart: () => void; // 从最开始（介绍页）重新来过
 };
@@ -31,6 +32,7 @@ const Ctx = createContext<ToneCtx>({
   seenIntro: false,
   setTone: () => {},
   enterIntro: () => {},
+  backToIntro: () => {},
   reset: () => {},
   restart: () => {},
 });
@@ -80,6 +82,13 @@ export function ToneProvider({ children }: { children: ReactNode }) {
   }, [tone]);
 
   const setTone = useCallback((t: Tone) => setToneState(t), []);
+  // 退一步：大门 → 介绍页
+  const backToIntro = useCallback(() => {
+    window.localStorage.removeItem(INTRO_KEY);
+    window.localStorage.removeItem(KEY);
+    setToneState(null);
+    setSeenIntro(false);
+  }, []);
   const reset = useCallback(() => {
     window.localStorage.removeItem(KEY);
     setToneState(null);
@@ -92,7 +101,7 @@ export function ToneProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <Ctx.Provider value={{ tone, ready, seenIntro, setTone, enterIntro, reset, restart }}>
+    <Ctx.Provider value={{ tone, ready, seenIntro, setTone, enterIntro, backToIntro, reset, restart }}>
       {children}
     </Ctx.Provider>
   );
