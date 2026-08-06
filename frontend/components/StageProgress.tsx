@@ -192,12 +192,88 @@ function Quiz({ tone }: { tone: Tone }) {
   );
 }
 
+function pctOf(v: number) {
+  const n = v <= 1 ? v * 100 : v;
+  return Math.max(0, Math.min(100, Math.round(n)));
+}
+
+// 渐进揭示：随后端流式推来的中间产物，一块块点亮
+function LiveBuild({ job }: { job: Job }) {
+  const idx = STAGE_ORDER.indexOf(job.stage);
+  const reached = (s: string) => idx >= STAGE_ORDER.indexOf(s);
+  const fp = job.fingerprint;
+  const cands = job.candidates ?? [];
+  const verified = job.verified ?? [];
+  const dup = job.duplication;
+
+  const steps = [
+    {
+      key: "fp", icon: "🧬", title: "看穿你的项目",
+      done: !!fp,
+      running: job.stage === "fingerprint" || (reached("site_analysis") && !fp && !reached("search")),
+      body: fp ? <p className="lb-one">{fp.one_liner}</p> : null,
+    },
+    {
+      key: "search", icon: "🔍", title: "全网揪同类",
+      done: cands.length > 0 || reached("verify"),
+      running: job.stage === "search",
+      body: cands.length ? (
+        <div className="lb-chips">
+          {cands.slice(0, 8).map((c, i) => (
+            <span key={i} className="lb-chip">{c.name}</span>
+          ))}
+          {cands.length > 8 ? <span className="lb-chip more">+{cands.length - 8}</span> : null}
+        </div>
+      ) : reached("search") ? (
+        <span className="muted">本轮没召回到候选</span>
+      ) : null,
+    },
+    {
+      key: "verify", icon: "⚖️", title: "逐个深度核对",
+      done: verified.length > 0 || reached("judge"),
+      running: job.stage === "verify",
+      body: verified.length ? (
+        <p className="lb-note">
+          深读 {verified.length} 个 · 直接竞品{" "}
+          {verified.filter((v) => v.relation === "direct_competitor").length} 个
+        </p>
+      ) : null,
+    },
+    {
+      key: "judge", icon: "🔨", title: "落下裁决",
+      done: !!dup,
+      running: job.stage === "judge",
+      body: dup ? (
+        <div className="lb-verdict">
+          重复造轮子概率 <b>{pctOf(dup.duplication_score)}%</b>
+        </div>
+      ) : null,
+    },
+  ];
+
+  return (
+    <div className="livebuild">
+      {steps.map((s) => (
+        <div key={s.key} className={`lb-step ${s.done ? "done" : s.running ? "run" : "wait"}`}>
+          <div className="lb-ico">{s.done ? "✓" : s.icon}</div>
+          <div className="lb-main">
+            <div className="lb-title">
+              {s.title}
+              {s.running && !s.done ? <i className="lb-dots" aria-hidden="true" /> : null}
+            </div>
+            {s.done && s.body ? <div className="lb-body">{s.body}</div> : null}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function StageProgress({ job }: { job: Job }) {
   const { tone } = useTone();
   const pct = Math.max(0, Math.min(100, Math.round((job.progress ?? 0) * 100)));
   const label = STAGE_LABELS[job.stage] ?? job.stage ?? "处理中";
   const queued = job.status === "queued";
-  const currentIndex = STAGE_ORDER.indexOf(job.stage);
 
   return (
     <div className="panel waitroom">
@@ -219,17 +295,7 @@ export default function StageProgress({ job }: { job: Job }) {
         </div>
       </div>
 
-      <ol className="stagelist">
-        {STAGE_ORDER.map((key, i) => {
-          const state = currentIndex < 0 ? "" : i < currentIndex ? "done" : i === currentIndex ? "active" : "";
-          return (
-            <li key={key} className={`stage-item ${state}`}>
-              <span className="stage-dot" aria-hidden="true" />
-              <span className="stage-name">{STAGE_LABELS[key]}</span>
-            </li>
-          );
-        })}
-      </ol>
+      <LiveBuild job={job} />
 
       {tone ? <Quiz tone={tone} /> : null}
 

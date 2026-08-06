@@ -13,6 +13,7 @@ import type {
 } from "@/lib/types";
 import Markdown from "./Markdown";
 import FindingCard from "./FindingCard";
+import ShareModal from "./ShareCard";
 import { useTone } from "@/lib/tone";
 
 const LEVEL_LABEL: Record<string, string> = { high: "高", medium: "中", low: "低" };
@@ -420,6 +421,7 @@ export default function ReportView({ job }: { job: Job }) {
   // 载入动效：表盘填充 + 数字滚动 + 印章落章 + 维度条生长。
   const [ignited, setIgnited] = useState(false);
   const [dialNum, setDialNum] = useState(0);
+  const [shareOpen, setShareOpen] = useState(false);
   useEffect(() => {
     let raf = 0;
     let to: ReturnType<typeof setTimeout> | null = null;
@@ -485,6 +487,11 @@ export default function ReportView({ job }: { job: Job }) {
     return () => io.disconnect();
   }, []);
 
+  // ?share=1 深链直接弹出战报
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("share") === "1") setShareOpen(true);
+  }, []);
+
   const report: Report | undefined = reports[tone] ?? reports.serious ?? reports.roast;
   if (!report) {
     return (
@@ -519,6 +526,11 @@ export default function ReportView({ job }: { job: Job }) {
           <Dial pct={pct} confidence={dup?.confidence} dialNum={dialNum} ignited={ignited} />
         </div>
         <ToneToggle available={available} tone={tone} onChange={setTone} />
+        <div className="hero-actions">
+          <button type="button" className="share-btn" onClick={() => setShareOpen(true)}>
+            📸 生成战报 · 分享
+          </button>
+        </div>
       </div>
 
       {/* ---------- 核心总结（最重要，放最显眼） ---------- */}
@@ -625,6 +637,10 @@ export default function ReportView({ job }: { job: Job }) {
 
       {/* ---------- 成本 / 页脚 ---------- */}
       <CostFooter job={job} />
+
+      {shareOpen ? (
+        <ShareModal job={job} tone={tone} onClose={() => setShareOpen(false)} />
+      ) : null}
     </div>
   );
 }

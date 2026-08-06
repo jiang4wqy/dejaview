@@ -141,6 +141,11 @@ export interface Job {
   site_facts: Facts;
   repo_facts: Facts;
   pending_fingerprint?: ProjectFingerprint;
+  // 流式中间态（运行时逐阶段填充）
+  fingerprint?: ProjectFingerprint;
+  candidates?: CandidateRef[];
+  verified?: Candidate[];
+  duplication?: Duplication;
   result?: AnalysisResult;
   reports: Reports;
   cost: Cost;

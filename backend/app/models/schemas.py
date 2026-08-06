@@ -392,6 +392,11 @@ class Job(BaseModel):
     site_facts: Optional[SiteFacts] = None
     repo_facts: Optional[RepoFacts] = None
     pending_fingerprint: Optional[ProjectFingerprint] = None  # 成本闸门: 等用户确认/修正的指纹
+    # 流式中间态: 每阶段完成即写入, 让前端"边跑边出"
+    fingerprint: Optional[ProjectFingerprint] = None          # 指纹合成后
+    candidates: list[CandidateRef] = Field(default_factory=list)      # 搜索召回后
+    verified: list[VerifiedCandidate] = Field(default_factory=list)   # 深度核对后
+    duplication: Optional[DuplicationVerdict] = None          # 重复度裁判后
     result: Optional[AnalysisResult] = None
     reports: dict[str, Report] = Field(default_factory=dict)  # tone.value -> Report
     cost: CostMeter = Field(default_factory=CostMeter)

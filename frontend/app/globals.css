@@ -1405,6 +1405,93 @@ h1.verdict {
   .dial .val, .summary { animation: none !important; }
   .pre-reveal { opacity: 1 !important; transform: none !important; }
 }
+
+/* ===== 渐进揭示时间线(等待时边跑边出) ===== */
+.livebuild { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+.lb-step {
+  display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px;
+  border-radius: 14px; border: 1px solid var(--line); background: var(--panel-2);
+  transition: opacity .4s, border-color .3s, box-shadow .3s;
+}
+.lb-step.wait { opacity: .42; }
+.lb-step.run {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent), 0 10px 26px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.lb-step.done { border-color: color-mix(in srgb, var(--good) 42%, var(--line)); }
+.lb-ico {
+  flex: 0 0 auto; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center;
+  font-size: 18px; background: var(--panel); border: 1px solid var(--line);
+}
+.lb-step.done .lb-ico { background: color-mix(in srgb, var(--good) 22%, var(--panel)); border-color: var(--good); color: var(--good); font-weight: 800; }
+.lb-step.run .lb-ico { animation: lbPulse 1s ease-in-out infinite; }
+@keyframes lbPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.14)} }
+.lb-main { flex: 1; min-width: 0; }
+.lb-title { font-weight: 750; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; }
+.lb-dots { color: var(--accent); }
+.lb-dots::after { content: "···"; letter-spacing: 2px; animation: lbBlink 1.2s ease-in-out infinite; }
+@keyframes lbBlink { 0%,100%{opacity:.3} 50%{opacity:1} }
+.lb-body { margin-top: 8px; animation: foldIn .35s cubic-bezier(.2,.7,.2,1); }
+.lb-one { margin: 0; color: var(--ink); font-size: 14px; line-height: 1.55; }
+.lb-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.lb-chip {
+  font-family: var(--mono); font-size: 11.5px; padding: 4px 9px; border-radius: 999px; color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
+  animation: chipPop .32s cubic-bezier(.2,1.5,.4,1);
+}
+.lb-chip.more { color: var(--muted); }
+@keyframes chipPop { from{transform:scale(.6);opacity:0} to{transform:scale(1);opacity:1} }
+.lb-note { margin: 0; color: var(--muted); font-size: 13px; }
+.lb-verdict { font-size: 15px; color: var(--ink); }
+.lb-verdict b { font-family: var(--mono); font-size: 22px; color: var(--accent); font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) {
+  .lb-step.run .lb-ico, .lb-chip, .lb-body, .lb-dots::after { animation: none !important; }
+}
+
+/* ===== 分享战报 ===== */
+.share-overlay { position: fixed; inset: 0; z-index: 10000; background: rgba(4,2,10,.72); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; animation: shOverlay .25s ease; }
+@keyframes shOverlay { from{opacity:0} to{opacity:1} }
+.share-modal { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 20px; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 30px 90px rgba(0,0,0,.6); animation: shPop .3s cubic-bezier(.2,1.2,.3,1); }
+@keyframes shPop { from{transform:translateY(16px) scale(.96); opacity:0} to{transform:none; opacity:1} }
+.share-preview { width: 440px; height: 440px; max-width: 76vw; max-height: 76vw; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+.sc-scale { transform: scale(.4074); transform-origin: top left; width: 1080px; height: 1080px; }
+@media (max-width: 520px) { .share-preview { width: 300px; height: 300px; } .sc-scale { transform: scale(.2778); } }
+.share-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: center; }
+
+.sharecard { width: 1080px; height: 1080px; box-sizing: border-box; padding: 92px 84px; display: flex; flex-direction: column; overflow: hidden; font-family: "PingFang SC","Microsoft YaHei","Songti SC",system-ui,sans-serif; }
+.sharecard[data-tone="roast"] { background: radial-gradient(120% 92% at 12% -6%, #3d1257, #170a2b 60%); color: #fdf0ff; }
+.sharecard[data-tone="serious"] { background: radial-gradient(120% 92% at 88% -6%, #26200f, #09090b 58%); color: #f4ecd8; }
+.sc-top { display: flex; align-items: baseline; gap: 20px; }
+.sc-brand { font-family: "Bungee","Arial Black",sans-serif; font-size: 48px; letter-spacing: -.01em; }
+.sharecard[data-tone="roast"] .sc-brand { color: #ffe600; }
+.sharecard[data-tone="serious"] .sc-brand { font-family: "Playfair",Georgia,serif; font-weight: 850; color: #e9c96a; }
+.sc-kicker { font-family: ui-monospace,monospace; font-size: 24px; opacity: .6; letter-spacing: .12em; }
+.sc-subject { font-family: ui-monospace,monospace; font-size: 26px; margin-top: 16px; opacity: .68; }
+.sc-gauge { margin: 44px 0 6px; }
+.sc-pct { font-family: ui-monospace,monospace; font-weight: 800; font-size: 210px; line-height: .86; letter-spacing: -.04em; }
+.sharecard[data-tone="roast"] .sc-pct { color: #ff2e88; }
+.sharecard[data-tone="serious"] .sc-pct { color: #e9c96a; }
+.sc-pct i { font-size: 96px; font-style: normal; opacity: .85; }
+.sc-glabel { font-family: ui-monospace,monospace; font-size: 30px; opacity: .6; letter-spacing: .1em; margin-top: 2px; }
+.sc-headline { font-size: 68px; font-weight: 850; line-height: 1.18; letter-spacing: -.02em; margin: 30px 0 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.sharecard[data-tone="serious"] .sc-headline { font-family: "Playfair",Georgia,"Songti SC",serif; }
+.sc-line { font-size: 34px; line-height: 1.5; margin: 26px 0 0; opacity: .9;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.sc-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 18px; font-family: ui-monospace,monospace; font-size: 26px; padding-top: 34px; border-top: 2px solid rgba(255,255,255,.16); }
+.sharecard[data-tone="roast"] .sc-tag { color: #ffe600; font-weight: 700; }
+.sharecard[data-tone="serious"] .sc-tag { color: #e9c96a; font-weight: 700; }
+/* 报告里的"生成战报"按钮 */
+.hero-actions { margin-top: 14px; }
+.share-btn {
+  appearance: none; cursor: pointer; font-family: var(--sans); font-weight: 800; font-size: 14px;
+  color: #100a18; border: 0; padding: 11px 20px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 38%, transparent);
+  transition: transform .12s, filter .15s;
+}
+.share-btn:hover { transform: translateY(-2px); filter: brightness(1.06); }
 .home-flow {
   display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px;
   font-family: var(--mono, ui-monospace, monospace); font-size: 12px;

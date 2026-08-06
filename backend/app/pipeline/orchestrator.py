@@ -52,6 +52,13 @@ class Pipeline:
         if self.on_progress:
             self.on_progress(job)
 
+    # ---- 推送中间产物(不改阶段), 让前端"边跑边出" ----
+    def _push(self, job: Job) -> None:
+        job.updated_at = datetime.now(timezone.utc)
+        job.cost = self.meter.model_copy(deep=True)
+        if self.on_progress:
+            self.on_progress(job)
+
     # ---- 单阶段: 计时 + 错误处理(可降级) ----
     def _stage(self, job: Job, stage: Stage, progress: float, fn: Callable[[], R],
                *, critical: bool = True, fallback: Optional[Callable[[], R]] = None) -> Optional[R]:
@@ -88,6 +95,8 @@ class Pipeline:
                 lambda: fingerprint_mod.synthesize(job.site_facts, job.repo_facts,
                                                    req.author_statement, self.svc),
             )
+            job.fingerprint = fp
+            self._push(job)   # 指纹先亮出来
             if req.confirm_fingerprint and not fp.user_confirmed:
                 job.pending_fingerprint = fp
                 self._tick(job, Stage.AWAIT_CONFIRM, 0.40, status=JobStatus.AWAIT_CONFIRM)
@@ -120,18 +129,26 @@ class Pipeline:
     # ---- 阶段 4-7: 搜索 → 验证 → 裁判 → 事实层 → 渲染 ----
     def _finish(self, job: Job, fp: ProjectFingerprint) -> Job:
         job.pending_fingerprint = None
+        job.fingerprint = fp
         # 搜索/验证失败可降级(honest: 本轮没召回到候选), 不至于整单失败
         candidates = self._stage(job, Stage.SEARCH, 0.50,
                                  lambda: search_mod.find(fp, self.svc),
                                  critical=False, fallback=list) or []
+        job.candidates = candidates
+        self._push(job)   # 竞品陆续揪出来
         verified = self._stage(job, Stage.VERIFY, 0.65,
                                lambda: verify_mod.verify_candidates(candidates, fp, self.svc),
                                critical=False, fallback=list) or []
+        job.verified = verified
+        self._push(job)   # 深度核对完
         verdict = self._stage(job, Stage.JUDGE, 0.80,
                               lambda: judge_mod.judge(fp, verified, self.svc))
+        job.duplication = verdict
+        self._push(job)   # 裁决落定
         result = self._stage(job, Stage.FACTLAYER, 0.90,
                              lambda: factlayer_mod.assemble(fp, verified, verdict, self.svc))
         job.result = result
+        self._push(job)
 
         def _render() -> None:
             # 同一事实层渲染两种语气; 毒舌版不新增未证实结论(见 report.py)
