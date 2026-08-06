@@ -168,12 +168,23 @@ ROAST_SYSTEM = (
 
 def render(result, tone: ToneMode) -> tuple[str, str]:
     system = ROAST_SYSTEM if tone is ToneMode.ROAST else SERIOUS_SYSTEM
+    top = result.improvements[0].title if result.improvements else ""
     user = (
         f"项目: {result.fingerprint.one_liner}\n"
         f"重复度: {result.duplication.duplication_score} ({result.duplication.confidence.value})\n"
+        f"裁判理由(事实, 你要用本语气重新措辞): {result.duplication.rationale}\n"
         f"检索边界: {result.duplication.search_scope_note}\n"
         f"优点: {[f.title for f in result.strengths]}\n"
         f"问题: {[f.title for f in result.issues]}\n"
-        f"改进: {[i.title for i in result.improvements]}\n\n写 headline + body_markdown。"
+        f"第一优先改进(事实): {top}\n"
+        f"全部改进: {[i.title for i in result.improvements]}\n\n"
+        "请输出以下字段, 全部用本语气的性格来写:\n"
+        "- headline: 标题\n"
+        "- body_markdown: 完整点评\n"
+        "- verdict_line: 一句话总结\n"
+        "- top_fix: 把『第一优先改进』这件事用本语气重新说一遍(同一件事, 换个说法, 不新增事实)\n"
+        "- why_line: 把『裁判理由』用本语气重新说一遍(同样的依据, 换个口吻)\n"
+        "★ 硬性要求: verdict_line / top_fix / why_line 必须带本语气的鲜明性格, 和另一版(认真/毒舌)"
+        "在**每个字、每一层**上都不能撞词雷同——同一件事实, 两种嘴脸。"
     )
     return system, user

@@ -67,12 +67,14 @@ export default function WorldFx() {
       cap();
     }
     function balloon() {
-      parts.push({ x: Math.random() * W(), y: H() + 30, vx: (Math.random() - 0.5) * 0.7, vy: -1.3 - Math.random(),
-        g: 0, r: 34, c: "", rot: 0, vr: (Math.random() - 0.5) * 0.04, life: 1, decay: 0.0016, kind: "emoji", char: rnd(BALLOONS), tw: 0 });
+      // 从上往下飘落的 emoji
+      parts.push({ x: Math.random() * W(), y: -34, vx: (Math.random() - 0.5) * 0.7, vy: 1.1 + Math.random(),
+        g: 0.006, r: 34, c: "", rot: 0, vr: (Math.random() - 0.5) * 0.05, life: 1, decay: 0.0011, kind: "emoji", char: rnd(BALLOONS), tw: 0 });
     }
     function dust() {
-      parts.push({ x: Math.random() * W(), y: H() + 8, vx: (Math.random() - 0.5) * 0.3, vy: -0.5 - Math.random() * 0.7,
-        g: 0, r: Math.random() * 2.6 + 1, c: rnd(GOLD), rot: 0, vr: 0, life: 1, decay: 0.0016, kind: "dust", tw: Math.random() * 6 });
+      // 从上往下飘落的金尘
+      parts.push({ x: Math.random() * W(), y: -8, vx: (Math.random() - 0.5) * 0.3, vy: 0.5 + Math.random() * 0.8,
+        g: 0.002, r: Math.random() * 2.6 + 1, c: rnd(GOLD), rot: 0, vr: 0, life: 1, decay: 0.0011, kind: "dust", tw: Math.random() * 6 });
     }
     function shake() {
       document.body.classList.add("dj-shake");

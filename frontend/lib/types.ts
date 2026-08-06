@@ -47,6 +47,9 @@ export interface Report {
   tone: Tone;
   headline: string;
   body_markdown: string;
+  verdict_line?: string; // 一句话总结(本语气)
+  top_fix?: string; // 最该改的一件事(本语气重述)
+  why_line?: string; // 凭啥这么说 / 评级依据(本语气重述)
   findings: Finding[];
   share_card_ref: string;
 }

@@ -759,8 +759,11 @@
   "reports": {
     "serious": {
       "tone": "serious",
-      "headline": "评级 Pass：可爱的概念验证，护城河为零，商业模式一团迷雾，凭什么让我掏钱？",
-      "body_markdown": "## 概述\n这个 adorable little project 号称能将“任何 Git 仓库”转化为 LLM 友好的文本摘要。噢，多么宏大的叙事——TAM 直指整个开发者工具市场，对吧？但让我们先坐下来喝杯咖啡，仔细看看这到底是颠覆性的 infrastructure play，还是又一个“我有 GitHub API 我自豪”的周末 hackathon 项目。\n\n## 赛道拥挤程度？让我笑一会儿\n首先，Git-to-text 这个赛道早就不是 blue ocean 了。OpenAI 的官方爬虫、LangChain 的文档加载器、以及无数个“Clone and feed to GPT”的脚本都在做同样的事。你的 moat 在哪里？就凭一个 URL 改写的小 trick？挺 cute，但 cute 不能当饭吃。\n\n## 商业模式？亲爱的，你们管这叫商业模式？\nREADME 里对怎么赚钱只字未提。没有定价，没有 SaaS 订阅，甚至连个 .env.example 都懒得提供。我猜你是想走 open-core 然后卖 enterprise 授权？还是打算靠 MIT 许可证收点捐赠？拜托，说清楚你的 monetization，否则我的 LP 会以为我是在投慈善。\n\n## 实际能力 vs. 宣传口号：严重不符\n“支持任何 Git 仓库”这个 claim 非常 bold，然而现实是仅支持 GitHub。这不叫“任何”，这叫“GitHub-only”。你这是在给自己埋 legal risk，同时也在消耗早期开发者的信任。团队是不是该先把 GitHub 弄明白了，再去觊觎 GitLab 和 Bitbucket 的领地？\n\n## 执行风险：连自己是谁都没讲明白\n更让我担忧的是项目的归属问题。fork 和 rename 的历史不清不楚，旧 repo 没有 redirect，用户根本不知道哪个才是 canonical source。这反映出团队对 product hygiene 的基本忽视。一个连 repo 都管理不善的团队，我怎么放心把 capital 交给你去 scale？\n\n## 护城河评估：负分\n- 技术壁垒：几乎为零。任何能写 50 行 Python 的人都能复刻。\n- 网络效应：不存在。用户单次转换完就走了，没有粘性。\n- 切换成本：极低。用户换个工具毫无痛苦。\n所以，请告诉我，凭什么你能防御那些大厂和开源社区的免费替代品？唯一的“护城河”大概是“没写文档所以别人懒得抄”，这真是一种黑色幽默。\n\n## 投资结论：Pass\n总结一下：cute tool, ambitious tagline, zero moat, opaque business model, and sloppy execution. 我欣赏你的 effort，但在这个 stage，我找不到任何让我开具 term sheet 的理由。除非你下周就能把 multi-platform 支持、清晰的 pricing、以及一个像样的团队组织给我看，否则我会把这笔钱留给隔壁那个做代码审查 AI 的团队——至少人家有个像样的 deck。\n\n好了，我的时间很贵，下一个。",
+      "headline": "初步 Pass？这个……挺 cute 的小工具，但 scalability 故事在哪？",
+      "body_markdown": "## 概述\n\n一个 adorable little project——把 Git 仓库内容转换成 LLM-friendly 的文本摘要。概念听起来不陌生，甚至可以说赛道里已经挤满了 copycats。但这个小团队至少在产品 polish 上花了点心思，尤其是一键 URL 转换和隐私处理，算是唯一的 sparkle。不过，亲爱的 founder，你知道我们做投资的每天收到多少此类 pitch 吗？你的 differentiation 在哪里，你的 moat 在哪里？我扫了一眼，目前就是一个 cute utility，离 scalable business 还有几轮融资的距离。\n\n## 与竞品的雷同度\n\n我们 analytics 团队做了 competitive landscape，重合度 medium，但核心问题（代码库→LLM 上下文）已经被至少半打竞品解决过了。你们的 value prop 几乎就是 industry standard 的复刻，输入输出流程也许有“差异”，但这点偏差不足以说服我开 term sheet。坦率说，一键 URL conversion 是个 nice touch，但护城河在哪？代码上能做这个 feature 的，硅谷随便捞三个工程师一个 sprint 就能复现。你们的 private repo PAT 不落盘、用完即删，嗯，很 thoughtful，但这不是护城河，这是基本 hygiene。\n\n## 护城河分析\n\nMoat？现阶段是 zero。你们 open source under MIT，这很好，很 cute，但同时也意味着任何拥有同等资源的团队都可以 fork 并自建，甚至加上付费墙反超。你们的唯一亮眼功能——URL 一键转换——is not defensible。没有 data network effect，没有 proprietary algorithm，没有 stickiness。坦白讲，我现在看不到任何理由相信这个工具能在未来 18 个月内 survive intense competition，更别提 dominate a niche。\n\n## 为什么我现在不会投\n\n1. **TAM 模糊**：你说“任何 Git 仓库”，但实际上只支持 GitHub。这是 misrepresentation。一个总 addressable market 都定义不清楚的项目，怎么让我算 IRR？\n2. **Monetization 缺失**：目前没有商业模式，用户也对此存疑。我不 care 你未来是不是要加付费墙，但在 seed stage 还不思考 unit economics，我只能理解为 hobby project，不是 venture-scale business。\n3. **Execution risk**：文档缺失，.env.example 都没有，归属混乱，新旧 repo 未做重定向。这种 execution 水平，我很难相信你们后续能 deliver 复杂 feature。\n4. **团队叙事**：项目归属都讲不清楚，到底是从哪个祖传代码库 fork 来的？创始人的 storytelling 能力堪忧，而 storytelling 恰恰是我们下注的重要原因之一。\n\n唯一可爱的地方是 MIT 开源，自托管灵活，给自己留了条社区 adoption 的路。但即使这点，没有 polished onboarding docs，community 为何要 pick you over 其他更完善的开源竞品？\n\n## 结论\n\n我不排除这是一个 clever little hack，但以投资人视角，现在的 traction 和打磨程度离让我们产生 FOMO 还很远。Preliminary Pass，保持礼貌关注，等你们至少交出一版清晰的 monetization model 和 actual user growth numbers 再来聊。",
+      "verdict_line": "在没有看到明确的 monetization 和 product-market fit 之前，我们只会礼貌性点头，但不会写 check。",
+      "top_fix": "首页说的“任何 Git 仓库”实在是夸大其词，请马上在 Readme 里诚实标注目前仅支持 GitHub——这不是什么羞于启齿的事，但误导投资人就是你的不对了。",
+      "why_line": "我们当然看到了你们的差异化——一键 URL 转换和 PAT 不落盘的小把戏确实让人眼前一亮，但在一个功能高度重叠的赛道里，这种 level 的 differentiation 远远不够构建真正的 economic moat。",
       "findings": [
         {
           "id": "i1",
@@ -886,8 +889,11 @@
     },
     "roast": {
       "tone": "roast",
-      "headline": "『任何』仓库的幻觉：一个 GitHub 专享的摘要生成器滑稽秀",
-      "body_markdown": "这个项目宣称能“将任何Git仓库转换为LLM友好摘要”，实际呢？就像一个号称“全球通”的手机，结果只支持中国移动。\n\n先看它那三个优点，像极了相亲市场上的“有房有车”——编程界的“有房有车”：\n- 一键改URL确实方便，把 hub 改成 ingest 就算完事，这个创意我给满分，比改密码还简单。\n- PAT用完即焚，安全性值得点赞，黑客看到都流泪。\n- MIT开源，自托管自由，但前提是你得先会用，文档在哪儿？全靠猜。\n\n但是，这几个优点在致命缺陷面前就像纸糊的盔甲。\n- **嘴上说任何，身体很诚实**：代码里只认 GitHub，GitLab 和 Bitbucket 表示“我们不配拥有姓名？” 这是典型的“我有个大生意，就差一个程序员”——不，你已经有了程序员，却只做了 GitHub。\n- **薛定谔的商业模式**：收费？免费？靠爱发电？完全没有说明。用户心慌慌，生怕下一秒弹出“您的免费额度已用完”。\n- **配置文档？不存在**：没有 .env.example，自托管变成“自摸索”，debug 比找对象还难。\n- **真假美猴王**：项目分叉重命名不交代，旧 repo 像幽灵一样游荡，用户点进来一脸懵：“我是谁？我在哪儿？哪个才是真身？”\n\n真想救这个项目？先把“任何”俩字吞回去，改成“仅 GitHub”，补上 .env.example，说清楚到底怎么赚钱，再整合一下你那散落一地的仓库。否则，这个项目只能永远活在“即将支持”的 PPT 和自嗨的 README 里。",
+      "headline": "「任何仓库」？醒醒，你只嚼得动 GitHub，还只嚼文本！",
+      "body_markdown": "这项目口号拉满，声称能把「任何 Git 仓库」变成 LLM 的零食包，我兴冲冲打开一看，菜单上全是 GitHub 像素馒头，连个 GitLab 的味增汤都不给配。\n\n先说优点吧，一键把 `hub` 改成 `ingest` 确实像微波炉热剩饭一样方便，私有仓库的 PAT 用完就扔，隐私意识堪比用完即焚的情书。但这点好容易就被烂活淹了。\n\n「任何仓库」？您是重新定义了「任何」还是我的语文是体育老师教的？只撸 GitHub 还要装宇宙，这饼画得我血糖都高了。商业模式跟雾霾似的，问就是 MIT 开源，再问就是「你猜」，用户自托管还得猜您哪天突然关门放狗。文档缺得比我的发际线还厉害，连个 `.env.example` 都不给，新手上路纯靠意念。仓库归属更是一出伦理剧：fork 了又重命名，历史跟鬼打墙一样，让人怀疑手头这个是不是克隆羊多利分利。\n\n真想救？先把 README 里那个「任何」吃了，换成「仅 GitHub」，别让用户第一秒就觉得自己是诈骗受害者。然后补上文档和配置示例，商业模式哪怕写个「未来卖茶」也比当谜语人强。最后，把仓库整明白，别让贡献者在分支迷宫里拿不到工资。",
+      "verdict_line": "一个扛着「任何仓库」大旗的 GitHub 文本搅碎机，亮点有但藏得跟彩蛋一样，建议先把牛吹小，把活干实。",
+      "top_fix": "把首页上「任何 Git 仓库」这种宇宙广播赶紧掐了，就地改成「目前只支持 GitHub」，否则用户进来发现被骗，反手就是一个举报。",
+      "why_line": "裁判瞅了一圈：这哥们儿跟竞品抢的是同一碗饭——给 LLM 喂代码，但人家好歹发明了勺子（一键 URL）还自带了围兜（PAT 落地就焚），所以不算纯缝合怪。不过别美，外面一票影子选手可能只是没被搜到，您这独特性脆得跟薯片一样。",
       "findings": [
         {
           "id": "i1",

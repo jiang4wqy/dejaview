@@ -815,8 +815,11 @@
   "reports": {
     "serious": {
       "tone": "serious",
-      "headline": "评级 Pass：可爱的小工具，功能高度重合，护城河为零，这个 Deal 我碰都不碰",
-      "body_markdown": "## 概述\n\n又是一个可爱的自托管 URL 短链接项目。看到它支持自定义域名和链接管理，嗯，真是太有独创性了。让我想起 2010 年我在天使轮投的一堆小玩意儿，最后没有一个跑出 PMF。\n\n## 和一堆竞品有多像？\n\n我们的团队扫了一眼，立刻发现功能和 YOURLS、Shlink 的重叠度极高——达到 70% 的雷同率。多数据库？ OIDC 登录？这些连 YOURLS 的插件生态都能实现。差异化？Zero。Moat？Non-existent。作为一个投资人，我只能说： darling, this is a crowded space。\n\n## 护城河，在哪？\n\n你可能会说异步统计和 Redis 队列是亮点？Okay，这勉强算是一个小小的 engineering effort，但换个 queue 方案而已，任何一个 competent 的 team 都能在一周内复制。OIDC 企业登录？可是你没有 SaaS 托管，没有 SOC2 认证，哪个 enterprise 敢把短链接跳转交给一个自托管的、官网都打不开的 project？这连 enterprise-ready 的边都摸不到。\n\n## 我为什么 pass\n\n第一，官网打不开——这比一家对冲基金没有 Bloomberg Terminal 还离谱。第二，没有任何 traction 信号：Star 数、最近 commit 时间一概隐藏，典型的无人维护的 graveyard。第三，API 文档完全缺失，developer experience 为零，我的技术 VP 看了一眼直接扔进垃圾箱。最后，在这种 already commoditized 的赛道，没有 10x better 的产品，凭什么让 LP 的钱打水漂？哪怕你有一个 .env.example，我都愿意多聊五分钟，可惜没有。Pass。建议创业者要么快速推出 managed SaaS，要么 pivot 到一个更 niche 的场景——否则，就连 Series A 的门都看不到。",
+      "headline": "评级 Pass：可爱的小玩具，但护城河比纸还薄，我凭什么投？",
+      "body_markdown": "### 概述\n噢，又一个自托管的 URL 缩短器。这个……挺 cute。让我猜猜，是不是又一个照着 YOURLS 或 Shlink 描的 clone？可爱的 little project，但作为投资人，我们坐在 Midtown 办公室里看的是 TAM、moat、exit potential，不是周末 hackathon 上拿来炫耀的 side project。\n\n### 和一堆竞品有多像\n这个 space 已经 crowded 到令人窒息。从上古时期的 YOURLS 到现代的 Shlink，甚至还有 gh-pages-url-shortener 这种轻量玩具，哪一个不能 shorten a damn URL？你的 feature list 我扫一眼：自定义域名，统计，API——literally 每一个自托管短链都这么写。你说你用了 Bull 队列做异步统计？That’s cute，但任何一个 competent engineer 花一个周末都能把它拼出来，这充其量算是 implementation detail，不是 differentiation。多数据库开箱即用？你的 target audience 是喜欢折腾数据库的 nerd 吗？OIDC 登录？勉强算个 enterprise flavor，但付钱的企业客户早就在用 Bitly Enterprise Plan 了，他们连自托管的时间成本都懒得算。\n\n### 护城河在哪\n我看到的只有一层薄薄的 engineering sugar，没有任何真正的 moat。没有 network effect——用户不会因为你缩短了一个链接就锁在你的平台里；没有 switching cost——用户一行 `docker-compose down` 就能换到 Shlink；没有 data moat——你存的只是点击日志，不是 proprietary data。技术上的小巧思在开源世界里连一块砖都砌不起来，竞争对手随时可以 cherry-pick 你的 Bull 队列或者 OIDC 集成。更致命的是，你连官网都打不开，API 文档也找不到，这些可不是小事——它折射出 founder 对 go-to-market 的基本认知缺失。缺 `.env.example`？天哪，这是开源项目的最基本礼节，你连这都没做到，怎么指望开发者社区为你 build momentum？\n\n### 我为什么（不）投\n我们基金 filter deal 只问三句话：Why now? Why you? Why should I care? 你的 product 和市面已有方案 90% 重叠，remaining 10% 的“差异”根本无法构成 barrier。没有清晰的 distribution angle，没有 traction，连 GitHub 上的 stars badge 和最后提交时间都懒得挂出来——这让我怎么相信你有 execution 能力？或许你应该考虑推个 SaaS 托管方案？但那又是一个比短链更红海的红海。Call me when you have $10K MRR 或者至少一个让人信服的 niche community adoption。现在？Pass。",
+      "verdict_line": "一个缺乏商业纵深的小工具，护城河趋近于零，不具备机构投资的任何要素。",
+      "top_fix": "先把 `.env.example` 这种基础开发礼仪补上再说，否则潜在 developer 连 clone 试用的耐心都不会有。",
+      "why_line": "它本质上就是 YOURLS 与 Shlink 的又一个变体，功能高度重合，只有些许工程师的小聪明，但缺乏任何可防御的商业壁垒。",
       "findings": [
         {
           "id": "issue-1",
@@ -973,8 +976,11 @@
     },
     "roast": {
       "tone": "roast",
-      "headline": "又一个URL缩短器：恭喜，你成功把轮子漆成了2024限定色",
-      "body_markdown": "你管这叫“现代自托管”，但官网都打不开，莫非现代人都不看官网？这简直是自托管界的隐身术，连搜索引擎都找不到回家的路。\n\n**表面功夫，拆穿不赔**\n- **多数据库开箱即用**？YOURLS 也能 MySQL/PostgreSQL，Shlink 也没落下，你这开箱是把别人的箱子搬过来了吧。\n- **Redis 队列异步统计**？厉害了，但隔壁 Shlink 早就这么干了，你这算“借鉴”还是“致敬”？\n- **支持 OIDC 企业登录**？唯一看起来像护城河的东西，可惜官网和文档双双阵亡，企业用户连门都摸不到，难道登录按钮藏在空气里？\n\n**致命三连**\n1. **官网 404，信心归零**：一个短链服务连自己的长链接都保不住，谁敢把链接交给你缩短？\n2. **GitHub 比脸还干净**：Star 数躲猫猫，提交历史不敢见光，怕不是只有作者自己用 `git push --force` 刷存在感。\n3. **文档消失术**：API 文档靠猜，`.env.example` 不存在，部署全靠玄学——开发者打开项目那一刻，就已经在劝退的路上了。\n\n**护城河？护的是游泳池吧**\n跟 YOURLS、Shlink 比，功能重合度 70%，没有一丝惊喜。你说你是“现代”，但代码里可能还躺着 2018 年的 TODO。这不叫项目，这叫**技术复读机**。\n\n**真想救？先动这一刀**：\n把官网从坟里挖出来，README 挂上 GitHub 统计 Badge，补一份 `.env.example`，写几行能看的 API 文档。等别人能跑起来再吹“现代”，省的被笑话成“PPT 缩短器”。",
+      "headline": "又一个轮子，连官网都不愿意修？",
+      "body_markdown": "**开头暴击：看了一圈，这不就是 YOURLS 和 Shlink 的私生子，还继承了它爹所有的平庸基因？**\n\n自托管短链这个赛道，坟头草都三米高了，这位选手还在努力证明「我也能 CRUD」。\n\n**优点？有，但全是精致的小花活：**\n- 多数据库开箱即用：总算没让你只跟 MySQL 死磕，但这也就是把穷举法当卖点。\n- 异步统计队列：用 Redis 缓冲一下重定向，确实没让用户卡一脸。不过，这功能竞品早玩烂了。\n- OIDC 登录：给企业 SSO 打工仔发了半张入场券，但您看看哪个公司敢用官网都打不开的服务？\n\n**痛点那就一戳一蹦高：**\n- 官网打不开（kutt.it），信心直接归零。这是拿 GitHub 当官网使的典型「仓库即产品」。\n- README 上连个 star badge 都不挂，项目是死是活全靠猜，活跃度跟薛定谔的猫一样。\n- API 文档？不存在的。调用参数可能藏在源代码的某个犄角旮旯，准备让开发者玩寻宝游戏。\n- 缺 .env.example，部署起来像在拆弹，剪错一根线就得喜提 500。\n- 整体跟 YOURLS、Shlink 几乎撞脸，那点异步与多 DB 的区别，就像给同一款车换了俩轮毂盖。\n\n**真想救？先动刀：把 .env.example 和配置说明补上，别让用户连装都装不上——这是最低成本的尊重。**",
+      "verdict_line": "创意撞衫不可耻，可耻的是连官网都不修，就敢管自己叫「现代」。",
+      "top_fix": "先把 .env.example 补上，别让用户摸黑部署，省得第一关就劝退。",
+      "why_line": "跟 YOURLS、Shlink 的核心剧本一个字都不差：自托管、自定义域、统计、API。它那异步队列和 OIDC 充其量是加了两根鸡毛，骨子里还是老军医偏方。",
       "findings": [
         {
           "id": "issue-1",

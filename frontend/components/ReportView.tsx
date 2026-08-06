@@ -485,19 +485,21 @@ export default function ReportView({ job }: { job: Job }) {
           <span className="line" />
           <span className="eyebrow">重复度 {pct}%</span>
         </div>
-        <p className="summary-line">{summaryLine(pct, tone)}</p>
-        {result?.improvements?.[0] ? (
+        <p className="summary-line">{report.verdict_line || summaryLine(pct, tone)}</p>
+        {report.top_fix || result?.improvements?.[0] ? (
           <div className="summary-do">
             <span className="summary-do-k">
               {tone === "roast" ? "先补最露怯的一处" : "想让我投，先做这个"}
             </span>
-            <span className="summary-do-v">{result.improvements[0].title}</span>
+            <span className="summary-do-v">
+              {report.top_fix || result?.improvements?.[0]?.title}
+            </span>
           </div>
         ) : null}
-        {dup?.rationale ? (
+        {report.why_line || dup?.rationale ? (
           <p className="summary-why">
             <b>{tone === "roast" ? "凭啥这么说 · " : "评级依据 · "}</b>
-            {dup.rationale}
+            {report.why_line || dup?.rationale}
           </p>
         ) : null}
         {dup?.search_scope_note ? <div className="scope">{dup.search_scope_note}</div> : null}

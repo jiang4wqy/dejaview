@@ -335,6 +335,10 @@ class Report(BaseModel):
     tone: ToneMode
     headline: str = ""
     body_markdown: str = ""
+    # 以下三条是"同一事实、按语气各自措辞"的摘要, 保证两版在每一层都不撞车。
+    verdict_line: str = ""   # 一句话总结(本语气口吻)
+    top_fix: str = ""        # 最该改的一件事(本语气重新措辞, 不新增事实)
+    why_line: str = ""       # 凭啥这么说 / 评级依据(本语气重新措辞)
     findings: list[Finding] = Field(default_factory=list)   # 携带证据, 供 UI 点开
     share_card_ref: str = ""   # 分享图路径, TODO (GitBox 风格)
 
