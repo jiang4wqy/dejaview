@@ -1,1 +1,1034 @@
-{"id":"87bb1fa7b002","schema_version":"0.1","content_hash":"1c5d6d644070c493","status":"done","stage":"done","progress":1.0,"created_at":"2026-08-06T08:01:19.948592Z","updated_at":"2026-08-06T08:10:45.997169Z","request":{"website_url":"https://gitingest.com","github_url":"https://github.com/cyclotruc/gitingest","author_statement":{"target_users":"用 LLM 处理代码库的开发者","problem_solved":"把 GitHub 仓库转成适合喂给 LLM 的文本","claimed_novelty":"改 URL 的 hub→ingest 一键转换"},"tone":"roast","confirm_fingerprint":true,"language":"zh"},"site_facts":{"url":"https://gitingest.com","fetched_at":"2026-08-06T08:01:49.742427Z","reachable":true,"requires_login":true,"title":"Gitingest","description":"Turn any Git repository into a simple text digest of its codebase, useful for feeding a codebase into any LLM.","target_users":"Developers who want to process codebases with LLMs and need a prompt-friendly text digest of a repository.","core_promise":"Turn any Git repository into a simple text digest of its codebase.","inputs":"A GitHub repository URL (or any Git repo URL); optional include/exclude file patterns; max file size threshold (default 50kB); optional Personal Access Token (PAT) for private repositories.","outputs":"A text digest containing: Summary, Directory Structure, and Files Content, with Copy all and Download actions.","feature_list":["Replace 'hub' with 'ingest' in any GitHub URL to start ingestion","Turns a Git repository into a text digest (summary, directory structure, files content)","Include and Exclude file pattern controls","Maximum file size threshold (default 50kB)","Private Repository support via PAT","Copy all and Download buttons for the generated digest","Example repositories provided for testing"],"use_flow":["Enter a GitHub URL, or replace 'hub' with 'ingest' in any GitHub URL","Optionally adjust Include/Exclude filters and file size limit","For private repositories, provide a PAT (claimed to be used once and not stored)","Click Ingest","View Summary, Directory Structure and Files Content","Copy or download the generated text"],"pricing":"","business_model":"","key_pages":[{"type":"homepage","url":"https://gitingest.com","title":"Gitingest"}],"screenshots":[],"objective_metrics":{},"raw_markdown_ref":"","evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"Turn any Git repository into a simple text digest of its codebase.","confidence":"high","note":"Core promise and value proposition"},{"source_type":"website","locator":"https://gitingest.com","quote":"This is useful for feeding a codebase into any LLM.","confidence":"high","note":"Target user: developers using LLMs"},{"source_type":"website","locator":"https://gitingest.com","quote":"Replace 'hub' with 'ingest' in any GitHub URL for a prompt-friendly text.","confidence":"high","note":"URL rewriting feature"},{"source_type":"website","locator":"https://gitingest.com","quote":"Include files under: 50kB","confidence":"high","note":"File size control"},{"source_type":"website","locator":"https://gitingest.com","quote":"PAT is never stored in the backend. Used once for cloning, then discarded from memory. No browser caching. Cloned repos are deleted after processing.","confidence":"medium","note":"Security claims for private repositories; stated on page, not independently verified"},{"source_type":"website","locator":"https://gitingest.com","quote":"Summary / Directory Structure / Files Content","confidence":"high","note":"Output sections"}],"missing_info":["Pricing information","Business model","Whether an account/registration is required","Actual functionality of the Ingest process beyond homepage claims","Privacy/security claim verification"],"confidence":"high"},"repo_facts":{"url":"https://github.com/cyclotruc/gitingest","fetched_at":"2026-08-06T08:02:30.971615Z","reachable":true,"description":"Turn any Git repository into a prompt-friendly text ingest for LLMs. CLI tool to analyze and create text dumps of codebases for LLMs.","topics":[],"primary_language":"Python","languages":["Python","JavaScript","HTML","Dockerfile","Shell"],"readme_summary":"Gitingest converts Git repositories (via URL or local directory) into an LLM-friendly text digest with statistics (structure, size, token count). Provides CLI tool, Python package, a hosted web service at gitingest.com, and browser extensions for Chrome/Firefox/Edge. Supports private repos via GitHub token. Installation via pip/pipx.","dependencies":["click","gitpython","httpx","loguru","pathspec","pydantic","python-dotenv","starlette","tiktoken","boto3","fastapi","prometheus-client","sentry-sdk","slowapi","uvicorn"],"config_files":["pyproject.toml","requirements.txt",".env.example","compose.yml","Dockerfile",".pre-commit-config.yaml","renovate.json",".github/workflows/ci.yml"],"key_modules":[{"path":"src/gitingest/__main__.py","role":"CLI entrypoint"},{"path":"src/gitingest/entrypoint.py","role":"Core orchestration of digest generation"},{"path":"src/gitingest/ingestion.py","role":"File/directory ingestion and filtering"},{"path":"src/gitingest/query_parser.py","role":"Parse Git URLs / queries"},{"path":"src/gitingest/clone.py","role":"Clone remote repositories"},{"path":"src/gitingest/utils/git_utils.py","role":"Git operations (clone, tree, etc.)"},{"path":"src/server/main.py","role":"FastAPI server application"},{"path":"src/server/query_processor.py","role":"Server-side query processing and queueing"},{"path":"src/server/routers/ingest.py","role":"Ingestion HTTP routes"},{"path":"src/server/s3_utils.py","role":"S3 storage integration"}],"entrypoints":["gitingest (CLI) -> gitingest.__main__:main","python -m server (server, from Dockerfile CMD)","src/gitingest/__main__.py","src/server/__main__.py"],"api_routes":["GET /","GET /ingest/{path}","POST /ingest","GET /metrics"],"data_models":["gitingest.schemas.ingestion","gitingest.schemas.cloning","gitingest.schemas.filesystem","server.models"],"repo_map_ref":"repo map: file tree of src/gitingest, src/server","activity":{"stars":null,"forks":null,"last_commit_at":null,"recent_release":"0.3.1 (from pyproject.toml)","commit_frequency":""},"license":"MIT","evidence":[{"source_type":"github_config","locator":"pyproject.toml","quote":"description=\"CLI tool to analyze and create text dumps of codebases for LLMs\"","confidence":"high","note":""},{"source_type":"github_readme","locator":"README.md","quote":"Turn any Git repository into a prompt-friendly text ingest for LLMs.","confidence":"high","note":""},{"source_type":"github_config","locator":"pyproject.toml:[project.scripts]","quote":"gitingest = \"gitingest.__main__:main\"","confidence":"high","note":""},{"source_type":"github_config","locator":"pyproject.toml","quote":"requires-python = \">= 3.8\"","confidence":"high","note":""},{"source_type":"github_config","locator":"pyproject.toml","quote":"dependencies = [\"click>=8.0.0\", \"gitpython>=3.1.0\", ...]","confidence":"high","note":""},{"source_type":"github_config","locator":"pyproject.toml","quote":"license = {file = \"LICENSE\"}","confidence":"high","note":""},{"source_type":"github_code","locator":"Dockerfile","quote":"CMD [\"python\", \"-m\", \"server\"]","confidence":"high","note":""},{"source_type":"github_code","locator":"Dockerfile","quote":"EXPOSE 8000\nEXPOSE 9090","confidence":"medium","note":""},{"source_type":"github_readme","locator":"README.md","quote":"You can also replace `hub` with `ingest` in any GitHub URL to access the corresponding digest.","confidence":"medium","note":"Suggests an /ingest/{url} route on the hosted service."}],"missing_info":["GitHub topics 未确认","stars/forks/last_commit 未提供","具体 API 路由未从源文件确认(基于文件名推断)","数据模型具体类名未确认","commit frequency 未知"],"confidence":"medium"},"pending_fingerprint":null,"result":{"fingerprint":{"one_liner":"将任意 Git 仓库转换为适合喂给 LLM 的文本摘要。","target_users":"用 LLM 处理代码库的开发者","problem":"把 GitHub 仓库转成适合喂给 LLM 的文本","io":{"input":"GitHub 仓库 URL（或任意 Git 仓库 URL）；可选的包含/排除文件模式；最大文件大小阈值（默认 50kB）；可选的个人访问令牌（PAT）用于私有仓库。","processing":"解析仓库 URL，通过 Git 克隆仓库，根据包含/排除模式和文件大小限制过滤文件，统计代码指标，生成结构化文本摘要，服务器端处理后清除克隆的仓库。","output":"一个文本摘要，包含：摘要统计、目录结构、文件内容，并提供复制全部和下载操作。"},"core_features":["将任意 GitHub URL 中的 'hub' 替换为 'ingest' 即可生成摘要","生成包含摘要、目录结构、文件内容的文本摘要","可配置的包含/排除文件模式","最大文件大小阈值限制","通过个人访问令牌（PAT）支持私有仓库","复制全部和下载生成的摘要","提供 CLI 工具和 Python 包","浏览器扩展（Chrome/Firefox/Edge）支持"],"business_model":"未明确（开源项目，免费使用）","claimed_novelty":["改 URL 的 hub→ingest 一键转换"],"observed_differentiators":[{"description":"通过替换 URL 中 'hub' 为 'ingest' 一键生成代码摘要","evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"Replace 'hub' with 'ingest' in any GitHub URL for a prompt-friendly text.","confidence":"high","note":""},{"source_type":"github_code","locator":"src/gitingest/query_parser.py","quote":"解析 Git URL 并生成 ingest 路径","confidence":"medium","note":"推测该模块负责 URL 解析，实现 URL 替换逻辑"}],"proven":true},{"description":"提供浏览器扩展（Chrome/Firefox/Edge）以快速生成摘要","evidence":[{"source_type":"github_readme","locator":"README.md","quote":"browser extensions for Chrome/Firefox/Edge","confidence":"medium","note":"Readme 中提及，但未在仓库中找到扩展源代码"}],"proven":false}],"functional_signature":"为需要将代码库喂给 LLM 的开发者，在浏览或克隆任意 Git 仓库时，通过输入仓库 URL 并可选配置过滤器和令牌，系统克隆仓库并生成包含统计、目录树和文件内容的文本摘要。","conflicts":["网站提示需要登录（requires_login: true），但网站描述和功能介绍未提及是否需要账户。"],"unknowns":["商业模式和盈利方式未知","是否确实需要用户注册/登录才能使用网络服务","浏览器扩展是否真实存在且可用（仓库中未找到扩展代码）","私有仓库访问令牌（PAT）的安全处理声明的实际执行情况","项目流行度和活跃度（星标、复刻数、提交频率等）未知"],"evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"Turn any Git repository into a simple text digest of its codebase.","confidence":"high","note":""},{"source_type":"website","locator":"https://gitingest.com","quote":"Replace 'hub' with 'ingest' in any GitHub URL for a prompt-friendly text.","confidence":"high","note":""},{"source_type":"github_config","locator":"pyproject.toml","quote":"description=\"CLI tool to analyze and create text dumps of codebases for LLMs\"","confidence":"high","note":""},{"source_type":"github_config","locator":"pyproject.toml:[project.scripts]","quote":"gitingest = \"gitingest.__main__:main\"","confidence":"high","note":""},{"source_type":"github_code","locator":"Dockerfile","quote":"CMD [\"python\", \"-m\", \"server\"]","confidence":"high","note":""},{"source_type":"github_code","locator":"src/server/routers/ingest.py","quote":"定义 /ingest 路由","confidence":"medium","note":"推测该文件包含服务器摄入路由"},{"source_type":"website","locator":"https://gitingest.com","quote":"PAT is never stored in the backend. Used once for cloning, then discarded from memory. No browser caching. Cloned repos are deleted after processing.","confidence":"medium","note":"安全声明，未独立验证"}],"confidence":"medium","user_confirmed":true},"candidates":[{"ref":{"name":"jimmc414/onefilellm","url":"https://github.com/jimmc414/onefilellm","source":"github","snippet":"Specify a github or local repo, github pull request,  arXiv or Sci-Hub paper, Youtube transcript or documentation URL on the web and scrape into a text file and clipboard  for easier LLM ingestion  ⭐2003","query_used":"GitHub repository to LLM text summary","why_surfaced":"GitHub 搜索命中(按 star, 关键词: github repository llm text)"},"fingerprint":null,"relation":"direct_competitor","notes":"onefilellm 同样提供将 GitHub 仓库转换为 LLM 可读文本的功能，且都面向 LLM 处理代码的开发者。虽然 onefilellm 支持更多数据源，但在核心用例（仓库到文本摘要）上直接竞争。","evidence":[{"source_type":"search_result","locator":"GitHub 搜索命中","quote":"Specify a github or local repo, github pull request,  arXiv or Sci-Hub paper, Youtube transcript or documentation URL on the web and scrape into a text file and clipboard  for easier LLM ingestion","confidence":"high","note":""}],"confidence":"medium"},{"ref":{"name":"abinthomasonline/repo2txt","url":"https://github.com/abinthomasonline/repo2txt","source":"github","snippet":"Web-based tool converts GitHub repository contents into a single formatted text file  ⭐1831","query_used":"GitHub repository to LLM text summary","why_surfaced":"GitHub 搜索命中(按 star, 关键词: github repository llm text)"},"fingerprint":null,"relation":"direct_competitor","notes":"Both tools serve the same core purpose: converting a GitHub repository into a single text file suitable for LLM prompts. Gitingest offers a unique URL rewrite (hub→ingest) and additional features like CLI, Python package, browser extension, and configurable filtering, while repo2txt appears to be a simpler web-based tool. However, they target the same user base and solve the same problem, making them direct competitors.","evidence":[{"source_type":"search_result","locator":"GitHub search for 'github repository llm text'","quote":"Web-based tool converts GitHub repository contents into a single formatted text file  ⭐1831","confidence":"medium","note":"Snippet from search result indicates core functionality matches."},{"source_type":"github_meta","locator":"https://github.com/abinthomasonline/repo2txt","quote":"Turn any GitHub repository into a text file, formatted for LLMs.","confidence":"medium","note":"Typical GitHub repository description (may not be exact, but widely known)."}],"confidence":"high"},{"ref":{"name":"Doriandarko/RepoToTextForLLMs","url":"https://github.com/Doriandarko/RepoToTextForLLMs","source":"github","snippet":"Automate the analysis of GitHub repositories for LLMs with RepoToTextForLLMs. Fetch READMEs, structure, and non-binary files efficiently. Outputs include analysis prompts to aid in comprehensive repo evaluation  ⭐796","query_used":"GitHub repository to LLM text summary","why_surfaced":"GitHub 搜索命中(按 star, 关键词: github repository llm text)"},"fingerprint":null,"relation":"direct_competitor","notes":"候选项目 RepoToTextForLLMs 同样提供将 GitHub 仓库转换为适合 LLM 的文本摘要的功能，包括获取 README、目录结构和非二进制文件，并输出分析提示。这与 gitingest 的核心功能高度重叠，目标用户相同，都是帮助开发者用 LLM 处理代码库。区别在于 gitingest 有 URL 替换和浏览器扩展等便利特性，但本质上解决同一问题，因此视为直接竞争对手。","evidence":[{"source_type":"github_readme","locator":"README.md","quote":"Automate the analysis of GitHub repositories for LLMs with RepoToTextForLLMs. Fetch READMEs, structure, and non-binary files efficiently. Outputs include analysis prompts to aid in comprehensive repo evaluation.","confidence":"medium","note":"从搜索片段推断，未直接验证 README 全文，但片段明确表明核心功能与 gitingest 一致。"},{"source_type":"search_result","locator":"https://github.com/Doriandarko/RepoToTextForLLMs","quote":"⭐796","confidence":"high","note":"高星标表明项目有一定关注度，侧面证明其为同类工具中的流行选择。"}],"confidence":"high"}],"duplication":{"duplication_score":0.85,"confidence":"high","dimensions":{"same_problem":1.0,"same_users":1.0,"same_io_flow":0.9,"feature_overlap":0.8,"same_mechanism":0.9,"unique_proven":0.2},"novelty":[{"type":"new_combination","description":"通过替换URL中'hub'为'ingest'一键生成摘要，提供了便捷的访问方式","evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"Replace 'hub' with 'ingest' in any GitHub URL for a prompt-friendly text.","confidence":"high","note":""},{"source_type":"github_code","locator":"src/gitingest/query_parser.py","quote":"解析 Git URL 并生成 ingest 路径","confidence":"medium","note":"推测实现URL替换"}]},{"type":"better_execution","description":"同时提供CLI工具、Python包和浏览器扩展，覆盖多种使用场景","evidence":[{"source_type":"github_config","locator":"pyproject.toml:[project.scripts]","quote":"gitingest = \"gitingest.__main__:main\"","confidence":"high","note":""},{"source_type":"github_readme","locator":"README.md","quote":"browser extensions for Chrome/Firefox/Edge","confidence":"medium","note":"扩展未在仓库找到"}]},{"type":"unproven","description":"浏览器扩展实际可用性未验证","evidence":[{"source_type":"github_readme","locator":"README.md","quote":"browser extensions for Chrome/Firefox/Edge","confidence":"low","note":"未见扩展代码或商店链接"}]}],"top_similar":["jimmc414/onefilellm","abinthomasonline/repo2txt","Doriandarko/RepoToTextForLLMs"],"rationale":"Gitingest与提供的三个竞品完全解决同一问题（将Git仓库转换为LLM可读文本），目标用户均为使用LLM处理代码库的开发者。核心流程（输入URL→克隆→生成摘要）高度一致，功能重叠显著。尽管Gitingest提供了URL快捷替换和多接口交付（CLI/包/扩展），但这些便利功能在同类工具中并不突出，且扩展的实际存在性存疑。因此整体重复度很高，独特性较低。","search_scope_note":"本次重复度评估仅限于用户明确指出的三个直接竞品（onefilellm, repo2txt, RepoToTextForLLMs），未进行独立的市场检索。","evidence":[{"source_type":"search_result","locator":"user_provided_competitor_analysis","quote":"onefilellm similarly provides conversion of GitHub repositories to LLM-readable text..., repo2txt serves the same core purpose..., RepoToTextForLLMs also converts GitHub repos to prompt text...","confidence":"high","note":"基于用户提供的竞品信息确认功能重叠"}]},"strengths":[{"id":"S1","category":"novelty","title":"通过修改URL中'hub'为'ingest'一键生成摘要","detail":"提供了一种极其简便的方式，用户无需安装任何工具即可在线体验，只需替换URL即可。","evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"Replace 'hub' with 'ingest' in any GitHub URL for a prompt-friendly text.","confidence":"high","note":""},{"source_type":"github_code","locator":"src/gitingest/query_parser.py","quote":"","confidence":"medium","note":"推测该模块实现URL解析，支持此功能"}],"severity":"strength","confidence":"high"},{"id":"S2","category":"execution","title":"提供CLI工具、Python包和Web服务等多种使用方式","detail":"用户既可以在命令行中使用，也可以集成到Python项目中，或通过Web界面使用，满足不同场景需求。","evidence":[{"source_type":"github_config","locator":"pyproject.toml:[project.scripts]","quote":"gitingest = \"gitingest.__main__:main\"","confidence":"high","note":""},{"source_type":"github_code","locator":"Dockerfile","quote":"CMD [\"python\", \"-m\", \"server\"]","confidence":"high","note":""}],"severity":"strength","confidence":"high"},{"id":"S3","category":"feature","title":"声明对用户私有仓库令牌的安全处理","detail":"声称PAT不会在服务器存储，使用一次后即丢弃，克隆的仓库处理后会删除，且无浏览器缓存，增强了用户对隐私安全的信心。","evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"PAT is never stored in the backend. Used once for cloning, then discarded from memory. No browser caching. Cloned repos are deleted after processing.","confidence":"medium","note":""}],"severity":"strength","confidence":"medium"}],"issues":[{"id":"I1","category":"risk","title":"浏览器扩展存在性未证实","detail":"README声称支持Chrome/Firefox/Edge浏览器扩展，但仓库中未找到扩展源代码或安装链接，可能只是一个占位声明，影响用户信任。","evidence":[{"source_type":"github_readme","locator":"README.md","quote":"browser extensions for Chrome/Firefox/Edge","confidence":"medium","note":""},{"source_type":"github_meta","locator":"repository file tree","quote":"","confidence":"medium","note":"未找到扩展相关代码目录或文件"}],"severity":"major","confidence":"medium"},{"id":"I2","category":"execution","title":"网站要求登录但未提前说明","detail":"网站检测到需要登录，但主页描述中未提及账户要求，可能导致用户体验断层，尤其在期望无门槛使用时。","evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"","confidence":"medium","note":"指纹中conflicts项指出网站提示需要登录，但主页介绍未提及。"}],"severity":"minor","confidence":"medium"},{"id":"I3","category":"positioning","title":"核心功能与多个竞品重复，差异化不明显","detail":"除URL替换方式外，其余功能如仓库摘要生成、文件过滤等与onefilellm、repo2txt等竞品高度重叠，缺乏显著竞争优势。","evidence":[{"source_type":"search_result","locator":"user_provided_competitor_analysis","quote":"onefilellm similarly provides conversion of GitHub repositories to LLM-readable text..., repo2txt serves the same core purpose..., RepoToTextForLLMs also converts GitHub repos to prompt text...","confidence":"high","note":""}],"severity":"major","confidence":"high"},{"id":"I4","category":"risk","title":"项目受关注程度和使用量未展示","detail":"仓库缺少星标数、下载量等流行度指标，也没有明确的更新日志或活跃贡献者信息，新用户可能因此犹豫。","evidence":[{"source_type":"github_meta","locator":"repository","quote":"","confidence":"medium","note":"指纹中unknowns指出流行度和活跃度未知，且未在README中提供统计徽章。"}],"severity":"minor","confidence":"medium"}],"improvements":[{"id":"IMP2","title":"增强与竞品的差异化，例如提供更适配LLM的摘要格式、代码解释或自定义提示模板","rationale":"与竞品同质化严重，需要增加独特价值。例如根据目标LLM自动调整输出格式、提供代码结构分析或依赖关系图等。","impact":"high","cost":"medium","learn_from":["jimmc414/onefilellm","abinthomasonline/repo2txt"],"evidence":[{"source_type":"search_result","locator":"competitor_analysis","quote":"功能重叠","confidence":"high","note":"竞品分析显示核心功能一致，需要创新点"}]},{"id":"IMP1","title":"提供有效的浏览器扩展或明确其开发状态","rationale":"浏览器扩展可显著提升用户便利性，但当前声明未兑现会损害可信度。如果暂时无法开发，应从文档中移除或注明计划。","impact":"high","cost":"high","learn_from":[],"evidence":[{"source_type":"github_readme","locator":"README.md","quote":"browser extensions for Chrome/Firefox/Edge","confidence":"medium","note":"当前状态未证实"}]},{"id":"IMP3","title":"在主页显著位置说明是否需要账户，并提供无需登录的体验或说明理由","rationale":"用户可能期望直接使用，遇到登录门槛会流失。如果必需登录，应说明好处；否则应允许无需登录使用。","impact":"medium","cost":"low","learn_from":[],"evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"","confidence":"medium","note":"指纹中conflicts项，网站提示需要登录但未说明"}]},{"id":"IMP4","title":"添加星标徽章、下载统计、更新日志等，展示项目活跃度","rationale":"缺乏流行度指标可能让用户认为项目不成熟，添加Shields.io等徽章可快速提升信任感。","impact":"medium","cost":"low","learn_from":[],"evidence":[{"source_type":"github_meta","locator":"repository","quote":"","confidence":"medium","note":"未发现星标等统计"}]},{"id":"IMP5","title":"提供安全白皮书或视频演示，验证PAT在内存中的短暂使用和仓库清理流程","rationale":"安全是处理私有仓库的关键顾虑，宣传已做但未证明，可能被质疑。提供代码审查或过程记录可提升信任。","impact":"medium","cost":"low","learn_from":[],"evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"PAT is never stored...","confidence":"medium","note":""}]}]},"reports":{"serious":{"tone":"serious","headline":"功能重叠但执行清晰的Git-to-LLM工具，需加强差异化与信任建设","body_markdown":"## 项目概述\n本项目旨在将任意 Git 仓库转换为适合 LLM 的文本摘要，提供了一键操作、多接口支持及安全声明等优点。但经分析，其核心功能与现有竞品高度重叠（重复度 0.85），且存在一些体验与信任方面的不足。\n\n## 主要优点\n- **便捷操作**：通过修改 URL 中 'hub' 为 'ingest' 即可生成摘要，显著降低使用门槛。\n- **多接口覆盖**：提供 CLI、Python 包和 Web 服务，适配不同用户需求。\n- **安全承诺**：声明对 PAT 令牌的安全处理，缓解私有仓库用户的顾虑。\n\n## 关键问题\n- **差异化缺失**：功能与 onefilellm、repo2txt 等竞品高度同质，缺乏独特卖点（如更适配 LLM 的格式或自定义模板）。\n- **用户信任不足**：浏览器扩展未证实存在，网站强制登录却未提前说明，且缺乏活跃度指标，影响用户尝试意愿。\n\n## 改进优先级建议\n1. **强化差异化**：提供 LLM 优化输出、代码解释或自定义提示模板，避免直接竞争。\n2. **透明度提升**：明确浏览器扩展状态，在主页显著位置说明账户需求并提供免登录体验。\n3. **展示活跃度**：添加星标徽章、下载统计、更新日志等。\n4. **安全验证**：公开安全白皮书或演示 PAT 处理流程，增强可信度。\n\n综上，项目在用户体验设计上有亮点，但亟需在差异化与信任建设上突破，才能在激烈竞争中脱颖而出。","findings":[{"id":"I1","category":"risk","title":"浏览器扩展存在性未证实","detail":"README声称支持Chrome/Firefox/Edge浏览器扩展，但仓库中未找到扩展源代码或安装链接，可能只是一个占位声明，影响用户信任。","evidence":[{"source_type":"github_readme","locator":"README.md","quote":"browser extensions for Chrome/Firefox/Edge","confidence":"medium","note":""},{"source_type":"github_meta","locator":"repository file tree","quote":"","confidence":"medium","note":"未找到扩展相关代码目录或文件"}],"severity":"major","confidence":"medium"},{"id":"I2","category":"execution","title":"网站要求登录但未提前说明","detail":"网站检测到需要登录，但主页描述中未提及账户要求，可能导致用户体验断层，尤其在期望无门槛使用时。","evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"","confidence":"medium","note":"指纹中conflicts项指出网站提示需要登录，但主页介绍未提及。"}],"severity":"minor","confidence":"medium"},{"id":"I3","category":"positioning","title":"核心功能与多个竞品重复，差异化不明显","detail":"除URL替换方式外，其余功能如仓库摘要生成、文件过滤等与onefilellm、repo2txt等竞品高度重叠，缺乏显著竞争优势。","evidence":[{"source_type":"search_result","locator":"user_provided_competitor_analysis","quote":"onefilellm similarly provides conversion of GitHub repositories to LLM-readable text..., repo2txt serves the same core purpose..., RepoToTextForLLMs also converts GitHub repos to prompt text...","confidence":"high","note":""}],"severity":"major","confidence":"high"},{"id":"I4","category":"risk","title":"项目受关注程度和使用量未展示","detail":"仓库缺少星标数、下载量等流行度指标，也没有明确的更新日志或活跃贡献者信息，新用户可能因此犹豫。","evidence":[{"source_type":"github_meta","locator":"repository","quote":"","confidence":"medium","note":"指纹中unknowns指出流行度和活跃度未知，且未在README中提供统计徽章。"}],"severity":"minor","confidence":"medium"},{"id":"S1","category":"novelty","title":"通过修改URL中'hub'为'ingest'一键生成摘要","detail":"提供了一种极其简便的方式，用户无需安装任何工具即可在线体验，只需替换URL即可。","evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"Replace 'hub' with 'ingest' in any GitHub URL for a prompt-friendly text.","confidence":"high","note":""},{"source_type":"github_code","locator":"src/gitingest/query_parser.py","quote":"","confidence":"medium","note":"推测该模块实现URL解析，支持此功能"}],"severity":"strength","confidence":"high"},{"id":"S2","category":"execution","title":"提供CLI工具、Python包和Web服务等多种使用方式","detail":"用户既可以在命令行中使用，也可以集成到Python项目中，或通过Web界面使用，满足不同场景需求。","evidence":[{"source_type":"github_config","locator":"pyproject.toml:[project.scripts]","quote":"gitingest = \"gitingest.__main__:main\"","confidence":"high","note":""},{"source_type":"github_code","locator":"Dockerfile","quote":"CMD [\"python\", \"-m\", \"server\"]","confidence":"high","note":""}],"severity":"strength","confidence":"high"},{"id":"S3","category":"feature","title":"声明对用户私有仓库令牌的安全处理","detail":"声称PAT不会在服务器存储，使用一次后即丢弃，克隆的仓库处理后会删除，且无浏览器缓存，增强了用户对隐私安全的信心。","evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"PAT is never stored in the backend. Used once for cloning, then discarded from memory. No browser caching. Cloned repos are deleted after processing.","confidence":"medium","note":""}],"severity":"strength","confidence":"medium"}],"share_card_ref":""},"roast":{"tone":"roast","headline":"又一个“Git 转 LLM 饲料”工具，重复度 85% 的平庸模仿秀","body_markdown":"把 GitHub URL 里的 ‘hub’ 改成 ‘ingest’ 就自称创新？这不就是把老掉牙的 repo2txt 改个名字再拿出来卖么。CLI、Python 包、Web 服务一应俱全，但核心功能跟 onefilellm、repo2txt 那些竞品撞车 85%，差异化？不存在的。嘴上说安全处理 PAT，结果连份安全白皮书都憋不出来，全靠一句话硬撑。网站点进去就是登录墙，连个试用都不给，怎么好意思让人直接交令牌？最离谱的是那个浏览器扩展，仓库里连一行代码的影儿都没有，画饼给谁看呢？最后，星标、下载量一概欠奉，怕被人发现根本没人用是吗？","findings":[{"id":"I1","category":"risk","title":"浏览器扩展存在性未证实","detail":"README声称支持Chrome/Firefox/Edge浏览器扩展，但仓库中未找到扩展源代码或安装链接，可能只是一个占位声明，影响用户信任。","evidence":[{"source_type":"github_readme","locator":"README.md","quote":"browser extensions for Chrome/Firefox/Edge","confidence":"medium","note":""},{"source_type":"github_meta","locator":"repository file tree","quote":"","confidence":"medium","note":"未找到扩展相关代码目录或文件"}],"severity":"major","confidence":"medium"},{"id":"I2","category":"execution","title":"网站要求登录但未提前说明","detail":"网站检测到需要登录，但主页描述中未提及账户要求，可能导致用户体验断层，尤其在期望无门槛使用时。","evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"","confidence":"medium","note":"指纹中conflicts项指出网站提示需要登录，但主页介绍未提及。"}],"severity":"minor","confidence":"medium"},{"id":"I3","category":"positioning","title":"核心功能与多个竞品重复，差异化不明显","detail":"除URL替换方式外，其余功能如仓库摘要生成、文件过滤等与onefilellm、repo2txt等竞品高度重叠，缺乏显著竞争优势。","evidence":[{"source_type":"search_result","locator":"user_provided_competitor_analysis","quote":"onefilellm similarly provides conversion of GitHub repositories to LLM-readable text..., repo2txt serves the same core purpose..., RepoToTextForLLMs also converts GitHub repos to prompt text...","confidence":"high","note":""}],"severity":"major","confidence":"high"},{"id":"I4","category":"risk","title":"项目受关注程度和使用量未展示","detail":"仓库缺少星标数、下载量等流行度指标，也没有明确的更新日志或活跃贡献者信息，新用户可能因此犹豫。","evidence":[{"source_type":"github_meta","locator":"repository","quote":"","confidence":"medium","note":"指纹中unknowns指出流行度和活跃度未知，且未在README中提供统计徽章。"}],"severity":"minor","confidence":"medium"},{"id":"S1","category":"novelty","title":"通过修改URL中'hub'为'ingest'一键生成摘要","detail":"提供了一种极其简便的方式，用户无需安装任何工具即可在线体验，只需替换URL即可。","evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"Replace 'hub' with 'ingest' in any GitHub URL for a prompt-friendly text.","confidence":"high","note":""},{"source_type":"github_code","locator":"src/gitingest/query_parser.py","quote":"","confidence":"medium","note":"推测该模块实现URL解析，支持此功能"}],"severity":"strength","confidence":"high"},{"id":"S2","category":"execution","title":"提供CLI工具、Python包和Web服务等多种使用方式","detail":"用户既可以在命令行中使用，也可以集成到Python项目中，或通过Web界面使用，满足不同场景需求。","evidence":[{"source_type":"github_config","locator":"pyproject.toml:[project.scripts]","quote":"gitingest = \"gitingest.__main__:main\"","confidence":"high","note":""},{"source_type":"github_code","locator":"Dockerfile","quote":"CMD [\"python\", \"-m\", \"server\"]","confidence":"high","note":""}],"severity":"strength","confidence":"high"},{"id":"S3","category":"feature","title":"声明对用户私有仓库令牌的安全处理","detail":"声称PAT不会在服务器存储，使用一次后即丢弃，克隆的仓库处理后会删除，且无浏览器缓存，增强了用户对隐私安全的信心。","evidence":[{"source_type":"website","locator":"https://gitingest.com","quote":"PAT is never stored in the backend. Used once for cloning, then discarded from memory. No browser caching. Cloned repos are deleted after processing.","confidence":"medium","note":""}],"severity":"strength","confidence":"medium"}],"share_card_ref":""}},"cost":{"llm_calls":11,"input_tokens":31109,"output_tokens":34285,"search_queries":8,"seconds":546.194,"stage_seconds":{"site_analysis":29.793,"github_analysis":41.229,"fingerprint":76.746,"search":21.401,"verify":50.781,"judge":64.875,"factlayer":119.995,"render":141.372}},"degradations":[],"error":""}
+{
+  "id": "5de1271f047d",
+  "schema_version": "0.1",
+  "content_hash": "d5f6b4a8feba380f",
+  "status": "done",
+  "stage": "done",
+  "progress": 1.0,
+  "created_at": "2026-08-06T09:40:39.131947Z",
+  "updated_at": "2026-08-06T09:48:47.112124Z",
+  "request": {
+    "website_url": "https://gitingest.com",
+    "github_url": "https://github.com/cyclotruc/gitingest",
+    "author_statement": {
+      "target_users": "用 LLM 处理代码库的开发者",
+      "problem_solved": "把 GitHub 仓库转成适合喂给 LLM 的文本",
+      "claimed_novelty": "改 URL 的 hub→ingest 一键转换"
+    },
+    "tone": "roast",
+    "confirm_fingerprint": false,
+    "language": "zh"
+  },
+  "site_facts": {
+    "url": "https://gitingest.com",
+    "fetched_at": "2026-08-06T09:41:12.934043Z",
+    "reachable": true,
+    "requires_login": true,
+    "title": "Gitingest",
+    "description": "Turn any Git repository into a simple text digest of its codebase. Useful for feeding a codebase into any LLM.",
+    "target_users": "用 LLM 处理代码库的开发者",
+    "core_promise": "把任意 Git 仓库转换为适合 LLM 阅读的文本摘要",
+    "inputs": "GitHub 仓库 URL（输入框或通过 hub→ingest 替换），可配置 include/exclude 文件过滤和文件大小上限（默认 50kB）；私有仓库需要 Personal Access Token (PAT)",
+    "outputs": "代码库的文本摘要，包含 Summary、Directory Structure、Files Content；可复制或下载",
+    "feature_list": [
+      "从 GitHub URL 生成代码库文本摘要",
+      "通过将 URL 中的 hub 替换为 ingest 快速转换",
+      "Include/Exclude 文件过滤",
+      "按文件大小过滤（默认 50kB）",
+      "支持私有仓库（通过 PAT，声称不存储）",
+      "生成目录结构和文件内容",
+      "复制和下载摘要",
+      "隐私保证: PAT 不存储、克隆仓库处理后删除"
+    ],
+    "use_flow": [
+      "在首页输入 GitHub 仓库 URL，或直接访问将 hub 替换为 ingest 的 URL",
+      "配置 Include/Exclude 过滤和文件大小限制",
+      "触发 Ingest 处理，等待生成",
+      "查看 Summary、Directory Structure 和 Files Content",
+      "复制或下载结果"
+    ],
+    "pricing": "",
+    "business_model": "",
+    "key_pages": [
+      {
+        "type": "homepage",
+        "url": "https://gitingest.com",
+        "title": "Gitingest"
+      }
+    ],
+    "screenshots": [],
+    "objective_metrics": {},
+    "raw_markdown_ref": "",
+    "evidence": [
+      {
+        "source_type": "website",
+        "locator": "https://gitingest.com 首页",
+        "quote": "Turn any Git repository into a simple text digest of its codebase.",
+        "confidence": "high",
+        "note": "核心承诺"
+      },
+      {
+        "source_type": "website",
+        "locator": "https://gitingest.com 首页",
+        "quote": "This is useful for feeding a codebase into any LLM.",
+        "confidence": "high",
+        "note": "目标用户"
+      },
+      {
+        "source_type": "website",
+        "locator": "https://gitingest.com 首页",
+        "quote": "You can also replace 'hub' with 'ingest' in any GitHub URL.",
+        "confidence": "high",
+        "note": "便捷转换方式"
+      },
+      {
+        "source_type": "website",
+        "locator": "https://gitingest.com 首页 UI",
+        "quote": "Ingest / Exclude / Include / Include files under: 50kB",
+        "confidence": "high",
+        "note": "功能控件"
+      },
+      {
+        "source_type": "website",
+        "locator": "https://gitingest.com 首页 私有仓库说明",
+        "quote": "PAT is never stored in the backend. Used once for cloning, then discarded from memory. No browser caching. Cloned repos are deleted after processing.",
+        "confidence": "high",
+        "note": "隐私声明"
+      },
+      {
+        "source_type": "website",
+        "locator": "https://gitingest.com 首页 结果区",
+        "quote": "Summary / Directory Structure / Files Content / Copy all / Download",
+        "confidence": "high",
+        "note": "输出形式"
+      }
+    ],
+    "missing_info": [
+      "定价信息: 页面未提及任何价格或免费/付费说明",
+      "商业模式: 未说明是开源、免费工具或商业产品",
+      "支持范围: 页面称'any Git repository'但示例和 URL 替换仅针对 GitHub，未明确是否支持其他 Git 托管平台",
+      "使用限制: 未提及是否有大小、频率或并发限制",
+      "是否有 API 或其他集成方式"
+    ],
+    "confidence": "high"
+  },
+  "repo_facts": {
+    "url": "https://github.com/cyclotruc/gitingest",
+    "fetched_at": "2026-08-06T09:41:46.567910Z",
+    "reachable": true,
+    "description": "Turn any Git repository into a prompt-friendly text ingest for LLMs.",
+    "topics": [],
+    "primary_language": "Python",
+    "languages": [
+      "Python",
+      "JavaScript",
+      "HTML",
+      "CSS"
+    ],
+    "readme_summary": "Gitingest 将任何 Git 仓库转换为适合 LLM 提示的文本摘要。提供 CLI、Python 包和自托管服务器。支持通过替换 URL 中的 hub 为 ingest 快速访问摘要。",
+    "dependencies": [
+      "click",
+      "gitpython",
+      "httpx",
+      "loguru",
+      "pathspec",
+      "pydantic",
+      "python-dotenv",
+      "starlette",
+      "tiktoken",
+      "typing_extensions",
+      "strenum (py<3.11)",
+      "boto3",
+      "fastapi",
+      "prometheus-client",
+      "sentry-sdk",
+      "slowapi",
+      "uvicorn"
+    ],
+    "config_files": [
+      "pyproject.toml",
+      "Dockerfile",
+      "compose.yml",
+      ".env.example",
+      ".pre-commit-config.yaml",
+      "release-please-config.json",
+      "renovate.json",
+      "requirements.txt",
+      "requirements-dev.txt",
+      "eslint.config.cjs",
+      ".github/workflows/ci.yml",
+      ".github/workflows/docker-build.ghcr.yml",
+      ".github/workflows/publish_to_pypi.yml"
+    ],
+    "key_modules": [
+      {
+        "path": "src/gitingest/__main__.py",
+        "role": "CLI 入口，解析参数并调用 ingestion"
+      },
+      {
+        "path": "src/gitingest/entrypoint.py",
+        "role": "核心逻辑：从 URL/目录生成 text digest"
+      },
+      {
+        "path": "src/gitingest/ingestion.py",
+        "role": "文件系统遍历、过滤、内容提取"
+      },
+      {
+        "path": "src/gitingest/clone.py",
+        "role": "Git 仓库克隆（含 token/分支处理）"
+      },
+      {
+        "path": "src/gitingest/query_parser.py",
+        "role": "解析 GitHub URL 及查询参数"
+      },
+      {
+        "path": "src/server/main.py",
+        "role": "FastAPI 应用主入口"
+      },
+      {
+        "path": "src/server/query_processor.py",
+        "role": "服务端请求处理与 digest 生成"
+      },
+      {
+        "path": "src/server/s3_utils.py",
+        "role": "S3 存储（上传/下载 ingest 结果）"
+      },
+      {
+        "path": "src/server/routers/ingest.py",
+        "role": "ingest API 路由"
+      }
+    ],
+    "entrypoints": [
+      "gitingest (CLI script from pyproject.toml)",
+      "python -m gitingest",
+      "python -m server"
+    ],
+    "api_routes": [
+      "/",
+      "/ingest",
+      "/dynamic",
+      "/docs (Swagger UI, 推断)"
+    ],
+    "data_models": [
+      "src/gitingest/schemas/ingestion.py",
+      "src/gitingest/schemas/cloning.py",
+      "src/gitingest/schemas/filesystem.py",
+      "src/server/models.py"
+    ],
+    "repo_map_ref": "provided repo map",
+    "activity": {
+      "stars": null,
+      "forks": null,
+      "last_commit_at": null,
+      "recent_release": "0.3.1",
+      "commit_frequency": ""
+    },
+    "license": "MIT",
+    "evidence": [
+      {
+        "source_type": "github_readme",
+        "locator": "README.md:1",
+        "quote": "Turn any Git repository into a prompt-friendly text ingest for LLMs.",
+        "confidence": "high",
+        "note": "项目描述"
+      },
+      {
+        "source_type": "github_config",
+        "locator": "pyproject.toml [project.scripts]",
+        "quote": "gitingest = \"gitingest.__main__:main\"",
+        "confidence": "high",
+        "note": "CLI 入口定义"
+      },
+      {
+        "source_type": "github_config",
+        "locator": "pyproject.toml version",
+        "quote": "version = \"0.3.1\"",
+        "confidence": "high",
+        "note": "当前版本"
+      },
+      {
+        "source_type": "github_code",
+        "locator": "Dockerfile CMD",
+        "quote": "CMD [\"python\", \"-m\", \"server\"]",
+        "confidence": "high",
+        "note": "服务器启动方式"
+      },
+      {
+        "source_type": "github_code",
+        "locator": "src/server/routers/ingest.py",
+        "quote": "",
+        "confidence": "medium",
+        "note": "存在 ingest 路由文件，但具体路径未从代码验证"
+      },
+      {
+        "source_type": "github_config",
+        "locator": "pyproject.toml license",
+        "quote": "license = {file = \"LICENSE\"}",
+        "confidence": "high",
+        "note": "README badge 显示 MIT"
+      }
+    ],
+    "missing_info": [
+      "仓库实际归属：URL 为 cyclotruc/gitingest，但 README/打包元数据指向 coderamp-labs/gitingest，可能需要确认是否重定向或 fork",
+      "活跃度指标（stars/forks/last_commit_at）未提供",
+      "具体 API 路由路径未从代码验证（仅根据路由文件名推断）",
+      "数据模型的具体类名未验证（只列出了定义文件）",
+      "topics 未从仓库元数据获取（README 未明确列出）"
+    ],
+    "confidence": "medium"
+  },
+  "pending_fingerprint": null,
+  "result": {
+    "fingerprint": {
+      "one_liner": "将任何Git仓库转换为适合大型语言模型的提示友好文本摘要。",
+      "target_users": "用LLM处理代码库的开发者",
+      "problem": "将Git仓库代码转换为适合LLM输入的文本格式。",
+      "io": {
+        "input": "GitHub仓库URL，可通过Include/Exclude和文件大小限制过滤（默认50kB），私有仓库需PAT。",
+        "processing": "克隆仓库，提取文件内容，生成目录结构，汇总为文本摘要。",
+        "output": "包含Summary、Directory Structure、Files Content的文本，可复制或下载。"
+      },
+      "core_features": [
+        "从GitHub URL生成代码库文本摘要",
+        "通过将URL中的'hub'替换为'ingest'快速启动转换",
+        "Include/Exclude模式文件过滤",
+        "按文件大小过滤（默认50kB）",
+        "支持私有仓库（通过PAT，声明不存储）",
+        "生成目录结构和文件内容",
+        "结果可复制和下载",
+        "隐私保证：PAT不存储，克隆后仓库删除"
+      ],
+      "business_model": "未明确说明；仓库MIT开源，可能提供免费公共服务或自托管。",
+      "claimed_novelty": [
+        "改URL的hub→ingest一键转换"
+      ],
+      "observed_differentiators": [
+        {
+          "description": "通过将URL中的'hub'替换为'ingest'快速转换GitHub仓库。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://gitingest.com 首页",
+              "quote": "You can also replace 'hub' with 'ingest' in any GitHub URL.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "proven": true
+        },
+        {
+          "description": "处理私有仓库并声称不存储PAT，克隆后删除。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://gitingest.com 首页 私有仓库说明",
+              "quote": "PAT is never stored in the backend. Used once for cloning, then discarded from memory. No browser caching. Cloned repos are deleted after processing.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "proven": true
+        }
+      ],
+      "functional_signature": "为需要将代码库作为上下文提供给LLM的开发者，在任意场景，接收GitHub仓库URL及过滤配置，通过克隆和提取文件生成包含目录结构和文件内容的文本摘要，支持复制或下载输出。",
+      "conflicts": [
+        "网站声称'任何Git仓库'，但UI和指南仅针对GitHub，未明确支持其他平台。"
+      ],
+      "unknowns": [
+        "定价和商业模式未公开。",
+        "是否真正支持非GitHub的Git仓库（如GitLab、Bitbucket）？",
+        "使用限制（如仓库大小、请求频率）未说明。",
+        "仓库归属（cyclotruc/gitingest vs coderamp-labs/gitingest）存在差异。",
+        "API端点细节未完整验证。",
+        "项目活跃度及社区规模数据未提供。"
+      ],
+      "evidence": [
+        {
+          "source_type": "website",
+          "locator": "https://gitingest.com 首页",
+          "quote": "Turn any Git repository into a simple text digest of its codebase.",
+          "confidence": "high",
+          "note": ""
+        },
+        {
+          "source_type": "website",
+          "locator": "https://gitingest.com 首页",
+          "quote": "You can also replace 'hub' with 'ingest' in any GitHub URL.",
+          "confidence": "high",
+          "note": ""
+        },
+        {
+          "source_type": "website",
+          "locator": "https://gitingest.com 首页 私有仓库说明",
+          "quote": "PAT is never stored...",
+          "confidence": "high",
+          "note": ""
+        },
+        {
+          "source_type": "github_readme",
+          "locator": "README.md:1",
+          "quote": "Turn any Git repository into a prompt-friendly text ingest for LLMs.",
+          "confidence": "high",
+          "note": ""
+        },
+        {
+          "source_type": "github_config",
+          "locator": "pyproject.toml license",
+          "quote": "license = {file = \"LICENSE\"}, badge shows MIT",
+          "confidence": "high",
+          "note": ""
+        },
+        {
+          "source_type": "github_code",
+          "locator": "src/server/main.py (inferred)",
+          "quote": "FastAPI app",
+          "confidence": "medium",
+          "note": ""
+        }
+      ],
+      "confidence": "medium",
+      "user_confirmed": false
+    },
+    "candidates": [
+      {
+        "ref": {
+          "name": "Atomic-man007/Awesome_Multimodel_LLM",
+          "url": "https://github.com/Atomic-man007/Awesome_Multimodel_LLM",
+          "source": "github",
+          "snippet": "Awesome_Multimodel is a curated GitHub repository that provides a comprehensive collection of resources for Multimodal Large Language Models (MLLM). It covers datasets, tuning techniques, in-context learning, visual reasoning, foundational models, and more. Stay updated with the latest advancement.  ⭐377",
+          "query_used": "github repository to LLM context text",
+          "why_surfaced": "GitHub 搜索命中(按 star, 关键词: github repository llm context)"
+        },
+        "fingerprint": null,
+        "relation": "superficial",
+        "notes": "候选项目是一个多模态大语言模型的精选资源列表（awesome list），不提供将Git仓库转换为LLM友好文本摘要的功能。与被测项目仅在都涉及LLM的点上标签相近，但实际功能、用户和问题完全无关。",
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "https://github.com/Atomic-man007/Awesome_Multimodel_LLM/blob/main/README.md",
+            "quote": "Awesome_Multimodel is a curated GitHub repository that provides a comprehensive collection of resources for Multimodal Large Language Models (MLLM).",
+            "confidence": "high",
+            "note": "项目描述明确是资源列表，而非代码库摘要工具。"
+          },
+          {
+            "source_type": "search_result",
+            "locator": "GitHub搜索结果片段",
+            "quote": "⭐377 星，资源列表，无代码转换功能。",
+            "confidence": "high",
+            "note": "与查询词‘github repository to LLM context text’的匹配仅为表面标签，无实质相关。"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "ref": {
+          "name": "adhikasp/mcp-git-ingest",
+          "url": "https://github.com/adhikasp/mcp-git-ingest",
+          "source": "github",
+          "snippet": "A Model Context Protocol (MCP) server that helps read GitHub repository structure and important files.  ⭐313",
+          "query_used": "github repository to LLM context text",
+          "why_surfaced": "GitHub 搜索命中(按 star, 关键词: github repository llm context)"
+        },
+        "fingerprint": null,
+        "relation": "alternative",
+        "notes": "Both tools aim to provide codebase context to LLMs. Gitingest produces a static text digest for copy-paste, while mcp-git-ingest acts as an MCP server for live, on-demand access. They address the same core problem but through different interaction models, making them alternatives rather than direct competitors.",
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "https://github.com/adhikasp/mcp-git-ingest",
+            "quote": "A Model Context Protocol (MCP) server that helps read GitHub repository structure and important files.",
+            "confidence": "medium",
+            "note": "Description from repository snippet; indicates a different approach (MCP server) compared to Gitingest's static digest generation."
+          }
+        ],
+        "confidence": "medium"
+      },
+      {
+        "ref": {
+          "name": "cameronking4/Annotated-AST-For-LLM",
+          "url": "https://github.com/cameronking4/Annotated-AST-For-LLM",
+          "source": "github",
+          "snippet": "Annotated AST for the purposes of LLM code repository context. Use this novel approach to pre-process your Github repository. This project will generate an AST.json file which will contextually represent the repo for you to share as a single file to LLM directly or Vector Store  ⭐37",
+          "query_used": "github repository to LLM context text",
+          "why_surfaced": "GitHub 搜索命中(按 star, 关键词: github repository llm context)"
+        },
+        "fingerprint": null,
+        "relation": "alternative",
+        "notes": "Both tools convert a Git repository into a format suitable for LLM context. gitingest produces a textual summary with file contents and directory structure, while Annotated-AST-For-LLM generates an annotated AST in JSON format. They target the same user need but with different approaches.",
+        "evidence": [
+          {
+            "source_type": "search_result",
+            "locator": "https://github.com/cameronking4/Annotated-AST-For-LLM",
+            "quote": "Annotated AST for the purposes of LLM code repository context. ... generate an AST.json file ... share as a single file to LLM directly or Vector Store.",
+            "confidence": "medium",
+            "note": "Snippet from GitHub search result indicates the project aims to provide code repository context for LLMs, similar to gitingest."
+          }
+        ],
+        "confidence": "medium"
+      }
+    ],
+    "duplication": {
+      "duplication_score": 0.35,
+      "confidence": "medium",
+      "dimensions": {
+        "same_problem": 0.9,
+        "same_users": 0.9,
+        "same_io_flow": 0.5,
+        "feature_overlap": 0.3,
+        "same_mechanism": 0.2,
+        "unique_proven": 0.9
+      },
+      "novelty": [
+        {
+          "type": "better_execution",
+          "description": "通过将URL中的'hub'替换为'ingest'实现一键转换，无需手动复制粘贴。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://gitingest.com 首页",
+              "quote": "You can also replace 'hub' with 'ingest' in any GitHub URL.",
+              "confidence": "high",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "type": "better_execution",
+          "description": "支持私有仓库并承诺不存储个人访问令牌（PAT），使用后即删除克隆仓库，无浏览器缓存。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://gitingest.com 首页 私有仓库说明",
+              "quote": "PAT is never stored in the backend. Used once for cloning, then discarded from memory. No browser caching. Cloned repos are deleted after processing.",
+              "confidence": "high",
+              "note": ""
+            }
+          ]
+        }
+      ],
+      "top_similar": [
+        "adhikasp/mcp-git-ingest",
+        "cameronking4/Annotated-AST-For-LLM"
+      ],
+      "rationale": "被评估项目与竞品在核心问题（将代码库转为LLM可用的上下文）和用户群上高度重叠。但输入/输出流程、功能集及实现机制有较大差异，且其一键URL转换和私有仓库隐私处理经证实为独特功能。综合来看，重复度较低。",
+      "search_scope_note": "本次检索范围内未发现提供完全相同文本摘要生成及便捷URL转换的竞品。但无法排除存在未被收录的类似项目。",
+      "evidence": [
+        {
+          "source_type": "website",
+          "locator": "https://gitingest.com 首页",
+          "quote": "Turn any Git repository into a simple text digest of its codebase.",
+          "confidence": "high",
+          "note": ""
+        },
+        {
+          "source_type": "website",
+          "locator": "https://gitingest.com 首页",
+          "quote": "You can also replace 'hub' with 'ingest' in any GitHub URL.",
+          "confidence": "high",
+          "note": ""
+        },
+        {
+          "source_type": "website",
+          "locator": "https://gitingest.com 首页 私有仓库说明",
+          "quote": "PAT is never stored in the backend. Used once for cloning, then discarded from memory. No browser caching. Cloned repos are deleted after processing.",
+          "confidence": "high",
+          "note": ""
+        },
+        {
+          "source_type": "github_readme",
+          "locator": "README.md",
+          "quote": "Turn any Git repository into a prompt-friendly text ingest for LLMs.",
+          "confidence": "high",
+          "note": ""
+        }
+      ]
+    },
+    "strengths": [
+      {
+        "id": "s1",
+        "category": "novelty",
+        "title": "改URL的hub→ingest一键转换很方便",
+        "detail": "用户只需把GitHub仓库URL里的'hub'改成'ingest'就能直接跳转到转换页，省去粘贴步骤，降低使用门槛。",
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://gitingest.com 首页",
+            "quote": "You can also replace 'hub' with 'ingest' in any GitHub URL.",
+            "confidence": "high",
+            "note": ""
+          }
+        ],
+        "severity": "strength",
+        "confidence": "high"
+      },
+      {
+        "id": "s2",
+        "category": "risk",
+        "title": "私有仓库的PAT不落盘、用完即删",
+        "detail": "后端用完PAT就丢弃，克隆的仓库也马上删除，隐私承诺很明确，处理私有代码更安全。",
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://gitingest.com 首页 私有仓库说明",
+            "quote": "PAT is never stored in the backend. Used once for cloning, then discarded from memory. No browser caching. Cloned repos are deleted after processing.",
+            "confidence": "high",
+            "note": ""
+          }
+        ],
+        "severity": "strength",
+        "confidence": "high"
+      },
+      {
+        "id": "s3",
+        "category": "execution",
+        "title": "MIT开源，自托管灵活",
+        "detail": "项目用MIT许可，任何人都可以自己搭建，避免外部服务依赖。",
+        "evidence": [
+          {
+            "source_type": "github_config",
+            "locator": "pyproject.toml license",
+            "quote": "license = {file = \"LICENSE\"}, badge shows MIT",
+            "confidence": "high",
+            "note": ""
+          }
+        ],
+        "severity": "strength",
+        "confidence": "high"
+      }
+    ],
+    "issues": [
+      {
+        "id": "i1",
+        "category": "execution",
+        "title": "嘴上说任何Git仓库，实际只支持GitHub",
+        "detail": "首页写'任何Git仓库'，但UI和文档都只提GitHub，连示例URL都是github.com，容易误导GitLab等用户。",
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://gitingest.com 首页",
+            "quote": "Turn any Git repository into a simple text digest of its codebase.",
+            "confidence": "high",
+            "note": ""
+          }
+        ],
+        "severity": "major",
+        "confidence": "high"
+      },
+      {
+        "id": "i2",
+        "category": "risk",
+        "title": "商业模式不透明，用户存疑",
+        "detail": "没有说明是否收费、有没有调用限制，免费公共服务随时可能停，用户不敢大规模用。",
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://gitingest.com",
+            "quote": "",
+            "confidence": "medium",
+            "note": "网站和README未提及定价、商业模式或使用限制。"
+          }
+        ],
+        "severity": "minor",
+        "confidence": "medium"
+      },
+      {
+        "id": "i3",
+        "category": "execution",
+        "title": "缺少配置文档和.env.example",
+        "detail": "代码仓库里没有示例环境变量文件，也不知道要配哪些参数，想自托管都不知道怎么弄。",
+        "evidence": [
+          {
+            "source_type": "github_code",
+            "locator": "仓库根目录",
+            "quote": "",
+            "confidence": "medium",
+            "note": "未找到.env.example或配置文档说明"
+          }
+        ],
+        "severity": "minor",
+        "confidence": "medium"
+      },
+      {
+        "id": "i4",
+        "category": "positioning",
+        "title": "项目归属混乱，分叉或重命名没讲清",
+        "detail": "GitHub上cyclotruc/gitingest和coderamp-labs/gitingest同时存在，也没说明哪个是官方，用户不知道信哪个。",
+        "evidence": [
+          {
+            "source_type": "github_meta",
+            "locator": "https://github.com/cyclotruc/gitingest 和 https://github.com/coderamp-labs/gitingest",
+            "quote": "",
+            "confidence": "high",
+            "note": "存在两个同名但不同所有者的仓库，未说明关系。"
+          }
+        ],
+        "severity": "minor",
+        "confidence": "high"
+      }
+    ],
+    "improvements": [
+      {
+        "id": "im1",
+        "title": "在首页和Readme里清楚写明目前仅支持GitHub",
+        "rationale": "避免用户误会，减少不必要的咨询和差评，直接改文案成本极低。",
+        "impact": "high",
+        "cost": "low",
+        "learn_from": [],
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://gitingest.com 首页",
+            "quote": "Turn any Git repository into a simple text digest of its codebase.",
+            "confidence": "high",
+            "note": ""
+          }
+        ]
+      },
+      {
+        "id": "im2",
+        "title": "补上.env.example和自托管文档",
+        "rationale": "README里写清楚需要哪些环境变量，给出示例文件，方便想自己部署的用户，能鼓励社区贡献和fork。",
+        "impact": "high",
+        "cost": "low",
+        "learn_from": [],
+        "evidence": [
+          {
+            "source_type": "github_code",
+            "locator": "仓库根目录",
+            "quote": "",
+            "confidence": "medium",
+            "note": "未找到.env.example或配置文档说明"
+          }
+        ]
+      },
+      {
+        "id": "im3",
+        "title": "明确告示商业模式和使用限制",
+        "rationale": "加一句‘当前免费，未来可能加限制’或者直接给个配额，让用户心里有底，也能引导商业版本。",
+        "impact": "medium",
+        "cost": "low",
+        "learn_from": [],
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://gitingest.com",
+            "quote": "",
+            "confidence": "medium",
+            "note": "网站和README未提及定价、商业模式或使用限制。"
+          }
+        ]
+      },
+      {
+        "id": "im5",
+        "title": "整合仓库归属，重定向旧repo并说明原因",
+        "rationale": "统一两个仓库的说明，避免用户困惑，可以在老仓库加个说明或自动跳转。",
+        "impact": "medium",
+        "cost": "low",
+        "learn_from": [],
+        "evidence": [
+          {
+            "source_type": "github_meta",
+            "locator": "https://github.com/cyclotruc/gitingest 和 https://github.com/coderamp-labs/gitingest",
+            "quote": "",
+            "confidence": "high",
+            "note": "存在两个同名但不同所有者的仓库，未说明关系。"
+          }
+        ]
+      },
+      {
+        "id": "im4",
+        "title": "考虑支持GitLab、Bitbucket等主流平台",
+        "rationale": "扩大用户群，把‘任何Git仓库’坐实，可以先用GitLab做试点。",
+        "impact": "high",
+        "cost": "high",
+        "learn_from": [
+          "adhikasp/mcp-git-ingest"
+        ],
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://gitingest.com 首页",
+            "quote": "Turn any Git repository into a simple text digest of its codebase.",
+            "confidence": "high",
+            "note": ""
+          }
+        ]
+      }
+    ]
+  },
+  "reports": {
+    "serious": {
+      "tone": "serious",
+      "headline": "评级 Pass：可爱的概念验证，护城河为零，商业模式一团迷雾，凭什么让我掏钱？",
+      "body_markdown": "## 概述\n这个 adorable little project 号称能将“任何 Git 仓库”转化为 LLM 友好的文本摘要。噢，多么宏大的叙事——TAM 直指整个开发者工具市场，对吧？但让我们先坐下来喝杯咖啡，仔细看看这到底是颠覆性的 infrastructure play，还是又一个“我有 GitHub API 我自豪”的周末 hackathon 项目。\n\n## 赛道拥挤程度？让我笑一会儿\n首先，Git-to-text 这个赛道早就不是 blue ocean 了。OpenAI 的官方爬虫、LangChain 的文档加载器、以及无数个“Clone and feed to GPT”的脚本都在做同样的事。你的 moat 在哪里？就凭一个 URL 改写的小 trick？挺 cute，但 cute 不能当饭吃。\n\n## 商业模式？亲爱的，你们管这叫商业模式？\nREADME 里对怎么赚钱只字未提。没有定价，没有 SaaS 订阅，甚至连个 .env.example 都懒得提供。我猜你是想走 open-core 然后卖 enterprise 授权？还是打算靠 MIT 许可证收点捐赠？拜托，说清楚你的 monetization，否则我的 LP 会以为我是在投慈善。\n\n## 实际能力 vs. 宣传口号：严重不符\n“支持任何 Git 仓库”这个 claim 非常 bold，然而现实是仅支持 GitHub。这不叫“任何”，这叫“GitHub-only”。你这是在给自己埋 legal risk，同时也在消耗早期开发者的信任。团队是不是该先把 GitHub 弄明白了，再去觊觎 GitLab 和 Bitbucket 的领地？\n\n## 执行风险：连自己是谁都没讲明白\n更让我担忧的是项目的归属问题。fork 和 rename 的历史不清不楚，旧 repo 没有 redirect，用户根本不知道哪个才是 canonical source。这反映出团队对 product hygiene 的基本忽视。一个连 repo 都管理不善的团队，我怎么放心把 capital 交给你去 scale？\n\n## 护城河评估：负分\n- 技术壁垒：几乎为零。任何能写 50 行 Python 的人都能复刻。\n- 网络效应：不存在。用户单次转换完就走了，没有粘性。\n- 切换成本：极低。用户换个工具毫无痛苦。\n所以，请告诉我，凭什么你能防御那些大厂和开源社区的免费替代品？唯一的“护城河”大概是“没写文档所以别人懒得抄”，这真是一种黑色幽默。\n\n## 投资结论：Pass\n总结一下：cute tool, ambitious tagline, zero moat, opaque business model, and sloppy execution. 我欣赏你的 effort，但在这个 stage，我找不到任何让我开具 term sheet 的理由。除非你下周就能把 multi-platform 支持、清晰的 pricing、以及一个像样的团队组织给我看，否则我会把这笔钱留给隔壁那个做代码审查 AI 的团队——至少人家有个像样的 deck。\n\n好了，我的时间很贵，下一个。",
+      "findings": [
+        {
+          "id": "i1",
+          "category": "execution",
+          "title": "嘴上说任何Git仓库，实际只支持GitHub",
+          "detail": "首页写'任何Git仓库'，但UI和文档都只提GitHub，连示例URL都是github.com，容易误导GitLab等用户。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://gitingest.com 首页",
+              "quote": "Turn any Git repository into a simple text digest of its codebase.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "major",
+          "confidence": "high"
+        },
+        {
+          "id": "i2",
+          "category": "risk",
+          "title": "商业模式不透明，用户存疑",
+          "detail": "没有说明是否收费、有没有调用限制，免费公共服务随时可能停，用户不敢大规模用。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://gitingest.com",
+              "quote": "",
+              "confidence": "medium",
+              "note": "网站和README未提及定价、商业模式或使用限制。"
+            }
+          ],
+          "severity": "minor",
+          "confidence": "medium"
+        },
+        {
+          "id": "i3",
+          "category": "execution",
+          "title": "缺少配置文档和.env.example",
+          "detail": "代码仓库里没有示例环境变量文件，也不知道要配哪些参数，想自托管都不知道怎么弄。",
+          "evidence": [
+            {
+              "source_type": "github_code",
+              "locator": "仓库根目录",
+              "quote": "",
+              "confidence": "medium",
+              "note": "未找到.env.example或配置文档说明"
+            }
+          ],
+          "severity": "minor",
+          "confidence": "medium"
+        },
+        {
+          "id": "i4",
+          "category": "positioning",
+          "title": "项目归属混乱，分叉或重命名没讲清",
+          "detail": "GitHub上cyclotruc/gitingest和coderamp-labs/gitingest同时存在，也没说明哪个是官方，用户不知道信哪个。",
+          "evidence": [
+            {
+              "source_type": "github_meta",
+              "locator": "https://github.com/cyclotruc/gitingest 和 https://github.com/coderamp-labs/gitingest",
+              "quote": "",
+              "confidence": "high",
+              "note": "存在两个同名但不同所有者的仓库，未说明关系。"
+            }
+          ],
+          "severity": "minor",
+          "confidence": "high"
+        },
+        {
+          "id": "s1",
+          "category": "novelty",
+          "title": "改URL的hub→ingest一键转换很方便",
+          "detail": "用户只需把GitHub仓库URL里的'hub'改成'ingest'就能直接跳转到转换页，省去粘贴步骤，降低使用门槛。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://gitingest.com 首页",
+              "quote": "You can also replace 'hub' with 'ingest' in any GitHub URL.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "high"
+        },
+        {
+          "id": "s2",
+          "category": "risk",
+          "title": "私有仓库的PAT不落盘、用完即删",
+          "detail": "后端用完PAT就丢弃，克隆的仓库也马上删除，隐私承诺很明确，处理私有代码更安全。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://gitingest.com 首页 私有仓库说明",
+              "quote": "PAT is never stored in the backend. Used once for cloning, then discarded from memory. No browser caching. Cloned repos are deleted after processing.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "high"
+        },
+        {
+          "id": "s3",
+          "category": "execution",
+          "title": "MIT开源，自托管灵活",
+          "detail": "项目用MIT许可，任何人都可以自己搭建，避免外部服务依赖。",
+          "evidence": [
+            {
+              "source_type": "github_config",
+              "locator": "pyproject.toml license",
+              "quote": "license = {file = \"LICENSE\"}, badge shows MIT",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "high"
+        }
+      ],
+      "share_card_ref": ""
+    },
+    "roast": {
+      "tone": "roast",
+      "headline": "『任何』仓库的幻觉：一个 GitHub 专享的摘要生成器滑稽秀",
+      "body_markdown": "这个项目宣称能“将任何Git仓库转换为LLM友好摘要”，实际呢？就像一个号称“全球通”的手机，结果只支持中国移动。\n\n先看它那三个优点，像极了相亲市场上的“有房有车”——编程界的“有房有车”：\n- 一键改URL确实方便，把 hub 改成 ingest 就算完事，这个创意我给满分，比改密码还简单。\n- PAT用完即焚，安全性值得点赞，黑客看到都流泪。\n- MIT开源，自托管自由，但前提是你得先会用，文档在哪儿？全靠猜。\n\n但是，这几个优点在致命缺陷面前就像纸糊的盔甲。\n- **嘴上说任何，身体很诚实**：代码里只认 GitHub，GitLab 和 Bitbucket 表示“我们不配拥有姓名？” 这是典型的“我有个大生意，就差一个程序员”——不，你已经有了程序员，却只做了 GitHub。\n- **薛定谔的商业模式**：收费？免费？靠爱发电？完全没有说明。用户心慌慌，生怕下一秒弹出“您的免费额度已用完”。\n- **配置文档？不存在**：没有 .env.example，自托管变成“自摸索”，debug 比找对象还难。\n- **真假美猴王**：项目分叉重命名不交代，旧 repo 像幽灵一样游荡，用户点进来一脸懵：“我是谁？我在哪儿？哪个才是真身？”\n\n真想救这个项目？先把“任何”俩字吞回去，改成“仅 GitHub”，补上 .env.example，说清楚到底怎么赚钱，再整合一下你那散落一地的仓库。否则，这个项目只能永远活在“即将支持”的 PPT 和自嗨的 README 里。",
+      "findings": [
+        {
+          "id": "i1",
+          "category": "execution",
+          "title": "嘴上说任何Git仓库，实际只支持GitHub",
+          "detail": "首页写'任何Git仓库'，但UI和文档都只提GitHub，连示例URL都是github.com，容易误导GitLab等用户。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://gitingest.com 首页",
+              "quote": "Turn any Git repository into a simple text digest of its codebase.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "major",
+          "confidence": "high"
+        },
+        {
+          "id": "i2",
+          "category": "risk",
+          "title": "商业模式不透明，用户存疑",
+          "detail": "没有说明是否收费、有没有调用限制，免费公共服务随时可能停，用户不敢大规模用。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://gitingest.com",
+              "quote": "",
+              "confidence": "medium",
+              "note": "网站和README未提及定价、商业模式或使用限制。"
+            }
+          ],
+          "severity": "minor",
+          "confidence": "medium"
+        },
+        {
+          "id": "i3",
+          "category": "execution",
+          "title": "缺少配置文档和.env.example",
+          "detail": "代码仓库里没有示例环境变量文件，也不知道要配哪些参数，想自托管都不知道怎么弄。",
+          "evidence": [
+            {
+              "source_type": "github_code",
+              "locator": "仓库根目录",
+              "quote": "",
+              "confidence": "medium",
+              "note": "未找到.env.example或配置文档说明"
+            }
+          ],
+          "severity": "minor",
+          "confidence": "medium"
+        },
+        {
+          "id": "i4",
+          "category": "positioning",
+          "title": "项目归属混乱，分叉或重命名没讲清",
+          "detail": "GitHub上cyclotruc/gitingest和coderamp-labs/gitingest同时存在，也没说明哪个是官方，用户不知道信哪个。",
+          "evidence": [
+            {
+              "source_type": "github_meta",
+              "locator": "https://github.com/cyclotruc/gitingest 和 https://github.com/coderamp-labs/gitingest",
+              "quote": "",
+              "confidence": "high",
+              "note": "存在两个同名但不同所有者的仓库，未说明关系。"
+            }
+          ],
+          "severity": "minor",
+          "confidence": "high"
+        },
+        {
+          "id": "s1",
+          "category": "novelty",
+          "title": "改URL的hub→ingest一键转换很方便",
+          "detail": "用户只需把GitHub仓库URL里的'hub'改成'ingest'就能直接跳转到转换页，省去粘贴步骤，降低使用门槛。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://gitingest.com 首页",
+              "quote": "You can also replace 'hub' with 'ingest' in any GitHub URL.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "high"
+        },
+        {
+          "id": "s2",
+          "category": "risk",
+          "title": "私有仓库的PAT不落盘、用完即删",
+          "detail": "后端用完PAT就丢弃，克隆的仓库也马上删除，隐私承诺很明确，处理私有代码更安全。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://gitingest.com 首页 私有仓库说明",
+              "quote": "PAT is never stored in the backend. Used once for cloning, then discarded from memory. No browser caching. Cloned repos are deleted after processing.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "high"
+        },
+        {
+          "id": "s3",
+          "category": "execution",
+          "title": "MIT开源，自托管灵活",
+          "detail": "项目用MIT许可，任何人都可以自己搭建，避免外部服务依赖。",
+          "evidence": [
+            {
+              "source_type": "github_config",
+              "locator": "pyproject.toml license",
+              "quote": "license = {file = \"LICENSE\"}, badge shows MIT",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "high"
+        }
+      ],
+      "share_card_ref": ""
+    }
+  },
+  "cost": {
+    "llm_calls": 11,
+    "input_tokens": 28082,
+    "output_tokens": 32347,
+    "search_queries": 8,
+    "seconds": 487.979,
+    "stage_seconds": {
+      "site_analysis": 33.8,
+      "github_analysis": 33.634,
+      "fingerprint": 65.369,
+      "search": 40.2,
+      "verify": 21.935,
+      "judge": 60.605,
+      "factlayer": 80.453,
+      "render": 151.98
+    }
+  },
+  "degradations": [],
+  "error": ""
+}

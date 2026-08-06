@@ -28,9 +28,9 @@ const HERO = {
 
 // 预生成的示例报告（public/demos/*.json），点一下秒开，无需等待跑分析。
 const DEMOS = [
-  { slug: "gitingest", label: "Gitingest", dup: "0.85" },
-  { slug: "excalidraw", label: "Excalidraw", dup: "0.70" },
-  { slug: "kutt", label: "Kutt", dup: "0.78" },
+  { slug: "gitingest", label: "Gitingest", dup: "0.35" },
+  { slug: "excalidraw", label: "Excalidraw", dup: "0.85" },
+  { slug: "kutt", label: "Kutt", dup: "0.70" },
 ];
 
 const EXAMPLES = [
