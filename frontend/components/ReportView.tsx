@@ -102,6 +102,19 @@ function Dial({
   return (
     <div className="dial" aria-label={`重复造轮子概率 ${pct}%`} role="img">
       <svg viewBox="0 0 200 200">
+        <g className="dial-ticks">
+          {Array.from({ length: 44 }).map((_, i) => (
+            <line
+              key={i}
+              className={ignited && i < Math.round((pct / 100) * 44) ? "on" : ""}
+              x1="196"
+              y1="100"
+              x2={i % 4 === 0 ? "185" : "190"}
+              y2="100"
+              transform={`rotate(${(i * 360) / 44} 100 100)`}
+            />
+          ))}
+        </g>
         <circle className="track" cx="100" cy="100" r="82" />
         <circle
           className="val"

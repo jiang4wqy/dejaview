@@ -39,6 +39,12 @@ function TopBar() {
 export default function AppChrome({ children }: { children: ReactNode }) {
   return (
     <ToneProvider>
+      {/* 舞台氛围层：漂移聚光 + 胶片颗粒，纯装饰 */}
+      <div className="stage-fx" aria-hidden="true">
+        <span className="fx-spot a" />
+        <span className="fx-spot b" />
+      </div>
+      <div className="fx-grain" aria-hidden="true" />
       <WorldFx />
       <TopBar />
       <main className="main">{children}</main>

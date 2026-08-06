@@ -1322,6 +1322,70 @@ h1.verdict {
 }
 .chip-demo:hover { transform: translateY(-2px); filter: brightness(1.06); }
 .chip-demo b { font-family: var(--mono); font-size: 10px; font-weight: 700; opacity: .78; }
+
+/* ===========================================================================
+   美学加强：漂移聚光 / 胶片颗粒 / 表盘刻度 / 落章冲击 / 卡片微交互
+   =========================================================================== */
+/* 漂移聚光只放在开场深色戏台(介绍/大门)，内容页保持深色可读 */
+.stage-fx { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.fx-spot { position: absolute; width: 42vmax; height: 42vmax; border-radius: 50%; filter: blur(66px); opacity: 0; will-change: transform; }
+:root[data-splash] .fx-spot { opacity: .5; }
+:root[data-splash] .fx-spot.a { background: radial-gradient(circle, rgba(185,139,255,.55), transparent 64%); animation: spotA 26s ease-in-out infinite; }
+:root[data-splash] .fx-spot.b { background: radial-gradient(circle, rgba(255,46,136,.42), transparent 64%); animation: spotB 32s ease-in-out infinite; }
+/* 内容页只在最边缘留一点极淡的世界色氛围, 不进中心 */
+:root[data-tone] .fx-spot { opacity: .14; width: 34vmax; height: 34vmax; }
+:root[data-tone="roast"] .fx-spot.a { background: radial-gradient(circle, rgba(255,46,136,.5), transparent 60%); animation: spotA 30s ease-in-out infinite; }
+:root[data-tone="roast"] .fx-spot.b { background: radial-gradient(circle, rgba(0,229,255,.4), transparent 60%); animation: spotB 36s ease-in-out infinite; }
+:root[data-tone="serious"] .fx-spot.a { background: radial-gradient(circle, rgba(212,175,55,.45), transparent 60%); animation: spotA 30s ease-in-out infinite; }
+:root[data-tone="serious"] .fx-spot.b { background: radial-gradient(circle, rgba(150,110,30,.4), transparent 60%); animation: spotB 36s ease-in-out infinite; }
+/* 贴着屏幕四角游走, 不侵入中心内容 */
+@keyframes spotA { 0%,100%{transform:translate(-30vw,-32vh) scale(1)} 50%{transform:translate(-14vw,-18vh) scale(1.1)} }
+@keyframes spotB { 0%,100%{transform:translate(96vw,84vh) scale(1.1)} 50%{transform:translate(82vw,66vh) scale(.92)} }
+.fx-grain {
+  position: fixed; inset: 0; z-index: 9994; pointer-events: none; opacity: .05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* 表盘刻度：点亮到当前重复度，仪表感 */
+.dial-ticks line { stroke: var(--line); stroke-width: 2; transition: stroke .4s; }
+.dial-ticks line.on { stroke: var(--accent); filter: drop-shadow(0 0 3px var(--accent)); }
+.dial .pct { text-shadow: 0 0 22px color-mix(in srgb, var(--accent) 55%, transparent); }
+
+/* 印章落章：冲击波环 */
+.stamp.in::after {
+  content: ""; position: absolute; inset: -8px; border-radius: 12px;
+  border: 2px solid var(--accent); opacity: 0; animation: stampRing .65s ease-out .08s;
+}
+@keyframes stampRing { 0%{opacity:.7; transform:scale(.78) rotate(-11deg)} 100%{opacity:0; transform:scale(1.7) rotate(-11deg)} }
+
+/* 卡片微交互：抬升 + 强调色光晕 */
+.cand, .imp, .fold, .exhibit, .dim, .feat, .door, .chip-demo {
+  transition: transform .16s cubic-bezier(.2,1,.3,1), box-shadow .2s, border-color .2s, filter .15s;
+}
+.cand:hover, .imp:hover, .exhibit:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--accent) 24%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
+}
+.dim:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.feat:hover { transform: translateY(-2px) scale(1.03); }
+
+/* 折叠展开时，内容轻微上浮淡入 */
+.fold[open] .fold-body { animation: foldIn .32s cubic-bezier(.2,.7,.2,1); }
+@keyframes foldIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+/* 核心总结：一道缓缓扫过的高光 */
+.summary { position: relative; overflow: hidden; }
+.summary::before {
+  content: ""; position: absolute; top: 0; left: -30%; width: 40%; height: 100%;
+  background: linear-gradient(100deg, transparent, color-mix(in srgb, var(--accent) 12%, transparent), transparent);
+  animation: sheen 6s ease-in-out infinite; pointer-events: none;
+}
+@keyframes sheen { 0%,100%{left:-40%} 55%{left:120%} }
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-spot, .summary::before, .stamp.in::after, .fold[open] .fold-body { animation: none !important; }
+}
 .home-flow {
   display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px;
   font-family: var(--mono, ui-monospace, monospace); font-size: 12px;
