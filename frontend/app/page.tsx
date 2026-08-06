@@ -6,6 +6,25 @@ import { useRouter } from "next/navigation";
 import { analyze } from "@/lib/api";
 import { PERSONA, useTone } from "@/lib/tone";
 import WorldGate from "@/components/WorldGate";
+import Intro from "@/components/Intro";
+
+// 两个世界各自的开场文案（区别明显）。
+const HERO = {
+  roast: {
+    kicker: "🤡 当前审判官 · 马戏团 · 嘲讽现场",
+    lead: "把项目交出来，",
+    hl: "当众处刑",
+    sub: "马戏团今晚开庭：扒你的指纹、翻你的竞品、当场撕碎那点「创新」——每句嘲讽都钉着证据。",
+    submit: "拉开帷幕，开嘲 →",
+  },
+  serious: {
+    kicker: "💰 当前审判官 · 华尔街 · 评级委员会",
+    lead: "递上你的项目，",
+    hl: "接受估值",
+    sub: "评级委员会开始尽调：提炼指纹、对标竞品、给出重复度评级与改进优先级——每条结论皆有据可查。",
+    submit: "呈上评审，开鉴 →",
+  },
+} as const;
 
 const EXAMPLES = [
   { label: "Gitingest", website: "https://gitingest.com", github: "https://github.com/cyclotruc/gitingest",
@@ -18,7 +37,7 @@ const EXAMPLES = [
 
 export default function HomePage() {
   const router = useRouter();
-  const { tone, ready } = useTone();
+  const { tone, ready, seenIntro } = useTone();
 
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
@@ -71,26 +90,25 @@ export default function HomePage() {
     }
   }
 
-  // 首帧未恢复 tone 时留白，避免"表单→大门"闪烁
+  // 首帧未恢复状态时留白，避免闪烁
   if (!ready) return null;
-  // 尚未选择审判官 → 开场大门
+  // 最开始：项目介绍页 → 选审判官 → 表单
+  if (!seenIntro) return <Intro />;
   if (!tone) return <WorldGate />;
 
   const p = PERSONA[tone];
-  const submitLabel = tone === "roast" ? "拉开帷幕，开嘲 →" : "呈上评审，开鉴 →";
+  const hero = HERO[tone];
+  const submitLabel = hero.submit;
 
   return (
     <div className="home">
       <section className="home-hero">
-        <span className="home-kicker">
-          {p.emoji} 当前审判官 · {p.venue}
-        </span>
-        <h1 className="home-title">
-          把你的项目丢进来，<span className="hl">被 AI 看穿</span>
+        <span className="home-kicker rise">{hero.kicker}</span>
+        <h1 className="home-title rise" style={{ animationDelay: ".05s" }}>
+          {hero.lead}<span className="hl">{hero.hl}</span>
         </h1>
-        <p className="home-sub">
-          提炼项目指纹、检索相似项目、给出重复度裁判与改进优先级——每条结论都能点开物证。
-          {tone === "roast" ? "今晚由马戏团为你现场开嘲。" : "由评级委员会为你郑重估值。"}
+        <p className="home-sub rise" style={{ animationDelay: ".1s" }}>
+          {hero.sub}
         </p>
         <div className="home-examples">
           <span className="mono faint">没项目练手？点一下填入示例：</span>

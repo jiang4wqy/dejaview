@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import type {
   Candidate,
   Cost,
@@ -212,20 +212,12 @@ function ImprovementRow({ imp, n }: { imp: Improvement; n: number }) {
 }
 
 /* ------------------------------ 项目指纹卡 ------------------------------ */
-function FingerprintCard({ fp }: { fp: ProjectFingerprint }) {
+function FingerprintCard({ fp, embedded }: { fp: ProjectFingerprint; embedded?: boolean }) {
   const rows: [string, string][] = [];
   if (fp.problem) rows.push(["解决的问题", fp.problem]);
   if (fp.target_users) rows.push(["目标用户", fp.target_users]);
   if (fp.business_model) rows.push(["商业模式", fp.business_model]);
-  return (
-    <section className="block">
-      <div className="shead">
-        <h2>项目指纹</h2>
-        <span className="line" />
-        <span className="eyebrow">
-          我们理解的你 · 把握 {LEVEL_LABEL[fp.confidence] ?? fp.confidence}
-        </span>
-      </div>
+  const body = (
       <div className="fp">
         {fp.one_liner ? <p className="fp-one">{fp.one_liner}</p> : null}
         {rows.length ? (
@@ -251,6 +243,16 @@ function FingerprintCard({ fp }: { fp: ProjectFingerprint }) {
           </div>
         ) : null}
       </div>
+  );
+  if (embedded) return body;
+  return (
+    <section className="block">
+      <div className="shead">
+        <h2>项目指纹</h2>
+        <span className="line" />
+        <span className="eyebrow">我们理解的你 · 把握 {LEVEL_LABEL[fp.confidence] ?? fp.confidence}</span>
+      </div>
+      {body}
     </section>
   );
 }
@@ -258,7 +260,7 @@ function FingerprintCard({ fp }: { fp: ProjectFingerprint }) {
 /* --------------------- 新意 / 存疑 / 未知（诚实台账） --------------------- */
 // 把流水线算出但过去藏起来的三样东西摆上台面: 真新意、声称与事实的冲突、尚未确定项。
 // 呼应锁定原则"缺证据就诚实降置信"—— 毒舌不新增未经核实的结论。
-function HonestyLedger({ dup, fp }: { dup?: Duplication; fp: ProjectFingerprint }) {
+function HonestyLedger({ dup, fp, embedded }: { dup?: Duplication; fp: ProjectFingerprint; embedded?: boolean }) {
   const novel = [
     ...(dup?.novelty ?? []).map((n) => ({ tag: n.type, text: n.description })),
     ...(fp.observed_differentiators ?? [])
@@ -268,13 +270,7 @@ function HonestyLedger({ dup, fp }: { dup?: Duplication; fp: ProjectFingerprint 
   const conflicts = (fp.conflicts ?? []).filter(Boolean);
   const unknowns = (fp.unknowns ?? []).filter(Boolean);
   if (!novel.length && !conflicts.length && !unknowns.length) return null;
-  return (
-    <section className="block">
-      <div className="shead">
-        <h2>新意 · 存疑 · 未知</h2>
-        <span className="line" />
-        <span className="eyebrow">缺证据就降置信，不硬编</span>
-      </div>
+  const body = (
       <div className="ledger">
         <div className="led-col ok">
           <div className="led-h">真正的新意</div>
@@ -314,8 +310,51 @@ function HonestyLedger({ dup, fp }: { dup?: Duplication; fp: ProjectFingerprint 
           )}
         </div>
       </div>
+  );
+  if (embedded) return body;
+  return (
+    <section className="block">
+      <div className="shead">
+        <h2>新意 · 存疑 · 未知</h2>
+        <span className="line" />
+        <span className="eyebrow">缺证据就降置信，不硬编</span>
+      </div>
+      {body}
     </section>
   );
+}
+
+/* -------------------------------- 折叠块 + 一句话总结 -------------------------------- */
+function Fold({ title, hint, defaultOpen = false, children }: {
+  title: string; hint?: string; defaultOpen?: boolean; children: ReactNode;
+}) {
+  return (
+    <details className="fold" open={defaultOpen}>
+      <summary className="fold-sum">
+        <span className="fold-chev" aria-hidden="true">▸</span>
+        <span className="fold-title">{title}</span>
+        {hint ? <span className="fold-hint">{hint}</span> : null}
+        <span className="fold-toggle">展开 / 收起</span>
+      </summary>
+      <div className="fold-body">{children}</div>
+    </details>
+  );
+}
+
+// 一句话总结：按重复度分档 + 语气，措辞平实、少术语。
+function summaryLine(pct: number, tone: Tone): string {
+  const roast = tone === "roast";
+  if (pct >= 60)
+    return roast
+      ? "别自欺了——这基本就是个轮子，市面上一抓一大把。"
+      : "结论：与现有方案高度重合，差异化不足，重做的理由并不充分。";
+  if (pct >= 40)
+    return roast
+      ? "似曾相识——你是有点东西，但撞车的地方也真不少。"
+      : "结论：与同类存在明显重叠，需要找到真正的差异点才立得住。";
+  return roast
+    ? "行，居然有点东西——守住这点不一样，别浪费了。"
+    : "结论：具备一定独特性，值得继续，但仍有明确的优化空间。";
 }
 
 /* -------------------------------- 成本页脚 -------------------------------- */
@@ -425,7 +464,7 @@ export default function ReportView({ job }: { job: Job }) {
   return (
     <div className="dv" data-tone={tone}>
       {/* ---------- HERO ---------- */}
-      <div className="hero">
+      <div className="hero rise">
         <div className={`stamp ${ignited ? "in" : ""}`}>{verdictStamp(pct, tone)}</div>
         <div className="hero-grid">
           <div>
@@ -433,110 +472,109 @@ export default function ReportView({ job }: { job: Job }) {
               // 卷宗 {caseNo(job)} · <b>{subjectName(job)}</b>
             </div>
             <h1 className="verdict">{report.headline}</h1>
-            {dup?.rationale ? <p className="lede">{dup.rationale}</p> : null}
-            {dup?.search_scope_note ? (
-              <div className="scope">{dup.search_scope_note}</div>
-            ) : null}
           </div>
           <Dial pct={pct} confidence={dup?.confidence} dialNum={dialNum} ignited={ignited} />
         </div>
         <ToneToggle available={available} tone={tone} onChange={setTone} />
       </div>
 
-      {/* ---------- 项目指纹（我们理解的你） ---------- */}
-      {result?.fingerprint ? <FingerprintCard fp={result.fingerprint} /> : null}
-
-      {/* ---------- 结论 ---------- */}
-      {report.body_markdown ? (
-        <section className="block">
-          <div className="shead">
-            <span className="eyebrow">// 结论</span>
-            <span className="line" />
+      {/* ---------- 核心总结（最重要，放最显眼） ---------- */}
+      <section className="block summary rise" style={{ animationDelay: ".06s" }}>
+        <div className="shead">
+          <span className="eyebrow">{tone === "roast" ? "// 一句话，别绕弯" : "// 一句话总结"}</span>
+          <span className="line" />
+          <span className="eyebrow">重复度 {pct}%</span>
+        </div>
+        <p className="summary-line">{summaryLine(pct, tone)}</p>
+        {result?.improvements?.[0] ? (
+          <div className="summary-do">
+            <span className="summary-do-k">最该动的一件事</span>
+            <span className="summary-do-v">{result.improvements[0].title}</span>
           </div>
-          <Markdown text={report.body_markdown} className="prose" />
-        </section>
-      ) : null}
+        ) : null}
+        {dup?.rationale ? (
+          <p className="summary-why">
+            <b>为什么这么说 · </b>
+            {dup.rationale}
+          </p>
+        ) : null}
+        {dup?.search_scope_note ? <div className="scope">{dup.search_scope_note}</div> : null}
+      </section>
 
-      {/* ---------- 重复度拆解 ---------- */}
-      {dimKeys.length ? (
-        <section className="block">
-          <div className="shead">
-            <h2>重复度拆解</h2>
-            <span className="line" />
-            <span className="eyebrow">0 = 独一份 · 1 = 完全重合</span>
-          </div>
-          <div className="dims">
-            {dimKeys.map((k) => {
-              const v = dims[k];
-              const p = toPercent(v);
-              return (
-                <div key={k} className="dim">
-                  <div className="k">
-                    <span>{DIM_LABEL[k] ?? k}</span>
-                    <b>{(v <= 1 ? v : v / 100).toFixed(2)}</b>
+      {/* ---------- 详情：默认折叠，需要再展开 ---------- */}
+      <div className="folds rise" style={{ animationDelay: ".12s" }}>
+        <div className="folds-hint">想看论证细节？逐条展开 ↓</div>
+
+        {report.body_markdown ? (
+          <Fold title={tone === "roast" ? "毒舌全文" : "评审全文"} hint="完整点评">
+            <Markdown text={report.body_markdown} className="prose" />
+          </Fold>
+        ) : null}
+
+        {result?.improvements?.length ? (
+          <Fold title="改进优先级" hint="按 影响 × 成本">
+            <div className="imps">
+              {result.improvements.map((imp, i) => (
+                <ImprovementRow key={imp.id} imp={imp} n={i + 1} />
+              ))}
+            </div>
+          </Fold>
+        ) : null}
+
+        {dimKeys.length ? (
+          <Fold title="重复度拆解" hint="0 独一份 · 1 完全重合">
+            <div className="dims">
+              {dimKeys.map((k) => {
+                const v = dims[k];
+                const p = toPercent(v);
+                return (
+                  <div key={k} className="dim">
+                    <div className="k">
+                      <span>{DIM_LABEL[k] ?? k}</span>
+                      <b>{(v <= 1 ? v : v / 100).toFixed(2)}</b>
+                    </div>
+                    <div className="bar">
+                      <i style={{ width: `${p}%` }} />
+                    </div>
                   </div>
-                  <div className="bar">
-                    <i style={{ width: ignited ? `${p}%` : "0%" }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      ) : null}
+                );
+              })}
+            </div>
+          </Fold>
+        ) : null}
 
-      {/* ---------- 新意 · 存疑 · 未知 ---------- */}
-      {result?.fingerprint ? (
-        <HonestyLedger dup={dup} fp={result.fingerprint} />
-      ) : null}
+        {result?.fingerprint ? (
+          <Fold title="项目指纹" hint="我们理解的你">
+            <FingerprintCard fp={result.fingerprint} embedded />
+          </Fold>
+        ) : null}
 
-      {/* ---------- 问题与优点（物证） ---------- */}
-      {findings.length ? (
-        <section className="block">
-          <div className="shead">
-            <h2>问题与优点</h2>
-            <span className="line" />
-            <span className="eyebrow">每条可点开物证</span>
-          </div>
-          <div>
-            {findings.map((f) => (
-              <FindingCard key={f.id} finding={f} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+        {result?.fingerprint ? (
+          <Fold title="新意 · 存疑 · 未知" hint="缺证据就降置信">
+            <HonestyLedger dup={dup} fp={result.fingerprint} embedded />
+          </Fold>
+        ) : null}
 
-      {/* ---------- 改进优先级 ---------- */}
-      {result?.improvements?.length ? (
-        <section className="block">
-          <div className="shead">
-            <h2>改进优先级</h2>
-            <span className="line" />
-            <span className="eyebrow">按 影响 × 成本</span>
-          </div>
-          <div className="imps">
-            {result.improvements.map((imp, i) => (
-              <ImprovementRow key={imp.id} imp={imp} n={i + 1} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+        {findings.length ? (
+          <Fold title="问题与优点 · 物证" hint="每条可点开证据">
+            <div>
+              {findings.map((f) => (
+                <FindingCard key={f.id} finding={f} />
+              ))}
+            </div>
+          </Fold>
+        ) : null}
 
-      {/* ---------- 对照物 ---------- */}
-      {result?.candidates?.length ? (
-        <section className="block">
-          <div className="shead">
-            <h2>对照物 · 召回竞品</h2>
-            <span className="line" />
-            <span className="eyebrow">{result.candidates.length} 个</span>
-          </div>
-          <div className="cands">
-            {result.candidates.map((c, i) => (
-              <CandidateCard key={i} c={c} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+        {result?.candidates?.length ? (
+          <Fold title="对照物 · 召回竞品" hint={`${result.candidates.length} 个`}>
+            <div className="cands">
+              {result.candidates.map((c, i) => (
+                <CandidateCard key={i} c={c} />
+              ))}
+            </div>
+          </Fold>
+        ) : null}
+      </div>
 
       {/* ---------- 成本 / 页脚 ---------- */}
       <CostFooter job={job} />

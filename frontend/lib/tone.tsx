@@ -18,14 +18,18 @@ const KEY = "dejaview_tone";
 type ToneCtx = {
   tone: Tone | null; // null = 尚未选择 → 显示开场大门
   ready: boolean; // 是否已完成 localStorage 恢复（避免 SSR/首帧闪烁）
+  seenIntro: boolean; // 是否看过项目介绍页
   setTone: (t: Tone) => void;
-  reset: () => void; // 回到开场重新选审判官
+  enterIntro: () => void; // 从介绍页进入 → 选择审判官
+  reset: () => void; // 回到开场重新选审判官（保留已看过介绍）
 };
 
 const Ctx = createContext<ToneCtx>({
   tone: null,
   ready: false,
+  seenIntro: false,
   setTone: () => {},
+  enterIntro: () => {},
   reset: () => {},
 });
 
@@ -34,9 +38,12 @@ export const PERSONA: Record<Tone, { name: string; venue: string; emoji: string 
   roast: { name: "毒舌", venue: "马戏团 · 嘲讽现场", emoji: "🤡" },
 };
 
+const INTRO_KEY = "dejaview_intro";
+
 export function ToneProvider({ children }: { children: ReactNode }) {
   const [tone, setToneState] = useState<Tone | null>(null);
   const [ready, setReady] = useState(false);
+  const [seenIntro, setSeenIntro] = useState(false);
 
   // 恢复上次选择；?world=roast|serious(或 clown|gilt)可强制指定, 便于深链/分享。
   useEffect(() => {
@@ -47,17 +54,26 @@ export function ToneProvider({ children }: { children: ReactNode }) {
     const saved = window.localStorage.getItem(KEY);
     const init = forced ?? (saved === "roast" || saved === "serious" ? (saved as Tone) : null);
     if (init) setToneState(init);
+    // 有世界(深链/老用户)或看过介绍 → 跳过介绍页
+    if (init || window.localStorage.getItem(INTRO_KEY) === "1") setSeenIntro(true);
     setReady(true);
   }, []);
 
-  // 同步到 <html data-tone> + 存储
+  const enterIntro = useCallback(() => {
+    window.localStorage.setItem(INTRO_KEY, "1");
+    setSeenIntro(true);
+  }, []);
+
+  // 同步到 <html data-tone> + 存储；未选世界时(介绍/大门)统一深色戏台 data-splash
   useEffect(() => {
     const el = document.documentElement;
     if (tone) {
       el.dataset.tone = tone;
+      delete el.dataset.splash;
       window.localStorage.setItem(KEY, tone);
     } else {
       delete el.dataset.tone;
+      el.dataset.splash = "1";
     }
   }, [tone]);
 
@@ -67,7 +83,11 @@ export function ToneProvider({ children }: { children: ReactNode }) {
     setToneState(null);
   }, []);
 
-  return <Ctx.Provider value={{ tone, ready, setTone, reset }}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={{ tone, ready, seenIntro, setTone, enterIntro, reset }}>
+      {children}
+    </Ctx.Provider>
+  );
 }
 
 export function useTone() {
