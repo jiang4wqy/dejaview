@@ -10,9 +10,9 @@ import type {
   ProjectFingerprint,
 } from "./types";
 
-export const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE?.replace(/\/+$/, "") ??
-  "http://localhost:8000";
+// 默认走同源相对路径(经 next.config.js 的 /api 反代到后端)——单端口即可跑通。
+// 需要直连别的后端时再设 NEXT_PUBLIC_API_BASE。
+export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE ?? "").replace(/\/+$/, "");
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let res: Response;

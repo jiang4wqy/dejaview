@@ -13,6 +13,7 @@ import type {
 } from "@/lib/types";
 import Markdown from "./Markdown";
 import FindingCard from "./FindingCard";
+import { useTone } from "@/lib/tone";
 
 const LEVEL_LABEL: Record<string, string> = { high: "高", medium: "中", low: "低" };
 
@@ -352,9 +353,13 @@ export default function ReportView({ job }: { job: Job }) {
   if (reports.serious) available.push("serious");
   if (reports.roast) available.push("roast");
 
-  const [tone, setTone] = useState<Tone>(
-    reports.serious ? "serious" : available[0] ?? "serious",
-  );
+  // 语气来自全局世界主题：报告页的一键切换 → 整站在镀金/毒舌之间变形。
+  const { tone: ctxTone, setTone } = useTone();
+  const tone: Tone = ctxTone ?? (reports.serious ? "serious" : available[0] ?? "serious");
+  useEffect(() => {
+    if (!ctxTone) setTone(tone); // 直达报告页(无历史选择)时补一个默认世界
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ctxTone]);
 
   const result = job.result;
   const dup = result?.duplication;

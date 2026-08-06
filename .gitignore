@@ -28,3 +28,6 @@ frontend/.env.local
 .DS_Store
 .idea/
 .vscode/
+
+# 运行时日志
+*.log
