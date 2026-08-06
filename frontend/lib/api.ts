@@ -52,8 +52,12 @@ export function analyze(body: AnalyzeRequest): Promise<AnalyzeResponse> {
   });
 }
 
-/** 拉取任务状态（供报告页轮询）。 */
+/** 拉取任务状态（供报告页轮询）。demo-<slug> 直接读预生成的静态报告（秒开）。 */
 export function getJob(jobId: string): Promise<Job> {
+  if (jobId.startsWith("demo-")) {
+    const slug = jobId.slice("demo-".length);
+    return request<Job>(`/demos/${encodeURIComponent(slug)}.json`);
+  }
   return request<Job>(`/api/jobs/${encodeURIComponent(jobId)}`);
 }
 

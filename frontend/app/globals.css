@@ -1311,6 +1311,17 @@ h1.verdict {
 }
 .chip-ex:hover { border-color: var(--accent); color: var(--accent); }
 .chip-ex:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* 秒开示例报告按钮（走本世界强调色渐变） */
+.home-demos { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+.chip-demo {
+  font-family: var(--sans); font-size: 12.5px; font-weight: 700; color: #100a18; border: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius: 999px; padding: 7px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent);
+  transition: transform .12s, filter .15s;
+}
+.chip-demo:hover { transform: translateY(-2px); filter: brightness(1.06); }
+.chip-demo b { font-family: var(--mono); font-size: 10px; font-weight: 700; opacity: .78; }
 .home-flow {
   display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px;
   font-family: var(--mono, ui-monospace, monospace); font-size: 12px;

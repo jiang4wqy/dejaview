@@ -26,6 +26,13 @@ const HERO = {
   },
 } as const;
 
+// 预生成的示例报告（public/demos/*.json），点一下秒开，无需等待跑分析。
+const DEMOS = [
+  { slug: "gitingest", label: "Gitingest", dup: "0.85" },
+  { slug: "excalidraw", label: "Excalidraw", dup: "0.70" },
+  { slug: "kutt", label: "Kutt", dup: "0.78" },
+];
+
 const EXAMPLES = [
   { label: "Gitingest", website: "https://gitingest.com", github: "https://github.com/cyclotruc/gitingest",
     users: "用 LLM 处理代码库的开发者", problem: "把 GitHub 仓库转成适合喂给 LLM 的文本", novelty: "改 URL 的 hub→ingest 一键转换" },
@@ -118,6 +125,19 @@ export default function HomePage() {
           {EXAMPLES.map((ex) => (
             <button key={ex.label} type="button" className="chip-ex" onClick={() => fillExample(ex)}>
               {ex.label}
+            </button>
+          ))}
+        </div>
+        <div className="home-demos">
+          <span className="mono faint">或直接看已跑好的示例报告（秒开，无需等待）：</span>
+          {DEMOS.map((d) => (
+            <button
+              key={d.slug}
+              type="button"
+              className="chip-demo"
+              onClick={() => router.push(`/report/demo-${d.slug}`)}
+            >
+              {d.label} <b>重复度 {d.dup}</b>
             </button>
           ))}
         </div>
