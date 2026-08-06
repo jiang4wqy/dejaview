@@ -6,6 +6,15 @@ import { useRouter } from "next/navigation";
 import { analyze } from "@/lib/api";
 import type { Tone } from "@/lib/types";
 
+const EXAMPLES = [
+  { label: "Gitingest", website: "https://gitingest.com", github: "https://github.com/cyclotruc/gitingest",
+    users: "用 LLM 处理代码库的开发者", problem: "把 GitHub 仓库转成适合喂给 LLM 的文本", novelty: "改 URL 的 hub→ingest 一键转换" },
+  { label: "Excalidraw", website: "https://excalidraw.com", github: "https://github.com/excalidraw/excalidraw",
+    users: "需要快速画图的团队", problem: "手绘风白板 / 图表", novelty: "手绘质感 + 端到端加密协作" },
+  { label: "Umami", website: "https://umami.is", github: "https://github.com/umami-software/umami",
+    users: "在意隐私的网站主", problem: "隐私友好的网站分析", novelty: "无 cookie / 可自托管" },
+];
+
 export default function HomePage() {
   const router = useRouter();
 
@@ -19,6 +28,15 @@ export default function HomePage() {
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function fillExample(ex: (typeof EXAMPLES)[number]) {
+    setWebsiteUrl(ex.website);
+    setGithubUrl(ex.github);
+    setTargetUsers(ex.users);
+    setProblemSolved(ex.problem);
+    setClaimedNovelty(ex.novelty);
+    setError(null);
+  }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -62,6 +80,20 @@ export default function HomePage() {
           提炼项目指纹、检索相似项目、给出重复度裁判与改进优先级——每条结论都能点开物证。
           认真或毒舌，同一份事实，两种语气。
         </p>
+        <div className="home-examples">
+          <span className="mono faint">没项目练手？点一下填入示例：</span>
+          {EXAMPLES.map((ex) => (
+            <button key={ex.label} type="button" className="chip-ex" onClick={() => fillExample(ex)}>
+              {ex.label}
+            </button>
+          ))}
+        </div>
+        <div className="home-flow">
+          <span>提取指纹</span>
+          <span>搜同类</span>
+          <span>判重复度</span>
+          <span>出锐评</span>
+        </div>
       </section>
 
       <form className="panel form" onSubmit={onSubmit}>
