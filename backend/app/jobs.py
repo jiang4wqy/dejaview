@@ -32,6 +32,10 @@ class JobStore(ABC):
     @abstractmethod
     def put(self, job: Job) -> None: ...
 
+    def recent(self, limit: int = 20) -> list[Job]:
+        """最近的任务(新→旧)。默认空; 子类按需实现。"""
+        return []
+
 
 class InMemoryJobStore(JobStore):
     def __init__(self) -> None:
@@ -51,6 +55,10 @@ class InMemoryJobStore(JobStore):
     def put(self, job: Job) -> None:
         with self._lock:
             self._jobs[job.id] = job
+
+    def recent(self, limit: int = 20) -> list[Job]:
+        with self._lock:
+            return list(reversed(list(self._jobs.values())))[:limit]
 
 
 class RedisJobStore(JobStore):
@@ -79,6 +87,17 @@ class RedisJobStore(JobStore):
 
     def put(self, job: Job) -> None:
         self._r.set(self._key(job.id), job.model_dump_json(), ex=self._ttl)
+        self._r.lrem("dejaview:jobs:recent", 0, job.id)   # 去重后置顶
+        self._r.lpush("dejaview:jobs:recent", job.id)
+        self._r.ltrim("dejaview:jobs:recent", 0, 499)
+
+    def recent(self, limit: int = 20) -> list[Job]:
+        out: list[Job] = []
+        for jid in self._r.lrange("dejaview:jobs:recent", 0, limit - 1):
+            raw = self._r.get(self._key(jid))
+            if raw:
+                out.append(Job.model_validate_json(raw))
+        return out
 
 
 class SqlJobStore(JobStore):

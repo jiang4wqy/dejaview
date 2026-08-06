@@ -67,6 +67,7 @@ class Settings(BaseSettings):
     # ---- 其它 ----
     cache_dir: str = ""            # 空 = 关闭磁盘缓存
     max_candidates_deep_read: int = 5
+    verify_concurrency: int = 4          # verify 并行深读的并发数
     max_queries: int = 8
 
 

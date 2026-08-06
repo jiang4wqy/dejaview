@@ -6,6 +6,7 @@ import type {
   AnalyzeResponse,
   Health,
   Job,
+  JobSummary,
   ProjectFingerprint,
 } from "./types";
 
@@ -54,6 +55,11 @@ export function analyze(body: AnalyzeRequest): Promise<AnalyzeResponse> {
 /** 拉取任务状态（供报告页轮询）。 */
 export function getJob(jobId: string): Promise<Job> {
   return request<Job>(`/api/jobs/${encodeURIComponent(jobId)}`);
+}
+
+/** 最近任务列表（历史 / 复检对比）。 */
+export function listJobs(limit = 20): Promise<JobSummary[]> {
+  return request<JobSummary[]>(`/api/jobs?limit=${limit}`);
 }
 
 /** 提交用户编辑后的项目指纹，后端从"搜索"阶段恢复流水线。 */

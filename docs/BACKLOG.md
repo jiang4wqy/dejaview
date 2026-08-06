@@ -48,12 +48,14 @@
 - [ ] **E4-4** Product Hunt / AlternativeTo / G2 源
 - [x] **E4-5** 中文社区源：V2EX(经 sov2ex) + 掘金 已实现(best-effort) + `CompositeSearchClient` 多源合并(已实测)
 - [ ] **E4-6** 召回去重与初排（浅读 20–30，交给 verify 深读前 3–5）
+- [x] **E4-7** GitHub 检索召回修复：长自然语言 query → 关键词收窄（前 4，空则放宽前 2 重试）。实测 Umami 从 8 条全 0 命中 → 召回 Plausible/Shynet/InsightFlare 等真实竞品（有单测 `test_keywordize_shrinks_long_query`）
 
 ## E5 · 候选验证 `verify` ★
 依赖：`VerifiedCandidate` 契约、E4 候选
 - [ ] **E5-1** ★ 对候选套同一套指纹结构再比较（不只比营销文案）
 - [ ] **E5-2** ★ 关系分类：直接竞品/替代/相邻/已停维护/表面类似，带证据
 - [ ] **E5-3** 候选轻量抓取（复用 E1 抓取器）
+- [x] **E5-4** verify 并行化：`ThreadPoolExecutor` 并发深读候选（`verify_concurrency`），`LLMRouter.meter` 加锁保线程安全
 
 ## E6 · 重复度裁判 `judge` ★
 依赖：`DuplicationVerdict` 契约、E5 产物
@@ -78,18 +80,19 @@
 - [ ] **E8-5** ★ 每条 finding "点开证据"（展开 `evidence[]`）
 - [ ] **E8-6** ★ 重复度徽章 + 检索边界声明 + 竞品列表 + 改进(带 impact/cost)
 - [ ] **E8-7** ⏳ 分享卡下载、报告默认私密/可分享链接
+- [x] **E8-8** 报告增补：**项目指纹卡**（我们理解的你）+ **新意/存疑/未知"诚实台账"**（真新意 + 声称 vs 事实冲突 + 未确定项）+ **复检按钮**（同目标再跑）
 
 ## E9 · Provider / 成本层 [并行]
 依赖：`LLMProvider` 接口（已定）
 - [x] **E9-1** DeepSeek/Qwen 已接（`OpenAICompatibleProvider` + JSON 修复循环）; **DeepSeek v4 真实端到端验证通过**
 - [ ] **E9-2** ★ 真实 token/成本核算（从各 provider 的 usage 累加到 `CostMeter`）
-- [ ] **E9-3** 缓存落地：`cache.py` 接进 analyzers（按内容 hash 命中）
+- [x] **E9-3** 缓存落地：`cache.py` 已接进 `site_analyzer`/`github_analyzer`（按内容 hash 命中，有单测 `test_site_analyzer_cache_skips_llm`）
 - [ ] **E9-4** 重试/降级：某源失败时优雅降级并在报告里标注
 
 ## E10 · 存储 / 任务 [并行]
 - [x] **E10-1** ★ `Job` 持久化：`RedisJobStore`(真实 redis 往返已验证) + `make_job_store`；Postgres 留后续
 - [x] **E10-2** ★ RQ 队列(独立 worker 进程跑流水线) + thread 回退; 真实 worker 端到端已验证
-- [ ] **E10-3** ⏳ 用户账户 + 项目版本记录（改版后重新检测哪些问题真正改善）
+- [ ] **E10-3** ⏳ 用户账户 + 项目版本记录（改版后重新检测哪些问题真正改善）—— 已打基础：`GET /api/jobs`（`JobStore.recent`，内存/Redis 均实现）+ `content_hash` + 前端"复检"按钮
 - [ ] **E10-4** ⏳ 允许作者纠正指纹并沉淀成高质量项目分析数据集
 
 ## E11 · 评测 / 验收 ★ [并行]

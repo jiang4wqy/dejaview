@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import os
+import re
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -24,6 +25,29 @@ from app.logging import get_logger
 from app.models.schemas import CandidateRef, CandidateSource
 
 _UA = "Mozilla/5.0 (compatible; DejaViewBot/0.1)"
+
+# GitHub 仓库搜索是"所有词都要出现(AND)"—— 词越多命中越少, fingerprint 生成的长自然
+# 语言 query 几乎必然 0 结果。这些是对检索没有区分度、只会缩小结果集的填充词。
+_STOP = {
+    "the", "a", "an", "for", "and", "or", "of", "to", "in", "on", "with", "without",
+    "by", "your", "you", "that", "this", "is", "are", "be", "as", "at", "it", "its",
+    "from", "using", "use", "used", "via", "no", "not", "free", "friendly", "based",
+    "which", "who", "them", "their", "conscious", "owners", "side", "app", "tool",
+    "的", "和", "与", "及", "了", "个", "不", "可", "来", "做", "用", "把", "被", "让", "给", "在",
+}
+
+
+def keywordize(query: str, max_words: int) -> str:
+    """把长 query 压成 GitHub 能命中的关键词(去填充词, 保留前 max_words 个高信号词)。"""
+    kept: list[str] = []
+    for t in re.split(r"[\s,，。、/|]+", query.strip()):
+        t = t.strip("()（）\"'`：:").lower()
+        if not t or t in _STOP:
+            continue
+        kept.append(t)
+        if len(kept) >= max_words:
+            break
+    return " ".join(kept) if kept else query.strip()
 
 
 class SearchClient(ABC):
@@ -56,18 +80,29 @@ class GitHubSearchClient(SearchClient):
         self._timeout = timeout
         self._log = get_logger("search.github")
 
+    def _fetch(self, q: str, headers: dict) -> list[dict]:
+        try:
+            r = httpx.get(self.API, params={"q": q, "sort": "stars", "order": "desc",
+                          "per_page": self._per_query}, headers=headers,
+                          timeout=self._timeout, trust_env=True)
+            r.raise_for_status()
+            return r.json().get("items", [])
+        except Exception as e:  # noqa: BLE001
+            raise SearchError(f"GitHub 搜索失败(q={q!r}): {e}") from e
+
     def search(self, query, source=None):
         headers = {"Accept": "application/vnd.github+json", "User-Agent": _UA}
         if self._token:
             headers["Authorization"] = f"token {self._token}"
-        try:
-            r = httpx.get(self.API, params={"q": query, "sort": "stars", "order": "desc",
-                          "per_page": self._per_query}, headers=headers,
-                          timeout=self._timeout, trust_env=True)
-            r.raise_for_status()
-            items = r.json().get("items", [])
-        except Exception as e:  # noqa: BLE001
-            raise SearchError(f"GitHub 搜索失败(query={query!r}): {e}") from e
+        # 长 query 先收窄到 top-4 关键词; 若为空(AND 太严)再放宽到 top-2 试一次。
+        q = keywordize(query, 4)
+        items = self._fetch(q, headers)
+        if not items:
+            wide = keywordize(query, 2)
+            if wide and wide != q:
+                items = self._fetch(wide, headers)
+                if items:
+                    q = wide
         out = []
         for it in items:
             desc = (it.get("description") or "").strip()
@@ -75,8 +110,8 @@ class GitHubSearchClient(SearchClient):
                 name=it.get("full_name", ""), url=it.get("html_url", ""),
                 source=CandidateSource.GITHUB,
                 snippet=f"{desc}  ⭐{it.get('stargazers_count', 0)}".strip(),
-                query_used=query, why_surfaced=f"GitHub 搜索命中(按 star): {query}"))
-        self._log.info("github %r -> %d", query, len(out))
+                query_used=query, why_surfaced=f"GitHub 搜索命中(按 star, 关键词: {q})"))
+        self._log.info("github %r (kw=%r) -> %d", query, q, len(out))
         return out
 
 

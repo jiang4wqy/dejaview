@@ -4,6 +4,7 @@
 """
 from __future__ import annotations
 
+import threading
 from enum import Enum
 from typing import Type, TypeVar
 
@@ -52,6 +53,7 @@ class LLMRouter:
         self.meter = meter or CostMeter()
         self.provider = make_provider(settings)
         self.log = get_logger("llm")
+        self._lock = threading.Lock()   # 保护 meter(verify 并行时并发累加)
         self._tier_model = {
             ModelTier.CHEAP: settings.model_cheap,
             ModelTier.STANDARD: settings.model_standard,
@@ -68,7 +70,8 @@ class LLMRouter:
             task=task, schema_cls=schema_cls, system=system, prompt=prompt,
             model_id=self._tier_model[tier], thinking=use_thinking,
         )
-        self.meter.llm_calls += 1
-        self.meter.input_tokens += usage.input_tokens
-        self.meter.output_tokens += usage.output_tokens
+        with self._lock:
+            self.meter.llm_calls += 1
+            self.meter.input_tokens += usage.input_tokens
+            self.meter.output_tokens += usage.output_tokens
         return obj

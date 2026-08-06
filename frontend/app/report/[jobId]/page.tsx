@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { confirmFingerprint, getJob } from "@/lib/api";
+import { analyze, confirmFingerprint, getJob } from "@/lib/api";
 import type { Job, ProjectFingerprint } from "@/lib/types";
 import StageProgress from "@/components/StageProgress";
 import FingerprintEditor from "@/components/FingerprintEditor";
@@ -21,6 +21,7 @@ export default function ReportPage({ params }: { params: { jobId: string } }) {
   const [error, setError] = useState<string | null>(null);
   // 用户确认指纹后自增，用来重新触发轮询 effect。
   const [resumeToken, setResumeToken] = useState(0);
+  const [rechecking, setRechecking] = useState(false);
 
   // 轮询：每 ~1200ms 拉一次，直到终态 / 等待确认。
   useEffect(() => {
@@ -51,6 +52,19 @@ export default function ReportPage({ params }: { params: { jobId: string } }) {
       if (timer) clearTimeout(timer);
     };
   }, [jobId, resumeToken]);
+
+  // 复检：用同一目标再跑一遍（改版后看哪些问题真正改善）。跳过成本闸门直接出报告。
+  const onRecheck = useCallback(async () => {
+    if (!job?.request) return;
+    setRechecking(true);
+    try {
+      const { job_id } = await analyze({ ...job.request, confirm_fingerprint: false });
+      window.location.href = `/report/${job_id}`;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "复检失败");
+      setRechecking(false);
+    }
+  }, [job]);
 
   // 提交编辑后的指纹并恢复流水线；随后重启轮询。
   const onConfirm = useCallback(
@@ -89,7 +103,11 @@ export default function ReportPage({ params }: { params: { jobId: string } }) {
 
   return (
     <div className="home">
-      <TopNav jobId={job.id} />
+      <TopNav
+        jobId={job.id}
+        onRecheck={job.status === "done" && job.request ? onRecheck : undefined}
+        rechecking={rechecking}
+      />
 
       {job.status === "error" ? (
         <div className="panel">
@@ -119,13 +137,34 @@ export default function ReportPage({ params }: { params: { jobId: string } }) {
   );
 }
 
-function TopNav({ jobId }: { jobId: string }) {
+function TopNav({
+  jobId,
+  onRecheck,
+  rechecking,
+}: {
+  jobId: string;
+  onRecheck?: () => void;
+  rechecking?: boolean;
+}) {
   return (
     <div className="report-top">
       <a href="/" className="link-btn">
         ← 返回，换个项目
       </a>
-      <span className="caseno">卷宗 {jobId}</span>
+      <div className="report-top-r">
+        {onRecheck ? (
+          <button
+            type="button"
+            className="link-btn"
+            onClick={onRecheck}
+            disabled={rechecking}
+            title="用同一目标再跑一遍，对比改版前后"
+          >
+            {rechecking ? "复检中…" : "↻ 复检"}
+          </button>
+        ) : null}
+        <span className="caseno">卷宗 {jobId}</span>
+      </div>
     </div>
   );
 }

@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import type {
   Candidate,
   Cost,
+  Duplication,
   Improvement,
   Job,
+  ProjectFingerprint,
   Report,
   Tone,
 } from "@/lib/types";
@@ -208,6 +210,113 @@ function ImprovementRow({ imp, n }: { imp: Improvement; n: number }) {
   );
 }
 
+/* ------------------------------ 项目指纹卡 ------------------------------ */
+function FingerprintCard({ fp }: { fp: ProjectFingerprint }) {
+  const rows: [string, string][] = [];
+  if (fp.problem) rows.push(["解决的问题", fp.problem]);
+  if (fp.target_users) rows.push(["目标用户", fp.target_users]);
+  if (fp.business_model) rows.push(["商业模式", fp.business_model]);
+  return (
+    <section className="block">
+      <div className="shead">
+        <h2>项目指纹</h2>
+        <span className="line" />
+        <span className="eyebrow">
+          我们理解的你 · 把握 {LEVEL_LABEL[fp.confidence] ?? fp.confidence}
+        </span>
+      </div>
+      <div className="fp">
+        {fp.one_liner ? <p className="fp-one">{fp.one_liner}</p> : null}
+        {rows.length ? (
+          <div className="fp-grid">
+            {rows.map(([k, v]) => (
+              <div key={k} className="fp-row">
+                <span className="fp-k">{k}</span>
+                <span>{v}</span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+        {fp.functional_signature ? (
+          <div className="fp-sig mono">{fp.functional_signature}</div>
+        ) : null}
+        {fp.core_features?.length ? (
+          <div className="fp-feats">
+            {fp.core_features.map((f, i) => (
+              <span key={i} className="feat">
+                {f}
+              </span>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
+/* --------------------- 新意 / 存疑 / 未知（诚实台账） --------------------- */
+// 把流水线算出但过去藏起来的三样东西摆上台面: 真新意、声称与事实的冲突、尚未确定项。
+// 呼应锁定原则"缺证据就诚实降置信"—— 毒舌不新增未经核实的结论。
+function HonestyLedger({ dup, fp }: { dup?: Duplication; fp: ProjectFingerprint }) {
+  const novel = [
+    ...(dup?.novelty ?? []).map((n) => ({ tag: n.type, text: n.description })),
+    ...(fp.observed_differentiators ?? [])
+      .filter((d) => d.proven)
+      .map((d) => ({ tag: "已证实", text: d.description })),
+  ].filter((n) => n.text);
+  const conflicts = (fp.conflicts ?? []).filter(Boolean);
+  const unknowns = (fp.unknowns ?? []).filter(Boolean);
+  if (!novel.length && !conflicts.length && !unknowns.length) return null;
+  return (
+    <section className="block">
+      <div className="shead">
+        <h2>新意 · 存疑 · 未知</h2>
+        <span className="line" />
+        <span className="eyebrow">缺证据就降置信，不硬编</span>
+      </div>
+      <div className="ledger">
+        <div className="led-col ok">
+          <div className="led-h">真正的新意</div>
+          {novel.length ? (
+            novel.map((n, i) => (
+              <div key={i} className="led-row">
+                {n.tag ? <b>{n.tag}</b> : null}
+                {n.text}
+              </div>
+            ))
+          ) : (
+            <div className="led-row muted">未发现明确差异化</div>
+          )}
+        </div>
+        <div className="led-col warn">
+          <div className="led-h">声称 vs 事实</div>
+          {conflicts.length ? (
+            conflicts.map((c, i) => (
+              <div key={i} className="led-row">
+                {c}
+              </div>
+            ))
+          ) : (
+            <div className="led-row muted">无明显冲突</div>
+          )}
+        </div>
+        <div className="led-col unk">
+          <div className="led-h">尚未确定</div>
+          {unknowns.length ? (
+            unknowns.map((u, i) => (
+              <div key={i} className="led-row">
+                {u}
+              </div>
+            ))
+          ) : (
+            <div className="led-row muted">关键信息基本齐全</div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* -------------------------------- 成本页脚 -------------------------------- */
 function CostFooter({ job }: { job: Job }) {
   const cost: Cost | undefined = job.cost;
@@ -329,6 +438,9 @@ export default function ReportView({ job }: { job: Job }) {
         <ToneToggle available={available} tone={tone} onChange={setTone} />
       </div>
 
+      {/* ---------- 项目指纹（我们理解的你） ---------- */}
+      {result?.fingerprint ? <FingerprintCard fp={result.fingerprint} /> : null}
+
       {/* ---------- 结论 ---------- */}
       {report.body_markdown ? (
         <section className="block">
@@ -366,6 +478,11 @@ export default function ReportView({ job }: { job: Job }) {
             })}
           </div>
         </section>
+      ) : null}
+
+      {/* ---------- 新意 · 存疑 · 未知 ---------- */}
+      {result?.fingerprint ? (
+        <HonestyLedger dup={dup} fp={result.fingerprint} />
       ) : null}
 
       {/* ---------- 问题与优点（物证） ---------- */}

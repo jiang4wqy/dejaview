@@ -37,6 +37,22 @@ def analyze(request: AnalysisRequest) -> dict:
     return {"job_id": job.id}
 
 
+@app.get("/api/jobs")
+def list_jobs(limit: int = 20) -> list[dict]:
+    """最近任务列表(为历史 / 复检对比打基础)。"""
+    items = []
+    for j in store.recent(limit):
+        r = j.result
+        items.append({
+            "id": j.id, "status": j.status.value, "stage": j.stage.value,
+            "created_at": j.created_at.isoformat(), "tone": j.request.tone.value,
+            "website_url": j.request.website_url, "github_url": j.request.github_url,
+            "one_liner": r.fingerprint.one_liner if r else "",
+            "duplication": r.duplication.duplication_score if r else None,
+        })
+    return items
+
+
 @app.get("/api/jobs/{job_id}", response_model=Job)
 def get_job(job_id: str) -> Job:
     job = store.get(job_id)

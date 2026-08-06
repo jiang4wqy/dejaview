@@ -25,6 +25,17 @@ def test_make_github_client():
     assert c.name == "github"
 
 
+def test_keywordize_shrinks_long_query():
+    """GitHub 仓库搜索是 AND, 长自然语言 query 会 0 命中 —— 收窄到高信号关键词。"""
+    from app.providers.search_client import keywordize
+    q = "privacy friendly web analytics cookieless server side tracking for privacy conscious site owners"
+    kw4 = keywordize(q, 4)
+    assert kw4 == "privacy web analytics cookieless"   # 去填充词(friendly/for/side/conscious/owners), 取前 4
+    assert keywordize(q, 2) == "privacy web"           # 放宽兜底更短
+    assert keywordize("", 4) == ""                     # 空 query 不炸
+    assert keywordize("Umami", 4) == "umami"           # 单词原样(小写)
+
+
 @pytest.mark.skipif(not LIVE, reason="设 DEJAVIEW_LIVE_TESTS=1 跑联网测试")
 def test_github_search_live():
     client = GitHubSearchClient(per_query=3)

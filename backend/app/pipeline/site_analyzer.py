@@ -21,6 +21,12 @@ def empty(request: AnalysisRequest) -> SiteFacts:
 def analyze(request: AnalysisRequest, svc: Services) -> SiteFacts:
     if not request.website_url:
         return SiteFacts(reachable=False, confidence=Confidence.LOW, missing_info=["未提供网站 URL"])
+    key = svc.cache.key("site", request.website_url, svc.crawler.name,
+                        request.author_statement.model_dump_json())
+    cached = svc.cache.get(key)
+    if cached is not None:
+        svc.log.info("site cache 命中: %s", request.website_url)
+        return SiteFacts.model_validate(cached)
     crawl = svc.crawler.crawl(request.website_url)
     if crawl.note:
         svc.log.info("crawler(%s): %s", svc.crawler.name, crawl.note)
@@ -30,4 +36,5 @@ def analyze(request: AnalysisRequest, svc: Services) -> SiteFacts:
     facts.url = facts.url or request.website_url
     facts.requires_login = facts.requires_login or crawl.requires_login
     facts.fetched_at = facts.fetched_at or datetime.now(timezone.utc)
+    svc.cache.set(key, facts.model_dump(mode="json"))
     return facts

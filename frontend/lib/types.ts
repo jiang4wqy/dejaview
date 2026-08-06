@@ -148,6 +148,19 @@ export interface Job {
   error: string;
 }
 
+// 最近任务摘要（GET /api/jobs）—— 历史 / 复检对比用。
+export interface JobSummary {
+  id: string;
+  status: JobStatus;
+  stage: string;
+  created_at: string;
+  tone: Tone;
+  website_url?: string;
+  github_url?: string;
+  one_liner: string;
+  duplication: number | null;
+}
+
 // ===== 请求/响应体 =====
 
 export interface AuthorStatement {

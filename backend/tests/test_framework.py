@@ -107,3 +107,37 @@ def test_sql_jobstore_roundtrip(tmp_path):
     store.put(got)   # upsert -> 更新
     assert store.get(job.id).error == "e2"
     assert store.get("missing") is None
+
+
+def test_site_analyzer_cache_skips_llm(tmp_path):
+    """开启缓存后, 同一 URL 第二次分析命中缓存, 不再调 LLM。"""
+    from app.pipeline import site_analyzer
+    from app.services import build_services
+    svc = build_services(Settings(provider="mock", search_provider="mock",
+                                   crawler="stub", repomap="stub", cache_dir=str(tmp_path)))
+    req = AnalysisRequest(website_url="https://c.example")
+    f1 = site_analyzer.analyze(req, svc)
+    calls = svc.llm.meter.llm_calls
+    f2 = site_analyzer.analyze(req, svc)   # 第二次: 命中缓存
+    assert svc.llm.meter.llm_calls == calls
+    assert f2.title == f1.title
+
+
+def test_inmemory_recent_orders_new_first():
+    store = InMemoryJobStore()
+    a = store.create(AnalysisRequest(website_url="https://a.example"))
+    b = store.create(AnalysisRequest(website_url="https://b.example"))
+    assert [j.id for j in store.recent(10)] == [b.id, a.id]   # 新→旧
+    assert [j.id for j in store.recent(1)] == [b.id]          # limit 生效
+
+
+def test_redis_recent_dedups_and_reorders():
+    import fakeredis
+
+    from app.jobs import RedisJobStore
+    store = RedisJobStore(client=fakeredis.FakeRedis(decode_responses=True))
+    a = store.create(AnalysisRequest(website_url="https://a.example"))
+    b = store.create(AnalysisRequest(website_url="https://b.example"))
+    assert [j.id for j in store.recent(10)] == [b.id, a.id]
+    store.put(a)   # 再 put a → 去重后置顶, 不重复
+    assert [j.id for j in store.recent(10)] == [a.id, b.id]
