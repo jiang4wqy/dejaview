@@ -341,20 +341,20 @@ function Fold({ title, hint, defaultOpen = false, children }: {
   );
 }
 
-// 一句话总结：按重复度分档 + 语气，措辞平实、少术语。
+// 一句话总结：按重复度分档 + 语气。毒舌=段子暴击，镀金=装腔华尔街投资人。
 function summaryLine(pct: number, tone: Tone): string {
   const roast = tone === "roast";
   if (pct >= 60)
     return roast
       ? "别自欺了——这基本就是个轮子，市面上一抓一大把。"
-      : "结论：与现有方案高度重合，差异化不足，重做的理由并不充分。";
+      : "评级：Pass。同一盘菜的第 N 次加热，这个 valuation 我笑而不语。";
   if (pct >= 40)
     return roast
       ? "似曾相识——你是有点东西，但撞车的地方也真不少。"
-      : "结论：与同类存在明显重叠，需要找到真正的差异点才立得住。";
+      : "评级：观望。有点意思，可护城河呢？call me when you have traction。";
   return roast
     ? "行，居然有点东西——守住这点不一样，别浪费了。"
-    : "结论：具备一定独特性，值得继续，但仍有明确的优化空间。";
+    : "评级：可以聊。至少不是又一个轮子——但想让我投，还差得远。";
 }
 
 /* -------------------------------- 成本页脚 -------------------------------- */
@@ -488,13 +488,15 @@ export default function ReportView({ job }: { job: Job }) {
         <p className="summary-line">{summaryLine(pct, tone)}</p>
         {result?.improvements?.[0] ? (
           <div className="summary-do">
-            <span className="summary-do-k">最该动的一件事</span>
+            <span className="summary-do-k">
+              {tone === "roast" ? "先补最露怯的一处" : "想让我投，先做这个"}
+            </span>
             <span className="summary-do-v">{result.improvements[0].title}</span>
           </div>
         ) : null}
         {dup?.rationale ? (
           <p className="summary-why">
-            <b>为什么这么说 · </b>
+            <b>{tone === "roast" ? "凭啥这么说 · " : "评级依据 · "}</b>
             {dup.rationale}
           </p>
         ) : null}
