@@ -1,8 +1,13 @@
 """相似项目搜索的执行端(可插拔, recall)。search 模块用 LLM 生成 query, 交给它去召回。
 
-- mock:  固定候选池(离线跑通)
-- github: 真实 GitHub 仓库搜索(免费, 可选 token 提额) —— E4-3, 已实现
-- tavily: 通用网页搜索(需 key) —— E4-2, stub
+单源:
+- mock:   固定候选池(离线)
+- github: 真实 GitHub 仓库搜索(免 key, 已验证)
+- v2ex:   V2EX 社区(经 sov2ex 搜索 API), 找中文讨论/替代品
+- juejin: 掘金社区(非官方搜索 API, best-effort)
+- tavily: 通用网页搜索(需 key, stub)
+多源:
+- composite: 合并上面多个(DEJAVIEW_SEARCH_SOURCES=github,v2ex,...), 单源失败不影响其它
 """
 from __future__ import annotations
 
@@ -17,6 +22,8 @@ from app.errors import ConfigError, SearchError
 from app.fixtures.mocks import MOCK_CANDIDATES
 from app.logging import get_logger
 from app.models.schemas import CandidateRef, CandidateSource
+
+_UA = "Mozilla/5.0 (compatible; DejaViewBot/0.1)"
 
 
 class SearchClient(ABC):
@@ -43,40 +50,102 @@ class GitHubSearchClient(SearchClient):
     name = "github"
     API = "https://api.github.com/search/repositories"
 
-    def __init__(self, token_env: str = "GITHUB_TOKEN", per_query: int = 5, timeout: float = 15.0) -> None:
+    def __init__(self, token_env="GITHUB_TOKEN", per_query=5, timeout=15.0):
         self._token = os.getenv(token_env, "")
         self._per_query = per_query
         self._timeout = timeout
         self._log = get_logger("search.github")
 
     def search(self, query, source=None):
-        headers = {"Accept": "application/vnd.github+json", "User-Agent": "dejaview"}
+        headers = {"Accept": "application/vnd.github+json", "User-Agent": _UA}
         if self._token:
             headers["Authorization"] = f"token {self._token}"
         try:
-            r = httpx.get(
-                self.API,
-                params={"q": query, "sort": "stars", "order": "desc", "per_page": self._per_query},
-                headers=headers, timeout=self._timeout,
-            )
+            r = httpx.get(self.API, params={"q": query, "sort": "stars", "order": "desc",
+                          "per_page": self._per_query}, headers=headers,
+                          timeout=self._timeout, trust_env=True)
             r.raise_for_status()
             items = r.json().get("items", [])
         except Exception as e:  # noqa: BLE001
             raise SearchError(f"GitHub 搜索失败(query={query!r}): {e}") from e
-
-        out: list[CandidateRef] = []
+        out = []
         for it in items:
-            stars = it.get("stargazers_count", 0)
             desc = (it.get("description") or "").strip()
             out.append(CandidateRef(
-                name=it.get("full_name", ""),
-                url=it.get("html_url", ""),
+                name=it.get("full_name", ""), url=it.get("html_url", ""),
                 source=CandidateSource.GITHUB,
-                snippet=f"{desc}  ⭐{stars}".strip(),
-                query_used=query,
-                why_surfaced=f"GitHub 搜索命中(按 star 排序): {query}",
-            ))
-        self._log.info("github search %r -> %d 个", query, len(out))
+                snippet=f"{desc}  ⭐{it.get('stargazers_count', 0)}".strip(),
+                query_used=query, why_surfaced=f"GitHub 搜索命中(按 star): {query}"))
+        self._log.info("github %r -> %d", query, len(out))
+        return out
+
+
+class V2exSearchClient(SearchClient):
+    """V2EX 社区搜索(经第三方 sov2ex 全文搜索 API)。找中文讨论 / 替代品 / 吐槽。"""
+    name = "v2ex"
+    API = "https://www.sov2ex.com/api/search"
+
+    def __init__(self, per_query=5, timeout=15.0):
+        self._per_query = per_query
+        self._timeout = timeout
+        self._log = get_logger("search.v2ex")
+
+    def search(self, query, source=None):
+        try:
+            r = httpx.get(self.API, params={"q": query, "size": self._per_query, "sort": "sumup"},
+                          headers={"User-Agent": _UA}, timeout=self._timeout, trust_env=True)
+            r.raise_for_status()
+            hits = r.json().get("hits", [])
+        except Exception as e:  # noqa: BLE001
+            raise SearchError(f"V2EX(sov2ex) 搜索失败(query={query!r}): {e}") from e
+        out = []
+        for h in hits:
+            src = h.get("_source", {})
+            tid = src.get("id")
+            out.append(CandidateRef(
+                name=(src.get("title") or "")[:80],
+                url=f"https://www.v2ex.com/t/{tid}" if tid else "https://www.v2ex.com",
+                source=CandidateSource.CN_COMMUNITY,
+                snippet=(src.get("content") or "")[:160],
+                query_used=query, why_surfaced=f"V2EX 讨论命中: {query}"))
+        self._log.info("v2ex %r -> %d", query, len(out))
+        return out
+
+
+class JuejinSearchClient(SearchClient):
+    """掘金社区搜索(非官方搜索 API, best-effort; 失败即优雅降级)。"""
+    name = "juejin"
+    API = "https://api.juejin.cn/search_api/v1/search"
+
+    def __init__(self, per_query=5, timeout=15.0):
+        self._per_query = per_query
+        self._timeout = timeout
+        self._log = get_logger("search.juejin")
+
+    def search(self, query, source=None):
+        try:
+            r = httpx.get(self.API, params={"query": query, "id_type": "0", "cursor": "0",
+                          "limit": self._per_query, "search_type": "0", "aid": "2608", "spider": "0"},
+                          headers={"User-Agent": _UA}, timeout=self._timeout, trust_env=True)
+            r.raise_for_status()
+            items = r.json().get("data") or []
+        except Exception as e:  # noqa: BLE001
+            raise SearchError(f"掘金搜索失败(query={query!r}): {e}") from e
+        out = []
+        for it in items:
+            doc = it.get("result_model", it)
+            info = doc.get("article_info") or doc.get("entry") or {}
+            title = info.get("title") or doc.get("title") or ""
+            if not title:
+                continue
+            aid = info.get("article_id") or doc.get("article_id") or ""
+            out.append(CandidateRef(
+                name=title[:80],
+                url=f"https://juejin.cn/post/{aid}" if aid else "https://juejin.cn",
+                source=CandidateSource.CN_COMMUNITY,
+                snippet=(info.get("brief_content") or "")[:160],
+                query_used=query, why_surfaced=f"掘金文章命中: {query}"))
+        self._log.info("juejin %r -> %d", query, len(out))
         return out
 
 
@@ -87,16 +156,43 @@ class TavilySearchClient(SearchClient):
         raise NotImplementedError("Tavily 搜索未实现 —— BACKLOG E4-2")
 
 
+class CompositeSearchClient(SearchClient):
+    """合并多个子源; 单源失败不影响其它(去重在 search.find 里做)。"""
+    name = "composite"
+
+    def __init__(self, clients: list[SearchClient]):
+        self._clients = clients
+        self._log = get_logger("search.composite")
+
+    def search(self, query, source=None):
+        out: list[CandidateRef] = []
+        for c in self._clients:
+            try:
+                out.extend(c.search(query, source))
+            except SearchError as e:
+                self._log.warning("子源 %s 失败, 跳过: %s", c.name, e)
+        return out
+
+
+_SINGLE = {
+    "mock": lambda s: MockSearchClient(),
+    "github": lambda s: GitHubSearchClient(s.github_token_env, s.github_per_query, s.search_timeout),
+    "v2ex": lambda s: V2exSearchClient(s.github_per_query, s.search_timeout),
+    "juejin": lambda s: JuejinSearchClient(s.github_per_query, s.search_timeout),
+    "tavily": lambda s: TavilySearchClient(),
+}
+
+
+def _build_one(name: str, settings: Settings) -> SearchClient:
+    if name not in _SINGLE:
+        raise ConfigError(f"未知 search 源: {name!r} (可选 {sorted(_SINGLE)})")
+    return _SINGLE[name](settings)
+
+
 def make_search_client(settings: Settings) -> SearchClient:
-    p = settings.search_provider
-    if p == "mock":
-        return MockSearchClient()
-    if p == "github":
-        return GitHubSearchClient(
-            token_env=settings.github_token_env,
-            per_query=settings.github_per_query,
-            timeout=settings.search_timeout,
-        )
-    if p == "tavily":
-        return TavilySearchClient()
-    raise ConfigError(f"未知 search_provider: {p!r} (可选 mock|github|tavily)")
+    if settings.search_provider == "composite":
+        names = [n.strip() for n in settings.search_sources.split(",") if n.strip()]
+        if not names:
+            raise ConfigError("composite 需要 DEJAVIEW_SEARCH_SOURCES(逗号分隔)")
+        return CompositeSearchClient([_build_one(n, settings) for n in names])
+    return _build_one(settings.search_provider, settings)

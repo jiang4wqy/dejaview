@@ -38,3 +38,24 @@ def test_github_search_live():
         assert r.url.startswith("http")
         assert r.source is CandidateSource.GITHUB
         assert r.name          # full_name 非空
+
+
+def test_composite_and_registry():
+    from app.errors import ConfigError
+    c = make_search_client(Settings(search_provider="composite", search_sources="github,v2ex"))
+    assert c.name == "composite"
+    for name in ("v2ex", "juejin"):
+        assert make_search_client(Settings(search_provider=name)).name == name
+    with pytest.raises(ConfigError):
+        make_search_client(Settings(search_provider="nope"))
+
+
+@pytest.mark.skipif(not LIVE, reason="设 DEJAVIEW_LIVE_TESTS=1 跑联网测试")
+def test_v2ex_live():
+    from app.errors import SearchError
+    from app.providers.search_client import V2exSearchClient
+    try:
+        res = V2exSearchClient(per_query=3).search("mind map")
+    except SearchError as e:
+        pytest.skip(f"网络: {e}")
+    assert isinstance(res, list)

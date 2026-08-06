@@ -14,8 +14,8 @@
 ## E0 · 基础设施 & 协作 [并行]
 - [x] **E0-1** 脚手架：7 模块流水线 + 编排 + mock + 8 测试（已完成）
 - [ ] **E0-2** ★ CI：GitHub Actions 跑 `pytest` + `ruff`/`mypy` — DoD：PR 自动跑绿
-- [ ] **E0-3** ★ 前后端本地一键起（`docker-compose` 或 `Makefile`）— DoD：一条命令起 API+前端
-- [ ] **E0-4** ⏳ 部署：后端容器化 + 前端 Vercel/自托管 — DoD：有可访问的预览环境
+- [x] **E0-3** ★ 一键起：`Makefile`(`make dev`) + `scripts/dev.sh`
+- [x] **E0-4** 部署：`docker-compose`(redis+backend+frontend) + Dockerfile；compose 配置已验证(本机无 docker 未 build)
 - [ ] **E0-5** 约定：`schemas.py` 变更需在 PR 描述里 @所有模块负责人
 
 ## E1 · 网站分析器 `site_analyzer` ★ [并行]
@@ -46,7 +46,7 @@
 - [ ] **E4-2** ★ 接真实搜索：先接 1 个（Tavily 或 Firecrawl search 或 Bing）实现 `SearchClient` — DoD：真实召回 20–30 候选
 - [x] **E4-3** ★ GitHub 搜索源（repos, 按 star）—— 已实现: `DEJAVIEW_SEARCH_PROVIDER=github`（免 key, 可选 GITHUB_TOKEN 提额）
 - [ ] **E4-4** Product Hunt / AlternativeTo / G2 源
-- [ ] **E4-5** 中文社区源（V2EX「分享创造」/ 少数派 / 掘金）
+- [x] **E4-5** 中文社区源：V2EX(经 sov2ex) + 掘金 已实现(best-effort) + `CompositeSearchClient` 多源合并(已实测)
 - [ ] **E4-6** 召回去重与初排（浅读 20–30，交给 verify 深读前 3–5）
 
 ## E5 · 候选验证 `verify` ★
@@ -87,14 +87,14 @@
 - [ ] **E9-4** 重试/降级：某源失败时优雅降级并在报告里标注
 
 ## E10 · 存储 / 任务 [并行]
-- [ ] **E10-1** ★ `Job` 持久化（内存 → Redis/Postgres）
+- [x] **E10-1** ★ `Job` 持久化：`RedisJobStore`(真实 redis 往返已验证) + `make_job_store`；Postgres 留后续
 - [ ] **E10-2** ★ 真正的任务队列（替换后台线程）
 - [ ] **E10-3** ⏳ 用户账户 + 项目版本记录（改版后重新检测哪些问题真正改善）
 - [ ] **E10-4** ⏳ 允许作者纠正指纹并沉淀成高质量项目分析数据集
 
 ## E11 · 评测 / 验收 ★ [并行]
 - [ ] **E11-1** ★ 收集 20–30 个真实项目（明显重复 / 明显创新 / 难判断 三类）
-- [ ] **E11-2** ★ 跑通 `DESIGN.md §9` 的 7 项验收指标，出报告
+- [~] **E11-2** ★ 评测 harness 已就绪(`scripts/eval.py` + 数据集 + `make eval`, 见 `docs/eval_sample.md`)；全量真实校准待跑(有 token 成本)
 - [ ] **E11-3** 重复度评分稳定性、指纹一致性回归脚本
 
 ---

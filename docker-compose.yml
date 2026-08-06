@@ -1,0 +1,44 @@
+# DejaView 生产部署: redis + backend + frontend
+# 用法: cp deploy.env.example .env && 填 DEEPSEEK_API_KEY, 然后 docker compose up -d --build
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      - redis
+    environment:
+      DEJAVIEW_PROVIDER: ${DEJAVIEW_PROVIDER:-deepseek}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      DEJAVIEW_MODEL_CHEAP: ${DEJAVIEW_MODEL_CHEAP:-deepseek-v4-flash}
+      DEJAVIEW_MODEL_STANDARD: ${DEJAVIEW_MODEL_STANDARD:-deepseek-v4-pro}
+      DEJAVIEW_MODEL_STRONG: ${DEJAVIEW_MODEL_STRONG:-deepseek-v4-pro}
+      DEJAVIEW_CRAWLER: builtin
+      DEJAVIEW_REPOMAP: builtin
+      DEJAVIEW_SEARCH_PROVIDER: ${DEJAVIEW_SEARCH_PROVIDER:-composite}
+      DEJAVIEW_SEARCH_SOURCES: ${DEJAVIEW_SEARCH_SOURCES:-github,v2ex}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      DEJAVIEW_JOBSTORE: redis
+      DEJAVIEW_REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-http://localhost:8000}
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+volumes:
+  redis-data:

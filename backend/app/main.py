@@ -17,7 +17,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.jobs import store
+from app.jobs import make_job_store
 from app.models.schemas import AnalysisRequest, Job, JobStatus, ProjectFingerprint, Report
 from app.pipeline.orchestrator import Pipeline
 
@@ -28,6 +28,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+store = make_job_store(get_settings())   # memory | redis(由 DEJAVIEW_JOBSTORE 决定)
 
 
 def _persist(job: Job) -> None:

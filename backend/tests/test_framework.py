@@ -72,3 +72,25 @@ def test_graceful_degradation_on_crawler_failure():
     assert job.status is JobStatus.DONE               # 没有崩, 跑完了
     assert any("site_analysis" in d for d in job.degradations)
     assert job.site_facts.confidence.value == "low"   # 降级为低置信度
+
+
+def test_make_job_store():
+    from app.jobs import InMemoryJobStore, make_job_store
+    assert isinstance(make_job_store(Settings(jobstore="memory")), InMemoryJobStore)
+    with pytest.raises(ConfigError):
+        make_job_store(Settings(jobstore="nope"))
+
+
+def test_redis_jobstore_roundtrip():
+    """RedisJobStore 用 fakeredis 做离线往返测试(序列化/反序列化 Job)。"""
+    import fakeredis
+
+    from app.jobs import RedisJobStore
+    store = RedisJobStore(client=fakeredis.FakeRedis(decode_responses=True))
+    job = store.create(AnalysisRequest(website_url="https://a.example"))
+    got = store.get(job.id)
+    assert got is not None and got.id == job.id and got.content_hash == job.content_hash
+    got.error = "boom"
+    store.put(got)
+    assert store.get(job.id).error == "boom"
+    assert store.get("nonexistent") is None

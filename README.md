@@ -73,7 +73,11 @@ dejaview/
 make install     # 装前后端依赖(venv + npm)
 make dev         # 同时起后端(:8000) + 前端(:3000)
 make test        # 后端测试(20 个)
+make eval        # 评测 harness(默认 mock; 配 .env 后跑真实校准)
 ```
+
+**生产部署**（docker-compose：redis + backend + frontend）：`cp deploy.env.example .env` 填 key，再 `docker compose up -d --build`。
+Job 用 Redis 持久化(`DEJAVIEW_JOBSTORE=redis`)；搜索用多源合并(`DEJAVIEW_SEARCH_PROVIDER=composite`, github+v2ex)。
 
 **离线零成本**（默认，无需任何 key）：直接 `make dev`，前端提交后走 mock，秒出认真版/毒舌版报告。
 

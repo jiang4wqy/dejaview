@@ -1,5 +1,5 @@
 # DejaView 一键命令。首次: make install; 起前后端: make dev
-.PHONY: install test backend frontend dev run
+.PHONY: install test backend frontend dev run eval
 
 install:
 	python3 -m venv backend/.venv
@@ -20,3 +20,6 @@ dev:
 
 run:
 	cd backend && ./.venv/bin/python scripts/run_pipeline.py $(ARGS)
+
+eval:
+	cd backend && ./.venv/bin/python scripts/eval.py $(ARGS)

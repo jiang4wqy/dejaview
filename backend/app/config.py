@@ -42,13 +42,19 @@ class Settings(BaseSettings):
     # ---- 抓取 / repo map / 搜索 执行端(均可插拔) ----
     crawler: str = "stub"          # stub | firecrawl | crawl4ai
     repomap: str = "stub"          # stub | gitingest | aider
-    search_provider: str = "mock"  # mock | tavily | github
+    search_provider: str = "mock"  # mock | github | v2ex | juejin | tavily | composite
+    # composite 时的子源(逗号分隔), 合并多源并去重
+    search_sources: str = "github,v2ex"
 
     # 搜索端配置
     github_token_env: str = "GITHUB_TOKEN"   # 可选; 有则提高 GitHub 搜索速率(30/分 vs 10/分)
     github_per_query: int = 5
     search_timeout: float = 15.0
     tavily_api_key_env: str = "TAVILY_API_KEY"
+
+    # ---- 任务存储: memory(默认) | redis(持久化) ----
+    jobstore: str = "memory"
+    redis_url: str = "redis://localhost:6379/0"
 
     # ---- 其它 ----
     cache_dir: str = ""            # 空 = 关闭磁盘缓存
