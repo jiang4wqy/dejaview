@@ -29,13 +29,15 @@ const STAGE_ORDER = [
 export default function StageProgress({ job }: { job: Job }) {
   const pct = Math.max(0, Math.min(100, Math.round((job.progress ?? 0) * 100)));
   const label = STAGE_LABELS[job.stage] ?? job.stage ?? "处理中";
-  const statusText = job.status === "queued" ? "排队中" : "分析中";
+  const queued = job.status === "queued";
   const currentIndex = STAGE_ORDER.indexOf(job.stage);
 
   return (
-    <section className="card">
+    <div className="panel">
+      <span className="invest-kicker">// 调查中…</span>
+
       <div className="progress-head">
-        <span className="progress-stage">{label}</span>
+        <span className="progress-stage">{queued ? "排队中" : label}</span>
         <span className="progress-pct">{pct}%</span>
       </div>
 
@@ -45,11 +47,14 @@ export default function StageProgress({ job }: { job: Job }) {
         aria-valuenow={pct}
         aria-valuemin={0}
         aria-valuemax={100}
+        aria-label="分析进度"
       >
         <div className="progress-fill" style={{ width: `${pct}%` }} />
       </div>
 
-      <p className="muted small">{statusText}… 页面会自动刷新，请勿关闭。</p>
+      <p className="progress-caption">
+        侦探正在翻你的卷宗，页面会自动刷新——先别关。
+      </p>
 
       <ol className="stagelist">
         {STAGE_ORDER.map((key, i) => {
@@ -69,6 +74,6 @@ export default function StageProgress({ job }: { job: Job }) {
           );
         })}
       </ol>
-    </section>
+    </div>
   );
 }

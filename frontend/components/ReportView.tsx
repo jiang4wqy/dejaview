@@ -1,34 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   Candidate,
   Cost,
   Improvement,
   Job,
-  ProjectFingerprint,
   Report,
   Tone,
 } from "@/lib/types";
 import Markdown from "./Markdown";
 import FindingCard from "./FindingCard";
 
-const LEVEL_LABEL: Record<string, string> = {
-  high: "高",
-  medium: "中",
-  low: "低",
+const LEVEL_LABEL: Record<string, string> = { high: "高", medium: "中", low: "低" };
+
+// 维度 key → 中文标签 + 展示顺序（契约固定六维）。
+const DIM_LABEL: Record<string, string> = {
+  same_problem: "同一问题",
+  same_users: "同一用户",
+  same_io_flow: "输入输出/工作流",
+  feature_overlap: "功能重合",
+  same_mechanism: "核心机制",
+  unique_proven: "独有且已证明",
+};
+const DIM_ORDER = [
+  "same_problem",
+  "same_users",
+  "same_io_flow",
+  "feature_overlap",
+  "same_mechanism",
+  "unique_proven",
+];
+
+// relation → 展示皮肤 + 中文（仅 direct_competitor 用告警色）。
+const RELATION: Record<string, { cls: string; label: string }> = {
+  direct_competitor: { cls: "direct", label: "直接竞品" },
+  alternative: { cls: "adj", label: "替代方案" },
+  adjacent: { cls: "adj", label: "相邻" },
+  abandoned: { cls: "adj", label: "已停更" },
+  superficial: { cls: "adj", label: "表面相似" },
 };
 
-// 重复度百分比：容错处理，score 可能是 0..1 的小数或 0..100 的整数。
+// score 容错：可能是 0..1 小数或 0..100 整数。
 function toPercent(score: number): number {
   const n = score <= 1 ? score * 100 : score;
   return Math.max(0, Math.min(100, Math.round(n)));
-}
-
-function dupLevel(pct: number): string {
-  if (pct >= 66) return "high";
-  if (pct >= 33) return "mid";
-  return "low";
 }
 
 function formatTokens(n: number): string {
@@ -36,6 +52,78 @@ function formatTokens(n: number): string {
   return String(n);
 }
 
+// 印章文案：随重复度分档 + 语气变化（同一事实，两种嘴脸）。
+function verdictStamp(pct: number, tone: Tone): string {
+  const roast = tone === "roast";
+  if (pct >= 60) return roast ? "又一个轮子" : "疑似重复";
+  if (pct >= 40) return roast ? "撞车预警" : "似曾相识";
+  return roast ? "居然有点东西" : "有点东西";
+}
+
+// 从请求派生"被告项目"的显示名（仅用于卷宗抬头，纯装饰）。
+function subjectName(job: Job): string {
+  const gh = job.request?.github_url;
+  const web = job.request?.website_url;
+  if (gh) {
+    const m = gh.match(/github\.com\/([^/]+\/[^/#?]+)/i);
+    if (m) return m[1].replace(/\.git$/, "");
+  }
+  if (web) {
+    try {
+      return new URL(web).hostname.replace(/^www\./, "");
+    } catch {
+      /* 忽略非法 URL */
+    }
+  }
+  if (gh) return gh;
+  return "本项目";
+}
+
+function caseNo(job: Job): string {
+  const slug = (job.id || "").replace(/[^a-z0-9]/gi, "").slice(0, 6).toUpperCase();
+  return `DV-${slug || "000000"}`;
+}
+
+/* ---------------------------------- 表盘 ---------------------------------- */
+function Dial({
+  pct,
+  confidence,
+  dialNum,
+  ignited,
+}: {
+  pct: number;
+  confidence?: string;
+  dialNum: number;
+  ignited: boolean;
+}) {
+  return (
+    <div className="dial" aria-label={`重复造轮子概率 ${pct}%`} role="img">
+      <svg viewBox="0 0 200 200">
+        <circle className="track" cx="100" cy="100" r="82" />
+        <circle
+          className="val"
+          cx="100"
+          cy="100"
+          r="82"
+          pathLength={100}
+          strokeDasharray={100}
+          style={{ strokeDashoffset: ignited ? 100 - pct : 100 }}
+        />
+      </svg>
+      <div className="center">
+        <div className="pct">
+          <span>{dialNum}</span>%
+        </div>
+        <div className="cap">重复造轮子概率</div>
+        {confidence ? (
+          <div className="conf">置信度 · {LEVEL_LABEL[confidence] ?? confidence}</div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------- 语气切换 -------------------------------- */
 function ToneToggle({
   available,
   tone,
@@ -46,313 +134,281 @@ function ToneToggle({
   onChange: (t: Tone) => void;
 }) {
   return (
-    <div className="toggle" role="tablist" aria-label="语气切换">
-      <button
-        type="button"
-        role="tab"
-        aria-selected={tone === "serious"}
-        className={tone === "serious" ? "active" : ""}
-        disabled={!available.includes("serious")}
-        onClick={() => onChange("serious")}
-      >
-        认真
-      </button>
-      <button
-        type="button"
-        role="tab"
-        aria-selected={tone === "roast"}
-        className={tone === "roast" ? "active" : ""}
-        disabled={!available.includes("roast")}
-        onClick={() => onChange("roast")}
-      >
-        毒舌
-      </button>
+    <div className="tonerow">
+      <span className="tonetip">同一份事实，两种语气 →</span>
+      <div className="toggle" data-sel={tone} role="group" aria-label="语气">
+        <span className="knob" aria-hidden="true" />
+        <button
+          type="button"
+          aria-pressed={tone === "serious"}
+          disabled={!available.includes("serious")}
+          onClick={() => onChange("serious")}
+        >
+          认真
+        </button>
+        <button
+          type="button"
+          aria-pressed={tone === "roast"}
+          disabled={!available.includes("roast")}
+          onClick={() => onChange("roast")}
+        >
+          毒舌
+        </button>
+      </div>
     </div>
   );
 }
 
-function CostMeter({ cost }: { cost: Cost }) {
-  if (!cost) return null;
-  return (
-    <div className="cost-meter" title="本次分析的资源开销">
-      <span>LLM 调用 {cost.llm_calls}</span>
-      <span>·</span>
-      <span>输入 {formatTokens(cost.input_tokens)} tokens</span>
-      <span>·</span>
-      <span>输出 {formatTokens(cost.output_tokens)} tokens</span>
-      <span>·</span>
-      <span>搜索 {cost.search_queries} 次</span>
-      <span>·</span>
-      <span>{(cost.seconds ?? 0).toFixed(1)}s</span>
-    </div>
-  );
-}
-
+/* -------------------------------- 候选卡片 -------------------------------- */
 function CandidateCard({ c }: { c: Candidate }) {
   const ref = c.ref;
+  const rel = RELATION[c.relation] ?? { cls: "adj", label: c.relation || "相关" };
+  const desc = c.notes || ref?.snippet || "";
   return (
-    <div className="candidate">
-      <div className="candidate-head">
+    <div className="cand">
+      <span className={`rel ${rel.cls}`}>{rel.label}</span>
+      <h3>
         {ref?.url ? (
-          <a href={ref.url} target="_blank" rel="noreferrer noopener" className="candidate-name">
+          <a href={ref.url} target="_blank" rel="noreferrer noopener">
             {ref?.name || ref.url}
           </a>
         ) : (
-          <span className="candidate-name">{ref?.name || "未知项目"}</span>
+          ref?.name || "未知项目"
         )}
-        {ref?.source ? <span className="tag">{ref.source}</span> : null}
-        {c.relation ? <span className="tag tag-accent">{c.relation}</span> : null}
-        {c.confidence ? (
-          <span className="conf">置信度 {LEVEL_LABEL[c.confidence] ?? c.confidence}</span>
-        ) : null}
-      </div>
-      {ref?.why_surfaced ? (
-        <p className="muted small">为何相关：{ref.why_surfaced}</p>
-      ) : null}
-      {ref?.snippet ? <p className="candidate-snippet">{ref.snippet}</p> : null}
-      {c.notes ? <p className="finding-detail">{c.notes}</p> : null}
+      </h3>
+      {desc ? <p>{desc}</p> : null}
+      {ref?.why_surfaced ? <p className="why">为何相关 · {ref.why_surfaced}</p> : null}
     </div>
   );
 }
 
-function ImprovementCard({ imp }: { imp: Improvement }) {
-  const evidence = imp.evidence ?? [];
+/* -------------------------------- 改进条目 -------------------------------- */
+function ImprovementRow({ imp, n }: { imp: Improvement; n: number }) {
   return (
-    <div className="improvement">
-      <div className="finding-head">
-        <span className="finding-title">{imp.title}</span>
-        {imp.impact ? (
-          <span className="badge impact">影响 {LEVEL_LABEL[imp.impact] ?? imp.impact}</span>
+    <div className="imp">
+      <div className="n">{n}</div>
+      <div>
+        <div className="t">{imp.title}</div>
+        {imp.rationale ? <div className="r">{imp.rationale}</div> : null}
+        {imp.learn_from?.length ? (
+          <div className="learn">可借鉴 · {imp.learn_from.join("、")}</div>
         ) : null}
-        {imp.cost ? (
-          <span className="badge cost">成本 {LEVEL_LABEL[imp.cost] ?? imp.cost}</span>
-        ) : null}
+        <div className="chips">
+          {imp.impact ? (
+            <span className={`chip ${imp.impact === "high" ? "hi" : ""}`}>
+              影响 {LEVEL_LABEL[imp.impact] ?? imp.impact}
+            </span>
+          ) : null}
+          {imp.cost ? (
+            <span className="chip">成本 {LEVEL_LABEL[imp.cost] ?? imp.cost}</span>
+          ) : null}
+        </div>
       </div>
-      {imp.rationale ? <p className="finding-detail">{imp.rationale}</p> : null}
-      {imp.learn_from?.length ? (
-        <p className="muted small">可借鉴：{imp.learn_from.join("、")}</p>
-      ) : null}
-      {evidence.length ? (
-        <details className="evidence-details">
-          <summary className="link-btn">点开证据 ({evidence.length})</summary>
-          <ul className="evidence-list">
-            {evidence.map((ev, i) => (
-              <li key={i} className="evidence">
-                <div className="evidence-meta">
-                  {ev.source_type ? <span className="tag">{ev.source_type}</span> : null}
-                  {ev.locator ? <span className="evidence-locator">{ev.locator}</span> : null}
-                </div>
-                {ev.quote ? <blockquote className="evidence-quote">{ev.quote}</blockquote> : null}
-              </li>
-            ))}
-          </ul>
-        </details>
-      ) : null}
     </div>
   );
 }
 
-function FingerprintSummary({ fp }: { fp: ProjectFingerprint }) {
+/* -------------------------------- 成本页脚 -------------------------------- */
+function CostFooter({ job }: { job: Job }) {
+  const cost: Cost | undefined = job.cost;
+  const sources: string[] = [];
+  if (job.request?.website_url) sources.push("网站");
+  if (job.request?.github_url) sources.push("仓库");
   return (
-    <section className="card">
-      <h3 className="card-title">项目指纹</h3>
-      <div className="kv">
-        <div className="kv-row">
-          <span className="kv-k">一句话简介</span>
-          <span className="kv-v">{fp.one_liner || "—"}</span>
-        </div>
-        <div className="kv-row">
-          <span className="kv-k">目标用户</span>
-          <span className="kv-v">{fp.target_users || "—"}</span>
-        </div>
-        <div className="kv-row">
-          <span className="kv-k">解决的问题</span>
-          <span className="kv-v">{fp.problem || "—"}</span>
-        </div>
-        <div className="kv-row">
-          <span className="kv-k">输入 / 处理 / 输出</span>
-          <span className="kv-v">
-            {[fp.io?.input, fp.io?.processing, fp.io?.output].filter(Boolean).join(" → ") || "—"}
-          </span>
-        </div>
-        <div className="kv-row">
-          <span className="kv-k">功能签名</span>
-          <span className="kv-v">{fp.functional_signature || "—"}</span>
-        </div>
-        <div className="kv-row">
-          <span className="kv-k">商业模式</span>
-          <span className="kv-v">{fp.business_model || "—"}</span>
-        </div>
+    <>
+      <div className="cost">
+        {cost ? (
+          <>
+            <span>{cost.llm_calls} 次调用</span>
+            <span>~{formatTokens((cost.input_tokens ?? 0) + (cost.output_tokens ?? 0))} tokens</span>
+            <span>{cost.search_queries} 次检索</span>
+            <span>{(cost.seconds ?? 0).toFixed(0)}s</span>
+          </>
+        ) : null}
+        {sources.length ? <span>数据源 · {sources.join(" + ")}</span> : null}
+        {job.degradations?.length ? <span>降级 {job.degradations.length} 项</span> : null}
       </div>
-
-      {fp.core_features?.length ? (
-        <>
-          <h4 className="mini-title">核心功能</h4>
-          <div className="chips">
-            {fp.core_features.map((f, i) => (
-              <span key={i} className="chip">
-                {f}
-              </span>
-            ))}
-          </div>
-        </>
-      ) : null}
-
-      {fp.claimed_novelty?.length ? (
-        <>
-          <h4 className="mini-title">宣称的创新点</h4>
-          <ul className="bullet">
-            {fp.claimed_novelty.map((n, i) => (
-              <li key={i}>{n}</li>
-            ))}
-          </ul>
-        </>
-      ) : null}
-
-      {fp.observed_differentiators?.length ? (
-        <>
-          <h4 className="mini-title">观察到的差异点</h4>
-          <ul className="bullet">
-            {fp.observed_differentiators.map((d, i) => (
-              <li key={i}>
-                {d.description}{" "}
-                <span className={`badge ${d.proven ? "impact" : "cost"}`}>
-                  {d.proven ? "已验证" : "未验证"}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : null}
-    </section>
+      <footer className="report-footer">
+        DejaView · 证据化项目锐评 ——{" "}
+        <b>刻薄可以主观，事实不能主观；锐评项目，不攻击开发者本人。</b>
+      </footer>
+    </>
   );
 }
 
+/* ================================ 报告主体 ================================ */
 export default function ReportView({ job }: { job: Job }) {
   const reports = job.reports ?? {};
   const available: Tone[] = [];
   if (reports.serious) available.push("serious");
   if (reports.roast) available.push("roast");
 
-  const [tone, setTone] = useState<Tone>(available[0] ?? "serious");
-  // 前端切换：直接从已获取的两份报告里取，不重新请求后端。
-  const report: Report | undefined = reports[tone] ?? reports.serious ?? reports.roast;
+  const [tone, setTone] = useState<Tone>(
+    reports.serious ? "serious" : available[0] ?? "serious",
+  );
 
   const result = job.result;
   const dup = result?.duplication;
-  const dupPct = dup ? toPercent(dup.duplication_score) : null;
+  const pct = dup ? toPercent(dup.duplication_score) : 0;
 
+  // 载入动效：表盘填充 + 数字滚动 + 印章落章 + 维度条生长。
+  const [ignited, setIgnited] = useState(false);
+  const [dialNum, setDialNum] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    let to: ReturnType<typeof setTimeout> | null = null;
+    let iv: ReturnType<typeof setInterval> | null = null;
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+    raf = requestAnimationFrame(() => {
+      to = setTimeout(() => {
+        setIgnited(true);
+        if (reduce || pct <= 0) {
+          setDialNum(pct);
+          return;
+        }
+        let n = 0;
+        const step = Math.max(1, Math.round(pct / 34));
+        iv = setInterval(() => {
+          n += step;
+          if (n >= pct) {
+            n = pct;
+            if (iv) clearInterval(iv);
+          }
+          setDialNum(n);
+        }, 34);
+      }, 180);
+    });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      if (to) clearTimeout(to);
+      if (iv) clearInterval(iv);
+    };
+  }, [pct]);
+
+  const report: Report | undefined = reports[tone] ?? reports.serious ?? reports.roast;
   if (!report) {
     return (
-      <section className="card">
+      <div className="panel">
         <p className="muted">报告数据缺失。</p>
-      </section>
+      </div>
     );
   }
 
+  // 事实层（共享，语气无关）：问题在前、优点在后。切换语气不改这里。
+  const findings = [...(result?.issues ?? []), ...(result?.strengths ?? [])];
+
+  // 维度：已知顺序在前，未知 key 追加在后。
+  const dims = dup?.dimensions ?? {};
+  const dimKeys = [
+    ...DIM_ORDER.filter((k) => k in dims),
+    ...Object.keys(dims).filter((k) => !DIM_ORDER.includes(k)),
+  ];
+
   return (
-    <div className="report">
-      {/* 头部：标题 + 语气切换 + 重复度徽标 */}
-      <section className="card">
-        <div className="report-headline-row">
-          <h1 className="headline">{report.headline}</h1>
-          <ToneToggle available={available} tone={tone} onChange={setTone} />
+    <div className="dv" data-tone={tone}>
+      {/* ---------- HERO ---------- */}
+      <div className="hero">
+        <div className={`stamp ${ignited ? "in" : ""}`}>{verdictStamp(pct, tone)}</div>
+        <div className="hero-grid">
+          <div>
+            <div className="subject">
+              // 卷宗 {caseNo(job)} · <b>{subjectName(job)}</b>
+            </div>
+            <h1 className="verdict">{report.headline}</h1>
+            {dup?.rationale ? <p className="lede">{dup.rationale}</p> : null}
+            {dup?.search_scope_note ? (
+              <div className="scope">{dup.search_scope_note}</div>
+            ) : null}
+          </div>
+          <Dial pct={pct} confidence={dup?.confidence} dialNum={dialNum} ignited={ignited} />
         </div>
+        <ToneToggle available={available} tone={tone} onChange={setTone} />
+      </div>
 
-        <div className="badges-row">
-          {dupPct !== null ? (
-            <span className={`badge-dup ${dupLevel(dupPct)}`}>
-              重复造轮子概率 {dupPct}%
-            </span>
-          ) : null}
-          {dup?.confidence ? (
-            <span className="conf">裁判置信度 {LEVEL_LABEL[dup.confidence] ?? dup.confidence}</span>
-          ) : null}
-        </div>
+      {/* ---------- 结论 ---------- */}
+      {report.body_markdown ? (
+        <section className="block">
+          <div className="shead">
+            <span className="eyebrow">// 结论</span>
+            <span className="line" />
+          </div>
+          <Markdown text={report.body_markdown} className="prose" />
+        </section>
+      ) : null}
 
-        {dup?.search_scope_note ? (
-          <p className="scope-note">搜索范围说明：{dup.search_scope_note}</p>
-        ) : null}
-      </section>
+      {/* ---------- 重复度拆解 ---------- */}
+      {dimKeys.length ? (
+        <section className="block">
+          <div className="shead">
+            <h2>重复度拆解</h2>
+            <span className="line" />
+            <span className="eyebrow">0 = 独一份 · 1 = 完全重合</span>
+          </div>
+          <div className="dims">
+            {dimKeys.map((k) => {
+              const v = dims[k];
+              const p = toPercent(v);
+              return (
+                <div key={k} className="dim">
+                  <div className="k">
+                    <span>{DIM_LABEL[k] ?? k}</span>
+                    <b>{(v <= 1 ? v : v / 100).toFixed(2)}</b>
+                  </div>
+                  <div className="bar">
+                    <i style={{ width: ignited ? `${p}%` : "0%" }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
 
-      {/* 正文 Markdown */}
-      <section className="card">
-        <Markdown text={report.body_markdown} />
-      </section>
-
-      {/* 锐评要点（随语气切换的 findings） */}
-      {report.findings?.length ? (
-        <section className="card">
-          <h3 className="card-title">锐评要点</h3>
-          <div className="finding-list">
-            {report.findings.map((f) => (
+      {/* ---------- 问题与优点（物证） ---------- */}
+      {findings.length ? (
+        <section className="block">
+          <div className="shead">
+            <h2>问题与优点</h2>
+            <span className="line" />
+            <span className="eyebrow">每条可点开物证</span>
+          </div>
+          <div>
+            {findings.map((f) => (
               <FindingCard key={f.id} finding={f} />
             ))}
           </div>
         </section>
       ) : null}
 
-      {/* 重复度裁判细节 */}
-      {dup ? (
-        <section className="card">
-          <h3 className="card-title">重复度裁判</h3>
-          {dup.rationale ? <p className="finding-detail">{dup.rationale}</p> : null}
-
-          {dup.dimensions && Object.keys(dup.dimensions).length ? (
-            <>
-              <h4 className="mini-title">各维度相似度</h4>
-              <div className="dims">
-                {Object.entries(dup.dimensions).map(([k, v]) => {
-                  const p = toPercent(v);
-                  return (
-                    <div key={k} className="dim">
-                      <div className="dim-head">
-                        <span>{k}</span>
-                        <span className="muted">{p}%</span>
-                      </div>
-                      <div className="progress-track slim">
-                        <div className={`progress-fill ${dupLevel(p)}`} style={{ width: `${p}%` }} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </>
-          ) : null}
-
-          {dup.novelty?.length ? (
-            <>
-              <h4 className="mini-title">新意点</h4>
-              <ul className="bullet">
-                {dup.novelty.map((n, i) => (
-                  <li key={i}>
-                    <span className="tag tag-accent">{n.type}</span> {n.description}
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : null}
-
-          {dup.top_similar?.length ? (
-            <>
-              <h4 className="mini-title">最相似项目</h4>
-              <div className="chips">
-                {dup.top_similar.map((s, i) => (
-                  <span key={i} className="chip">
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </>
-          ) : null}
+      {/* ---------- 改进优先级 ---------- */}
+      {result?.improvements?.length ? (
+        <section className="block">
+          <div className="shead">
+            <h2>改进优先级</h2>
+            <span className="line" />
+            <span className="eyebrow">按 影响 × 成本</span>
+          </div>
+          <div className="imps">
+            {result.improvements.map((imp, i) => (
+              <ImprovementRow key={imp.id} imp={imp} n={i + 1} />
+            ))}
+          </div>
         </section>
       ) : null}
 
-      {/* 相似项目候选 */}
+      {/* ---------- 对照物 ---------- */}
       {result?.candidates?.length ? (
-        <section className="card">
-          <h3 className="card-title">相似项目候选（{result.candidates.length}）</h3>
-          <div className="candidate-list">
+        <section className="block">
+          <div className="shead">
+            <h2>对照物 · 召回竞品</h2>
+            <span className="line" />
+            <span className="eyebrow">{result.candidates.length} 个</span>
+          </div>
+          <div className="cands">
             {result.candidates.map((c, i) => (
               <CandidateCard key={i} c={c} />
             ))}
@@ -360,46 +416,8 @@ export default function ReportView({ job }: { job: Job }) {
         </section>
       ) : null}
 
-      {/* 亮点 / 问题（来自结果的事实层，语气无关） */}
-      {result?.strengths?.length ? (
-        <section className="card">
-          <h3 className="card-title">亮点</h3>
-          <div className="finding-list">
-            {result.strengths.map((f) => (
-              <FindingCard key={f.id} finding={f} />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {result?.issues?.length ? (
-        <section className="card">
-          <h3 className="card-title">问题</h3>
-          <div className="finding-list">
-            {result.issues.map((f) => (
-              <FindingCard key={f.id} finding={f} />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {/* 改进建议 */}
-      {result?.improvements?.length ? (
-        <section className="card">
-          <h3 className="card-title">改进建议</h3>
-          <div className="improvement-list">
-            {result.improvements.map((imp) => (
-              <ImprovementCard key={imp.id} imp={imp} />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {/* 项目指纹汇总 */}
-      {result?.fingerprint ? <FingerprintSummary fp={result.fingerprint} /> : null}
-
-      {/* 开销计量（低调展示） */}
-      <CostMeter cost={job.cost} />
+      {/* ---------- 成本 / 页脚 ---------- */}
+      <CostFooter job={job} />
     </div>
   );
 }

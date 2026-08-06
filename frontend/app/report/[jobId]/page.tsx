@@ -68,31 +68,39 @@ export default function ReportPage({ params }: { params: { jobId: string } }) {
   // 首屏加载中。
   if (!job) {
     return (
-      <div className="report-page">
+      <div className="home">
         <TopNav jobId={jobId} />
         {error ? (
-          <section className="card">
-            <h2 className="card-title">出错了</h2>
+          <div className="panel">
+            <h2 className="panel-title">出错了</h2>
             <p className="error">{error}</p>
-          </section>
+          </div>
         ) : (
-          <section className="card">
-            <p className="muted">加载任务中…</p>
-          </section>
+          <div className="panel">
+            <span className="invest-kicker">// 调查中…</span>
+            <p className="muted" style={{ margin: "10px 0 0" }}>
+              正在调取卷宗…
+            </p>
+          </div>
         )}
       </div>
     );
   }
 
   return (
-    <div className="report-page">
+    <div className="home">
       <TopNav jobId={job.id} />
 
       {job.status === "error" ? (
-        <section className="card">
-          <h2 className="card-title">分析失败</h2>
+        <div className="panel">
+          <span className="invest-kicker" style={{ color: "var(--crit)" }}>
+            // 调查中止
+          </span>
+          <h2 className="panel-title" style={{ marginTop: 10 }}>
+            分析失败
+          </h2>
           <p className="error">{job.error || "未知错误。"}</p>
-        </section>
+        </div>
       ) : job.status === "await_confirm" && job.pending_fingerprint ? (
         <FingerprintEditor fingerprint={job.pending_fingerprint} onConfirm={onConfirm} />
       ) : job.status === "done" ? (
@@ -103,7 +111,9 @@ export default function ReportPage({ params }: { params: { jobId: string } }) {
 
       {/* 非终态时的瞬时连接错误提示（仍在重试）。 */}
       {error && !isTerminal(job.status) ? (
-        <p className="error small">连接异常：{error}（正在重试…）</p>
+        <p className="error small" style={{ marginTop: 12 }}>
+          连接异常：{error}（正在重试…）
+        </p>
       ) : null}
     </div>
   );
@@ -113,9 +123,9 @@ function TopNav({ jobId }: { jobId: string }) {
   return (
     <div className="report-top">
       <a href="/" className="link-btn">
-        ← 返回重新提交
+        ← 返回，换个项目
       </a>
-      <span className="muted small mono">任务 {jobId}</span>
+      <span className="caseno">卷宗 {jobId}</span>
     </div>
   );
 }

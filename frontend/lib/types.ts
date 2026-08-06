@@ -122,6 +122,7 @@ export interface Cost {
   output_tokens: number;
   search_queries: number;
   seconds: number;
+  stage_seconds?: Record<string, number>;
 }
 
 export interface Reports {
@@ -140,6 +141,10 @@ export interface Job {
   result?: AnalysisResult;
   reports: Reports;
   cost: Cost;
+  // 降级记录：某步失败但流水线继续（后端可选返回）。
+  degradations?: string[];
+  // 原始请求（后端始终回传）；仅用于报告页派生"卷宗"标题，可选以保持宽松。
+  request?: AnalyzeRequest;
   error: string;
 }
 

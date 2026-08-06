@@ -26,7 +26,7 @@ export default function HomePage() {
 
     // 校验：网站链接与 GitHub 仓库至少填一个。
     if (!websiteUrl.trim() && !githubUrl.trim()) {
-      setError("请至少填写「网站链接」或「GitHub 仓库」其中之一。");
+      setError("至少给一条线索：网站链接或 GitHub 仓库，二选一。");
       return;
     }
 
@@ -53,15 +53,18 @@ export default function HomePage() {
 
   return (
     <div className="home">
-      <section className="hero">
-        <h1 className="hero-title">让 DejaView 锐评你的项目</h1>
-        <p className="hero-sub">
-          提交一个网站（可选 GitHub 仓库），回答三个问题，选择语气。
-          我们会提炼项目指纹、搜索相似项目、给出重复度裁判与改进建议。
+      <section className="home-hero">
+        <span className="home-kicker">// 证据化项目锐评</span>
+        <h1 className="home-title">
+          把你的项目丢进来，<span className="hl">被 AI 看穿</span>
+        </h1>
+        <p className="home-sub">
+          提炼项目指纹、检索相似项目、给出重复度裁判与改进优先级——每条结论都能点开物证。
+          认真或毒舌，同一份事实，两种语气。
         </p>
       </section>
 
-      <form className="card form" onSubmit={onSubmit}>
+      <form className="panel form" onSubmit={onSubmit}>
         <label className="field">
           <span>
             网站链接 <span className="req">*</span>
@@ -87,7 +90,7 @@ export default function HomePage() {
             onChange={(e) => setGithubUrl(e.target.value)}
           />
         </label>
-        <p className="muted small">* 网站链接与 GitHub 仓库至少填写其中之一。</p>
+        <p className="faint small mono">* 网站与 GitHub 至少填一个，两个都给结论更准。</p>
 
         <div className="divider" />
 
@@ -124,13 +127,13 @@ export default function HomePage() {
         <div className="divider" />
 
         <div className="field">
-          <span>语气</span>
-          <div className="toggle" role="radiogroup" aria-label="选择语气">
+          <span>先定个语气</span>
+          <div className="toggle" data-sel={tone} role="radiogroup" aria-label="选择语气">
+            <span className="knob" aria-hidden="true" />
             <button
               type="button"
               role="radio"
               aria-checked={tone === "serious"}
-              className={tone === "serious" ? "active" : ""}
               onClick={() => setTone("serious")}
             >
               认真
@@ -139,7 +142,6 @@ export default function HomePage() {
               type="button"
               role="radio"
               aria-checked={tone === "roast"}
-              className={tone === "roast" ? "active" : ""}
               onClick={() => setTone("roast")}
             >
               毒舌
@@ -153,14 +155,14 @@ export default function HomePage() {
             checked={confirmFingerprint}
             onChange={(e) => setConfirmFingerprint(e.target.checked)}
           />
-          <span>提交前让我确认项目指纹</span>
+          <span>提交前让我确认项目指纹（省 token，也更准）</span>
         </label>
 
         {error ? <p className="error">{error}</p> : null}
 
         <div className="actions">
-          <button type="submit" className="btn-primary" disabled={submitting}>
-            {submitting ? "提交中…" : "开始锐评"}
+          <button type="submit" className="btn" disabled={submitting}>
+            {submitting ? "提交中…" : "开始锐评 →"}
           </button>
         </div>
       </form>

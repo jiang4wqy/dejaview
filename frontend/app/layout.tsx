@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export const metadata: Metadata = {
   title: "DejaView · 项目锐评",
@@ -11,13 +12,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="zh">
       <body>
-        <header className="topbar">
-          <div className="topbar-inner">
+        <header className="app-topbar">
+          <div className="app-topbar-inner">
             <a href="/" className="brand">
-              <span className="brand-name">DejaView</span>
-              <span className="brand-sep">·</span>
-              <span className="brand-sub">项目锐评</span>
+              <span className="dot" aria-hidden="true" />
+              DejaView <small>// 项目锐评</small>
             </a>
+            <ThemeToggle />
           </div>
         </header>
         <main className="main">{children}</main>
