@@ -22,6 +22,7 @@ type ToneCtx = {
   setTone: (t: Tone) => void;
   enterIntro: () => void; // 从介绍页进入 → 选择审判官
   reset: () => void; // 回到开场重新选审判官（保留已看过介绍）
+  restart: () => void; // 从最开始（介绍页）重新来过
 };
 
 const Ctx = createContext<ToneCtx>({
@@ -31,6 +32,7 @@ const Ctx = createContext<ToneCtx>({
   setTone: () => {},
   enterIntro: () => {},
   reset: () => {},
+  restart: () => {},
 });
 
 export const PERSONA: Record<Tone, { name: string; venue: string; emoji: string }> = {
@@ -82,9 +84,15 @@ export function ToneProvider({ children }: { children: ReactNode }) {
     window.localStorage.removeItem(KEY);
     setToneState(null);
   }, []);
+  // 从最开始重新来过：清掉世界 + 介绍标记，整页回到介绍页
+  const restart = useCallback(() => {
+    window.localStorage.removeItem(KEY);
+    window.localStorage.removeItem(INTRO_KEY);
+    window.location.href = "/";
+  }, []);
 
   return (
-    <Ctx.Provider value={{ tone, ready, seenIntro, setTone, enterIntro, reset }}>
+    <Ctx.Provider value={{ tone, ready, seenIntro, setTone, enterIntro, reset, restart }}>
       {children}
     </Ctx.Provider>
   );

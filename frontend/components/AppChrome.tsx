@@ -6,7 +6,7 @@ import { PERSONA, ToneProvider, useTone } from "@/lib/tone";
 import WorldFx from "./WorldFx";
 
 function TopBar() {
-  const { tone, setTone } = useTone();
+  const { tone, setTone, restart } = useTone();
   const other = tone === "roast" ? "serious" : "roast";
   return (
     <header className="app-topbar">
@@ -16,15 +16,20 @@ function TopBar() {
           DejaView <small>// 证据化项目锐评</small>
         </a>
         {tone ? (
-          <button
-            className="persona-pill"
-            onClick={() => setTone(other)}
-            title={`切到「${PERSONA[other].name}」`}
-          >
-            <span className="persona-emoji">{PERSONA[tone].emoji}</span>
-            <span className="persona-name">{PERSONA[tone].name}</span>
-            <span className="persona-swap">切 {PERSONA[other].emoji}</span>
-          </button>
+          <div className="topbar-tools">
+            <button className="topbar-restart" onClick={restart} title="回到最开始的介绍页">
+              ↻ 从头
+            </button>
+            <button
+              className="persona-pill"
+              onClick={() => setTone(other)}
+              title={`切到「${PERSONA[other].name}」`}
+            >
+              <span className="persona-emoji">{PERSONA[tone].emoji}</span>
+              <span className="persona-name">{PERSONA[tone].name}</span>
+              <span className="persona-swap">切 {PERSONA[other].emoji}</span>
+            </button>
+          </div>
         ) : null}
       </div>
     </header>
