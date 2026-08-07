@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "gitingest",
+    "label": "Gitingest",
+    "subtitle": "将任意 Git 仓库转换为适合 LLM 的文本摘要（digest）",
+    "dup": 0.65,
+    "website": "https://gitingest.com",
+    "github": "https://github.com/cyclotruc/gitingest"
+  },
+  {
+    "slug": "excalidraw",
+    "label": "Excalidraw",
+    "subtitle": "开源的虚拟手绘风格协作白板，支持端到端加密和本地优先存储。",
+    "dup": 0.6,
+    "website": "https://excalidraw.com",
+    "github": "https://github.com/excalidraw/excalidraw"
+  },
+  {
+    "slug": "kutt",
+    "label": "Kutt",
+    "subtitle": "现代URL缩短器，支持自定义域名、多数据库和自托管部署",
+    "dup": 0.15,
+    "website": "https://kutt.it",
+    "github": "https://github.com/thedevs-network/kutt"
+  }
+]

@@ -1,0 +1,2469 @@
+{
+  "id": "527136eb8546",
+  "schema_version": "0.1",
+  "content_hash": "803ed37156b50e47",
+  "status": "done",
+  "stage": "done",
+  "progress": 1.0,
+  "created_at": "2026-08-07T02:30:57.950289Z",
+  "updated_at": "2026-08-07T02:39:22.316701Z",
+  "request": {
+    "website_url": "https://excalidraw.com",
+    "github_url": "https://github.com/excalidraw/excalidraw",
+    "description": "",
+    "author_statement": {
+      "target_users": "需要快速画图的团队",
+      "problem_solved": "手绘风白板",
+      "claimed_novelty": "手绘质感+端到端加密协作"
+    },
+    "tone": "roast",
+    "confirm_fingerprint": false,
+    "language": "zh"
+  },
+  "site_facts": {
+    "url": "https://excalidraw.com",
+    "fetched_at": "2026-08-07T02:31:30.453099Z",
+    "reachable": true,
+    "requires_login": false,
+    "title": "Excalidraw Whiteboard",
+    "description": "Excalidraw is a virtual collaborative whiteboard tool that lets you easily sketch diagrams that have a hand-drawn feel to them.",
+    "target_users": "",
+    "core_promise": "让用户轻松绘制具有手绘感的图表",
+    "inputs": "",
+    "outputs": "",
+    "feature_list": [
+      "虚拟协作白板",
+      "绘制手绘感图表"
+    ],
+    "use_flow": [],
+    "pricing": "",
+    "business_model": "",
+    "key_pages": [
+      {
+        "type": "website",
+        "url": "https://excalidraw.com",
+        "title": "Excalidraw Whiteboard"
+      }
+    ],
+    "screenshots": [],
+    "objective_metrics": {},
+    "raw_markdown_ref": "https://excalidraw.com (抓取内容)",
+    "evidence": [
+      {
+        "source_type": "website",
+        "locator": "https://excalidraw.com",
+        "quote": "Excalidraw is a virtual collaborative whiteboard tool that lets you easily sketch diagrams that have a hand-drawn feel to them.",
+        "confidence": "high",
+        "note": "支撑核心承诺与功能列表"
+      }
+    ],
+    "missing_info": [
+      "目标用户未明确提及",
+      "输入输出未说明",
+      "使用流程未说明",
+      "定价未提及",
+      "商业模式未提及",
+      "端到端加密协作未在页面提及"
+    ],
+    "confidence": "medium"
+  },
+  "repo_facts": {
+    "url": "https://github.com/excalidraw/excalidraw",
+    "fetched_at": "2026-08-07T02:32:00.802273Z",
+    "reachable": true,
+    "description": "An open source virtual hand-drawn style whiteboard. Collaborative and end-to-end encrypted.",
+    "topics": [],
+    "primary_language": "TypeScript",
+    "languages": [
+      "TypeScript",
+      "JavaScript"
+    ],
+    "readme_summary": "Excalidraw is an open-source virtual hand-drawn style whiteboard. It supports real-time collaboration and end-to-end encryption. The npm package @excalidraw/excalidraw is provided for integration, and excalidraw-app is a minimal showcase app (excalidraw.com) with PWA, collaboration, encryption, local-first storage, and shareable links.",
+    "dependencies": [
+      "react",
+      "react-dom",
+      "@excalidraw/excalidraw",
+      "typescript",
+      "vite",
+      "vitest"
+    ],
+    "config_files": [
+      "package.json",
+      "tsconfig.json",
+      "vitest.config.mts",
+      ".eslintrc.json",
+      "vercel.json",
+      "Dockerfile",
+      "docker-compose.yml",
+      ".env.development",
+      ".env.production",
+      ".env.test",
+      ".npmrc",
+      ".lintstagedrc.js",
+      "crowdin.yml"
+    ],
+    "key_modules": [
+      {
+        "path": "excalidraw-app/App.tsx",
+        "role": "主应用组件"
+      },
+      {
+        "path": "excalidraw-app/index.tsx",
+        "role": "应用入口"
+      },
+      {
+        "path": "excalidraw-app/collab/Collab.tsx",
+        "role": "实时协作核心"
+      },
+      {
+        "path": "excalidraw-app/collab/Portal.tsx",
+        "role": "协作渲染 Portal"
+      },
+      {
+        "path": "excalidraw-app/data/index.ts",
+        "role": "数据层入口"
+      },
+      {
+        "path": "excalidraw-app/data/LocalData.ts",
+        "role": "本地数据持久化"
+      },
+      {
+        "path": "excalidraw-app/data/firebase.ts",
+        "role": "Firebase 协作后端"
+      },
+      {
+        "path": "packages/excalidraw",
+        "role": "核心编辑器 npm 包"
+      }
+    ],
+    "entrypoints": [
+      "excalidraw-app/index.tsx",
+      "excalidraw-app/App.tsx",
+      "examples/with-nextjs/src/app/page.tsx",
+      "examples/with-script-in-browser/index.tsx"
+    ],
+    "api_routes": [],
+    "data_models": [
+      "ExcalidrawElement",
+      "ExcalidrawAppState",
+      "ExcalidrawData",
+      "ExcalidrawFile"
+    ],
+    "repo_map_ref": "",
+    "activity": {
+      "stars": null,
+      "forks": null,
+      "last_commit_at": null,
+      "recent_release": "",
+      "commit_frequency": ""
+    },
+    "license": "MIT",
+    "evidence": [
+      {
+        "source_type": "github_readme",
+        "locator": "README.md:1",
+        "quote": "An open source virtual hand-drawn style whiteboard. Collaborative and end-to-end encrypted.",
+        "confidence": "high",
+        "note": "描述来自 README 首句"
+      },
+      {
+        "source_type": "github_readme",
+        "locator": "README.md:75",
+        "quote": "Excalidraw is released under the MIT license.",
+        "confidence": "high",
+        "note": "README badge 显示 MIT"
+      },
+      {
+        "source_type": "github_config",
+        "locator": "package.json:6",
+        "quote": "\"workspaces\": [\"excalidraw-app\", \"packages/*\", \"examples/*\"]",
+        "confidence": "high",
+        "note": "monorepo 结构，包含核心包 packages/*"
+      },
+      {
+        "source_type": "github_code",
+        "locator": "excalidraw-app/App.tsx",
+        "quote": "",
+        "confidence": "medium",
+        "note": "主应用组件，从文件名推断"
+      },
+      {
+        "source_type": "github_code",
+        "locator": "excalidraw-app/collab/Collab.tsx",
+        "quote": "",
+        "confidence": "medium",
+        "note": "协作功能核心组件"
+      },
+      {
+        "source_type": "github_readme",
+        "locator": "README.md:44",
+        "quote": "Open format - export drawings as an `.excalidraw` json file.",
+        "confidence": "medium",
+        "note": "推断数据模型包含 ExcalidrawData/Element"
+      }
+    ],
+    "missing_info": [
+      "GitHub topics 元数据未提供",
+      "stars/forks/last_commit 等活跃度数据未提供",
+      "packages/ 子包的具体 package.json 依赖未提供，dependencies 列表不完整",
+      "npm 包 @excalidraw/excalidraw 的入口文件路径未在仓库地图中显示（可能在 packages/excalidraw/src/index.ts）",
+      "api_routes 为空：纯前端应用，协作使用 Firebase/Socket.IO，但 Cloud Functions 等未在仓库地图中列出",
+      "数据模型的精确定义文件未显示（可能在 packages/excalidraw 内的 types.ts）",
+      "fetched_at 未提供",
+      "languages 仅基于文件树推断，缺少仓库语言统计的实际数据"
+    ],
+    "confidence": "medium"
+  },
+  "pending_fingerprint": null,
+  "fingerprint": {
+    "one_liner": "开源的虚拟手绘风格协作白板，支持端到端加密和本地优先存储。",
+    "target_users": "需要快速画图的团队",
+    "problem": "缺乏快速、协作且具有手绘感的白板绘图工具，现有工具要么复杂，要么缺乏手绘感或实时协作。",
+    "io": {
+      "input": "用户通过绘图工具（自由画笔、形状、文本、图片）在画布上绘制和编辑。",
+      "processing": "浏览器内使用 Canvas 渲染手绘风格图形；通过 WebSocket 或 Firebase 实时同步协作更改；数据本地存储于浏览器（localStorage/IndexedDB），并可导出为开放格式 JSON。",
+      "output": "手绘风格的图表，可导出为 PNG、SVG 或 .excalidraw 文件；生成分享链接；或嵌入其他应用通过 npm 包。"
+    },
+    "core_features": [
+      "虚拟协作白板（实时同步）",
+      "手绘风格渲染",
+      "端到端加密协作",
+      "本地优先存储（离线可用）",
+      "分享链接生成",
+      "导出多种格式（PNG, SVG, .excalidraw）",
+      "开放文件格式（.excalidraw JSON）",
+      "渐进式 Web 应用（PWA）",
+      "可嵌入的 npm 包（@excalidraw/excalidraw）"
+    ],
+    "business_model": "完全开源免费（MIT），目前无明确商业变现路径。在线演示版本免费使用，用户也可自托管。",
+    "claimed_novelty": [
+      "手绘质感",
+      "端到端加密协作"
+    ],
+    "observed_differentiators": [
+      {
+        "description": "手绘风格渲染：图表具有自然的手绘感，区别于传统矢量绘图。",
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://excalidraw.com",
+            "quote": "lets you easily sketch diagrams that have a hand-drawn feel to them.",
+            "confidence": "high",
+            "note": ""
+          },
+          {
+            "source_type": "github_readme",
+            "locator": "README.md:1",
+            "quote": "An open source virtual hand-drawn style whiteboard.",
+            "confidence": "high",
+            "note": ""
+          }
+        ],
+        "proven": true
+      },
+      {
+        "description": "端到端加密协作：协作绘图过程中的数据传输经过端到端加密。",
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "README.md:1",
+            "quote": "Collaborative and end-to-end encrypted.",
+            "confidence": "high",
+            "note": ""
+          },
+          {
+            "source_type": "github_readme",
+            "locator": "README.md (摘要)",
+            "quote": "end-to-end encrypted",
+            "confidence": "high",
+            "note": ""
+          }
+        ],
+        "proven": true
+      },
+      {
+        "description": "本地优先存储：用户数据默认保存在本地浏览器，支持离线使用。",
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "README.md (摘要)",
+            "quote": "local-first storage",
+            "confidence": "medium",
+            "note": ""
+          },
+          {
+            "source_type": "github_code",
+            "locator": "excalidraw-app/data/LocalData.ts",
+            "quote": "",
+            "confidence": "medium",
+            "note": "存在本地数据持久化模块"
+          }
+        ],
+        "proven": true
+      },
+      {
+        "description": "开放文件格式：绘图可导出为 .excalidraw JSON 文件，便于交换和处理。",
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "README.md:44",
+            "quote": "Open format - export drawings as an `.excalidraw` json file.",
+            "confidence": "medium",
+            "note": ""
+          }
+        ],
+        "proven": true
+      }
+    ],
+    "functional_signature": "为需要快速画图的团队，在协作场景中，接收用户绘图输入，通过浏览器端手绘渲染和端到端加密实时同步，产生可导出的手绘风格图表，并支持本地优先和离线访问。",
+    "conflicts": [],
+    "unknowns": [
+      "目标用户声明为'需要快速画图的团队'，但网站未明确提及目标用户群体",
+      "商业模式不明：目前完全开源免费，但未来可能引入付费服务；无明确赞助或 SaaS 计划",
+      "实时协作使用的具体同步算法（CRDT/OT）未在 README 或网站说明",
+      "端到端加密的具体实现方式不详",
+      "项目活跃度（stars, forks, 最近提交）数据缺失",
+      "在线免费版是否有功能限制、用户容量限制未知",
+      "npm 包 @excalidraw/excalidraw 的内部组件化程度未知"
+    ],
+    "evidence": [
+      {
+        "source_type": "website",
+        "locator": "https://excalidraw.com",
+        "quote": "Excalidraw is a virtual collaborative whiteboard tool that lets you easily sketch diagrams that have a hand-drawn feel to them.",
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "source_type": "github_readme",
+        "locator": "README.md:1",
+        "quote": "An open source virtual hand-drawn style whiteboard. Collaborative and end-to-end encrypted.",
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "source_type": "github_readme",
+        "locator": "README.md:44",
+        "quote": "Open format - export drawings as an `.excalidraw` json file.",
+        "confidence": "medium",
+        "note": ""
+      },
+      {
+        "source_type": "github_config",
+        "locator": "package.json:6",
+        "quote": "\"workspaces\": [\"excalidraw-app\", \"packages/*\", \"examples/*\"]",
+        "confidence": "high",
+        "note": "monorepo 结构"
+      },
+      {
+        "source_type": "author_claim",
+        "locator": "作者声明",
+        "quote": "target_users: 需要快速画图的团队, problem_solved: 手绘风白板, claimed_novelty: 手绘质感+端到端加密协作",
+        "confidence": "medium",
+        "note": ""
+      }
+    ],
+    "confidence": "medium",
+    "user_confirmed": false
+  },
+  "candidates": [
+    {
+      "name": "shyarez/DoodleSync",
+      "url": "https://github.com/shyarez/DoodleSync",
+      "source": "github",
+      "snippet": "DoodleSync is a real-time collaborative whiteboard designed for thinking out loud. It lets teams sketch ideas, draw diagrams, and explain concepts together in a fast, low-friction, hand-drawn style.  ⭐1",
+      "query_used": "collaborative hand-drawn whiteboard for teams",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: collaborative hand-drawn whiteboard teams)",
+      "stars": 1,
+      "last_active": "2026-02-08T11:12:50Z"
+    },
+    {
+      "name": "shyarez/DoodleSyncApp",
+      "url": "https://github.com/shyarez/DoodleSyncApp",
+      "source": "github",
+      "snippet": "DoodleSync is a real-time collaborative whiteboard designed for thinking out loud. It lets teams sketch ideas, draw diagrams, and explain concepts together in a fast, low-friction, hand-drawn style.  ⭐0",
+      "query_used": "collaborative hand-drawn whiteboard for teams",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: collaborative hand-drawn whiteboard teams)",
+      "stars": 0,
+      "last_active": "2026-04-27T06:52:26Z"
+    },
+    {
+      "name": "Excalidraw-whiteboard/.github",
+      "url": "https://github.com/Excalidraw-whiteboard/.github",
+      "source": "github",
+      "snippet": "Download excalidraw whiteboard to sketch ideas, map workflows, and collaborate in a clean, hand-drawn style. The Excalidraw app makes it simple to create shareable visuals, plan projects, present product concepts, and turn complex ideas into clear boards teams can understand fast.  ⭐0",
+      "query_used": "collaborative hand-drawn whiteboard for teams",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: collaborative hand-drawn whiteboard teams)",
+      "stars": 0,
+      "last_active": "2026-08-06T02:52:24Z"
+    },
+    {
+      "name": "Obsidian-ExcaliDraw/.github",
+      "url": "https://github.com/Obsidian-ExcaliDraw/.github",
+      "source": "github",
+      "snippet": "Download excalidraw whiteboard to sketch ideas, map workflows, and collaborate in a clean, hand-drawn style. The Excalidraw app makes it simple to create shareable visuals, plan projects, present product concepts, and turn complex ideas into clear boards teams can understand fast.  ⭐0",
+      "query_used": "collaborative hand-drawn whiteboard for teams",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: collaborative hand-drawn whiteboard teams)",
+      "stars": 0,
+      "last_active": "2026-06-05T07:12:30Z"
+    },
+    {
+      "name": "请问 mac 端有类似微软的 WhiteBoard 软件吗？",
+      "url": "https://www.v2ex.com/t/709278",
+      "source": "cn_community",
+      "snippet": "不是用来画画，所以不需要很复杂的功能，能无限解决 whiteboard 就最好了",
+      "query_used": "collaborative hand-drawn whiteboard for teams",
+      "why_surfaced": "V2EX 讨论命中: collaborative hand-drawn whiteboard for teams",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "Microsoft Teams 故障",
+      "url": "https://www.v2ex.com/t/867680",
+      "source": "cn_community",
+      "snippet": "Microsoft Teams 故障了？\r\n\r\nhttps://downdetector.com/status/teams/",
+      "query_used": "collaborative hand-drawn whiteboard for teams",
+      "why_surfaced": "V2EX 讨论命中: collaborative hand-drawn whiteboard for teams",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "国内的 Teams 与国外的 Teams 还能交流吗？",
+      "url": "https://www.v2ex.com/t/1075999",
+      "source": "cn_community",
+      "snippet": "- 国内团队的 Teams 属于乙方。\r\n- 国外团队的 Teams 属于甲方。\r\n\r\n在两周前，这两个团队还可以用 Teams 进行交流，自从两周前国内的 Teams 抽风之后就和国外的甲方失联了。\r\n\r\n具体的失联情况就是：\r\n\r\n- 国内团队的 Teams 上所显示国外团队的 Teams 成员的帐号都是离线状态，",
+      "query_used": "collaborative hand-drawn whiteboard for teams",
+      "why_surfaced": "V2EX 讨论命中: collaborative hand-drawn whiteboard for teams",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "微软 Teams 招安卓开发",
+      "url": "https://www.v2ex.com/t/663049",
+      "source": "cn_community",
+      "snippet": "苏州微软最近刚成立了 Teams 组, 主要做客户端, 现在在招安卓开发, 同时还招 React/React Native 开发.\r\nTeams 在这段时间使用量激增, 变成一个很重要的产品, 这是第一次把工作分到了苏州这边.\r\n有兴趣的各位跟我联系欸~~~ \r\n[发邮件给我](mailto:wenghexx@gmai",
+      "query_used": "collaborative hand-drawn whiteboard for teams",
+      "why_surfaced": "V2EX 讨论命中: collaborative hand-drawn whiteboard for teams",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "新版 Teams 针对 Apple Silicon 优化",
+      "url": "https://www.v2ex.com/t/870666",
+      "source": "cn_community",
+      "snippet": "仅仅是优化，依然是离不开 Rosetta\r\n\r\nhttps://techcommunity.microsoft.com/t5/microsoft-teams-blog/announcing-microsoft-teams-optimized-for-apple-silicon/ba-p/3589463",
+      "query_used": "collaborative hand-drawn whiteboard for teams",
+      "why_surfaced": "V2EX 讨论命中: collaborative hand-drawn whiteboard for teams",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "Itz-Agasta/OpenDiagram",
+      "url": "https://github.com/Itz-Agasta/OpenDiagram",
+      "source": "github",
+      "snippet": "AI diagram generator for software architecture - the open-source Eraser.io alternative. Describe your system in plain English, get editable system design, sequence, ERD & cloud diagrams on an Excalidraw canvas. Self-hostable, bring your own key. Vibe diagramming for engineers.  ⭐11",
+      "query_used": "excalidraw alternative diagramming tool",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: excalidraw alternative diagramming)",
+      "stars": 11,
+      "last_active": "2026-08-06T16:36:29Z"
+    },
+    {
+      "name": "私有化在线协同画图平台 Excalidraw",
+      "url": "https://www.v2ex.com/t/887515",
+      "source": "cn_community",
+      "snippet": "我印象里面 v 站好多人讨论过 Excalidraw ，\r\nhttps://www.google.com/search?q=site:v2ex.com/t%20excalidraw\r\n\r\n最近我做了一点工作，将 Excalidraw 可以私有化部署，支持官方的在线协同（ Room 功能），也增加了中文 Hand-wri",
+      "query_used": "excalidraw alternative diagramming tool",
+      "why_surfaced": "V2EX 讨论命中: excalidraw alternative diagramming tool",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "excalidraw 该如何实现多开",
+      "url": "https://www.v2ex.com/t/859915",
+      "source": "cn_community",
+      "snippet": "excalidraw 作为绘图软件非常的好用，但有时需要打开多个绘图软件，这时候有什么好的解决办法么？",
+      "query_used": "excalidraw alternative diagramming tool",
+      "why_surfaced": "V2EX 讨论命中: excalidraw alternative diagramming tool",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "私有化 Excalidraw，支持多种中文字体选择",
+      "url": "https://www.v2ex.com/t/1074564",
+      "source": "cn_community",
+      "snippet": "之前大部分的私有化 Excalidraw 都只支持一种中文字体，最近 Excalidraw 更新了字体选择器功能，可以更方便的添加想要的字体。\r\n\r\n自己就也搭建部署了一个： [https://draw.vfox.me/]( https://draw.vfox.me/)。\r\n\r\n新增的内容：\r\n\r\n* 支持多种中文字体",
+      "query_used": "excalidraw alternative diagramming tool",
+      "why_surfaced": "V2EX 讨论命中: excalidraw alternative diagramming tool",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "Excalidraw 前缀 excali 是什么意思?",
+      "url": "https://www.v2ex.com/t/872144",
+      "source": "cn_community",
+      "snippet": "如题, Excalidraw 前缀 excali 是什么意思?\r\n\r\nhttps://excalidraw.com/",
+      "query_used": "excalidraw alternative diagramming tool",
+      "why_surfaced": "V2EX 讨论命中: excalidraw alternative diagramming tool",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "手绘风格画图软件 Excalidraw",
+      "url": "https://www.v2ex.com/t/788287",
+      "source": "cn_community",
+      "snippet": "发现一个好用的手绘风格画图软件 https://excalidraw.com ，开源免费。",
+      "query_used": "excalidraw alternative diagramming tool",
+      "why_surfaced": "V2EX 讨论命中: excalidraw alternative diagramming tool",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "akshay2211/DrawBox",
+      "url": "https://github.com/akshay2211/DrawBox",
+      "source": "github",
+      "snippet": "Kotlin Multiplatform drawing library with SVG export, undo/redo & shapes for Android, iOS, Web & Desktop.  ⭐415",
+      "query_used": "canvas drawing export svg png json",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: canvas drawing export svg)",
+      "stars": 415,
+      "last_active": "2026-08-03T06:38:05Z"
+    },
+    {
+      "name": "CatsJuice/svg-drawing",
+      "url": "https://github.com/CatsJuice/svg-drawing",
+      "source": "github",
+      "snippet": "A canvas for easy sketching and replay, exportable in SVG format.  ⭐197",
+      "query_used": "canvas drawing export svg png json",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: canvas drawing export svg)",
+      "stars": 197,
+      "last_active": "2026-01-12T14:42:04Z"
+    },
+    {
+      "name": "realazthat/excalidraw-brute-export-cli",
+      "url": "https://github.com/realazthat/excalidraw-brute-export-cli",
+      "source": "github",
+      "snippet": "💪🔨🎭 CLI to export Excalidraw diagrams to svg/png files, using playwright+firefox.  ⭐15",
+      "query_used": "canvas drawing export svg png json",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: canvas drawing export svg)",
+      "stars": 15,
+      "last_active": "2024-09-05T07:44:56Z"
+    },
+    {
+      "name": "pinkpixel-dev/gumdrop-studio",
+      "url": "https://github.com/pinkpixel-dev/gumdrop-studio",
+      "source": "github",
+      "snippet": "A pixel art creation app with a unique dual-layer canvas system. Draw crisp pixel art and add fine vector details on a smooth overlay layer. Built with React, Vite, and Tailwind CSS. Features 8+ drawing tools, advanced color system, project management, and multi-format export (PNG, SVG, JSON, HTML). ✨  ⭐5",
+      "query_used": "canvas drawing export svg png json",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: canvas drawing export svg)",
+      "stars": 5,
+      "last_active": "2026-05-08T00:23:52Z"
+    },
+    {
+      "name": "akshitsutharr/justdraw",
+      "url": "https://github.com/akshitsutharr/justdraw",
+      "source": "github",
+      "snippet": "Just Draw is a feature-rich collaborative drawing application built with Next.js and TypeScript. It offers comprehensive drawing tools including shapes, freehand sketching, text editing, and image support. Features real-time collaboration, export options (PNG/SVG), customizable styling, canvas controls with zoom, and a clean responsive interface.  ⭐4",
+      "query_used": "canvas drawing export svg png json",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: canvas drawing export svg)",
+      "stars": 4,
+      "last_active": "2026-02-19T05:28:15Z"
+    },
+    {
+      "name": "是否可以通过 css 或者 js 改变 svg 中引入 png 图片的颜色？",
+      "url": "https://www.v2ex.com/t/328447",
+      "source": "cn_community",
+      "snippet": "[PNG 格式小图标的 CSS 任意颜色赋色技术][1]\r\n\r\n我现在的问题在于我操作的元素是 svg ，即图片的引入是通过 svg image 元素 xlink:href 来引入图片的。\r\n[尝试 demo][2]\r\n\r\n在 MDN 上查了关于 svg 滤镜 filter 的相关 API ，和上述 drop-shad",
+      "query_used": "canvas drawing export svg png json",
+      "why_surfaced": "V2EX 讨论命中: canvas drawing export svg png json",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "[杭州] [比特币公司] [15K 起] [急招] [Canvas•SVG] 开发",
+      "url": "https://www.v2ex.com/t/342004",
+      "source": "cn_community",
+      "snippet": "急招急招急招! 重要的事说三遍。\r\n\r\n要求：\r\n1. 精通 JavaScript 语言\r\n2. 熟悉 Canvas 和 SVG 底层接口，熟悉 fabricjs,d3 等底层库\r\n3. 热爱编程\r\n\r\n薪资 15K 起底，能力说事，范围在 15K - 25K 之间。\r\n\r\n----------------------",
+      "query_used": "canvas drawing export svg png json",
+      "why_surfaced": "V2EX 讨论命中: canvas drawing export svg png json",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "动画渲染选择 svg/canvas？",
+      "url": "https://www.v2ex.com/t/878759",
+      "source": "cn_community",
+      "snippet": "https://ibb.co/C2VtZ24\r\n\r\n是音频波形可视化图，大概想法是这个样子，通过`offlineAudioContext`获取`buffer`，动态生成`wave`，`resize`时根据宽度重新渲染，整个过程都需要有动画，\r\n\r\n现在用的是多个`div`+`flex`布局实现的，是否性能不如`svg`",
+      "query_used": "canvas drawing export svg png json",
+      "why_surfaced": "V2EX 讨论命中: canvas drawing export svg png json",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "前端 svg 和 canvas 要掌握到什么程度?",
+      "url": "https://www.v2ex.com/t/603397",
+      "source": "cn_community",
+      "snippet": "下面是腾讯同学的 omi 前端路线\r\n \r\n\r\n\r\n其中的图形化部分,svg 和 canvas 目前我,就算是能用...也就能画个圆,矩形啥的,\r\n其他的图形化也就曾经尝试过 api\r\n\r\n平常基本用不到这部分知识,svg 和 canvas 很重要吗, 要掌握到什么程度?",
+      "query_used": "canvas drawing export svg png json",
+      "why_surfaced": "V2EX 讨论命中: canvas drawing export svg png json",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "有什么好用的 png 转 svg 的工具或网站推荐?",
+      "url": "https://www.v2ex.com/t/1118866",
+      "source": "cn_community",
+      "snippet": "在日常办公中，经常需要进行图片转换，某些场景下需要使用 svg 格式的图片。从 svg 转 png 的工具很多，比如像[Convertio]( https://convertio.co/zh/image-converter/)，[SVG to PNG]( https://svgtopng.online/)等。但是从 p",
+      "query_used": "canvas drawing export svg png json",
+      "why_surfaced": "V2EX 讨论命中: canvas drawing export svg png json",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "11suixing11/mindnotes-pro",
+      "url": "https://github.com/11suixing11/mindnotes-pro",
+      "source": "github",
+      "snippet": "Local-first React/Canvas whiteboard focused on offline drawing, privacy, and readable implementation.  ⭐10",
+      "query_used": "local-first offline whiteboard app",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: local-first offline whiteboard)",
+      "stars": 10,
+      "last_active": "2026-08-04T17:57:15Z"
+    },
+    {
+      "name": "nocodework/offline-whiteboard",
+      "url": "https://github.com/nocodework/offline-whiteboard",
+      "source": "github",
+      "snippet": "A private, offline whiteboard in a single HTML file. No account, no server, no tracking — your data never leaves your browser. Sticky notes, shapes, arrows. Free & open source.  ⭐2",
+      "query_used": "local-first offline whiteboard app",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: local-first offline whiteboard)",
+      "stars": 2,
+      "last_active": "2026-07-08T11:22:54Z"
+    },
+    {
+      "name": "Dragoon0x/slate-whiteboard",
+      "url": "https://github.com/Dragoon0x/slate-whiteboard",
+      "source": "github",
+      "snippet": "A lightning-fast, local-first infinite whiteboard. No login, no cloud, works offline. Frames, presentation mode, smart connectors, dark mode and more.  ⭐2",
+      "query_used": "local-first offline whiteboard app",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: local-first offline whiteboard)",
+      "stars": 2,
+      "last_active": "2026-06-05T10:30:39Z"
+    },
+    {
+      "name": "DilpreetSinghh/offline-mindmap-app",
+      "url": "https://github.com/DilpreetSinghh/offline-mindmap-app",
+      "source": "github",
+      "snippet": "Offline Whiteboard - fully offline, local-first drawing editor powered by Excalidraw. No backend, no telemetry; drawings stay in browser storage with version history, shape recognition and PDF export. Stable: https://dilpreetsinghh.github.io/offline-mindmap-app/ | Beta: https://dilpreetsinghh.github.io/offline-mindmap-app/beta  ⭐1",
+      "query_used": "local-first offline whiteboard app",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: local-first offline whiteboard)",
+      "stars": 1,
+      "last_active": "2026-07-31T19:39:37Z"
+    },
+    {
+      "name": "jinwovo/weave",
+      "url": "https://github.com/jinwovo/weave",
+      "source": "github",
+      "snippet": "A multiplayer whiteboard on a hand-rolled CRDT - offline merge, time travel, character-level co-editing. Try the in-browser playground: partition the network, watch two replicas reconverge.  ⭐1",
+      "query_used": "local-first offline whiteboard app",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: local-first offline whiteboard)",
+      "stars": 1,
+      "last_active": "2026-08-06T00:07:30Z"
+    },
+    {
+      "name": "nearlock pro 后台运行总是 offline",
+      "url": "https://www.v2ex.com/t/162230",
+      "source": "cn_community",
+      "snippet": "今天发现了一个小众软件nearlock，下载了免费版用着还可以，除了距离识别有一点点问题外，但还可以接受，然后看见PRO版本可以再后台运行，就匆匆下单买了，结果试了试后台运行的时候，总是提示offline，是我太着急买pro了吗？？？悲催，相当于白买（25￥），还是不能后台运行，哎！！！！\r\n有同样遭遇的小伙伴嘛？？报",
+      "query_used": "local-first offline whiteboard app",
+      "why_surfaced": "V2EX 讨论命中: local-first offline whiteboard app",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "Mac OS X 10.9.1连接Nexus 5时adb device显示offline？",
+      "url": "https://www.v2ex.com/t/99593",
+      "source": "cn_community",
+      "snippet": "Mac OS X 10.9.1连接Nexus 5时adb device显示offline？\r\nGoogle半天没找到原因",
+      "query_used": "local-first offline whiteboard app",
+      "why_surfaced": "V2EX 讨论命中: local-first offline whiteboard app",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "Local-first 软件收录站",
+      "url": "https://www.v2ex.com/t/1206648",
+      "source": "cn_community",
+      "snippet": "**Local-first （本地优先）** 是一种回归用户本位的软件设计理念。它不仅仅关乎技术，更关乎数字世界的自由与尊严。我们相信：\r\n\r\n- **数据主权**：数据属于你，而非云端服务商。它应首先保存在你的设备上，你可以随时导出、迁移或自行托管。\r\n- **离线可用**：网络应当是增强体验的加速器，而非使用的前提",
+      "query_used": "local-first offline whiteboard app",
+      "why_surfaced": "V2EX 讨论命中: local-first offline whiteboard app",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "极客通识读本《离线 Offline》",
+      "url": "https://www.v2ex.com/t/130646",
+      "source": "cn_community",
+      "snippet": "我不是程序员，也不是设计师，只是个做书的，但想为这群在改变世界的群体提供一些更优质的阅读。所以我们做了这一系列的杂志书。\r\n\r\n--\r\n\r\n《离线Offline》是一本关于科技与文化的mook，她为热爱思考与创新的人提供深度的阅读体验。\r\n\r\n❦ 科技文化\r\n\r\n《离线》关注科技如何影响文化、商业和社会生活，并发掘技术",
+      "query_used": "local-first offline whiteboard app",
+      "why_surfaced": "V2EX 讨论命中: local-first offline whiteboard app",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "ente/ente",
+      "url": "https://github.com/ente/ente",
+      "source": "github",
+      "snippet": "💚 End-to-end encrypted cloud for everything.  ⭐28192",
+      "query_used": "end-to-end encrypted real-time drawing sync",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: end-to-end encrypted)",
+      "stars": 28192,
+      "last_active": "2026-08-07T02:23:08Z"
+    },
+    {
+      "name": "streetwriters/notesnook",
+      "url": "https://github.com/streetwriters/notesnook",
+      "source": "github",
+      "snippet": "A fully open source & end-to-end encrypted note taking alternative to Evernote.  ⭐14378",
+      "query_used": "end-to-end encrypted real-time drawing sync",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: end-to-end encrypted)",
+      "stars": 14378,
+      "last_active": "2026-08-06T08:35:11Z"
+    },
+    {
+      "name": "cryptpad/cryptpad",
+      "url": "https://github.com/cryptpad/cryptpad",
+      "source": "github",
+      "snippet": "Collaborative office suite, end-to-end encrypted and open-source.  ⭐7826",
+      "query_used": "end-to-end encrypted real-time drawing sync",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: end-to-end encrypted)",
+      "stars": 7826,
+      "last_active": "2026-08-06T13:40:10Z"
+    },
+    {
+      "name": "standardnotes/app",
+      "url": "https://github.com/standardnotes/app",
+      "source": "github",
+      "snippet": "Think fearlessly with end-to-end encrypted notes and files. For issues, visit https://standardnotes.com/forum or https://standardnotes.com/help.  ⭐6578",
+      "query_used": "end-to-end encrypted real-time drawing sync",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: end-to-end encrypted)",
+      "stars": 6578,
+      "last_active": "2026-08-05T18:36:29Z"
+    },
+    {
+      "name": "PurpleI2P/i2pd",
+      "url": "https://github.com/PurpleI2P/i2pd",
+      "source": "github",
+      "snippet": "🛡 I2P: End-to-End encrypted and anonymous Internet  ⭐4160",
+      "query_used": "end-to-end encrypted real-time drawing sync",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: end-to-end encrypted)",
+      "stars": 4160,
+      "last_active": "2026-08-07T00:38:49Z"
+    },
+    {
+      "name": "记录下 Resilio Sync 的一个坑",
+      "url": "https://www.v2ex.com/t/610851",
+      "source": "cn_community",
+      "snippet": "## TL;DR\r\n\r\n[Resilio Sync]( https://www.resilio.com) 在差异同步下仍会重写整个文件，在用于同步类似日志文件这样不断变动的文件时，会导致巨量硬盘写入量。\r\n\r\n## 起因\r\n\r\n前几天我无意中使用 [DriveDx]( https://binaryfruit.com/d",
+      "query_used": "end-to-end encrypted real-time drawing sync",
+      "why_surfaced": "V2EX 讨论命中: end-to-end encrypted real-time drawing sync",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "coding + drawing",
+      "url": "https://www.v2ex.com/t/100644",
+      "source": "cn_community",
+      "snippet": "http://gameofworlds.tumblr.com/post/76836176462/drawing-as-a-programmer",
+      "query_used": "end-to-end encrypted real-time drawing sync",
+      "why_surfaced": "V2EX 讨论命中: end-to-end encrypted real-time drawing sync",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "Keybase Chat. End-to-end encrypted chat.",
+      "url": "https://www.v2ex.com/t/339157",
+      "source": "cn_community",
+      "snippet": "https://keybase.io/blog/keybase-chat",
+      "query_used": "end-to-end encrypted real-time drawing sync",
+      "why_surfaced": "V2EX 讨论命中: end-to-end encrypted real-time drawing sync",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "群晖 cloud sync 和百度盘 sync， 文件 upload failed 但是群晖状态仍然是 up to date",
+      "url": "https://www.v2ex.com/t/635161",
+      "source": "cn_community",
+      "snippet": "用白群晖的 cloud sync 和百度盘双向同步。 偶然发现 有几个文件上传到 NAS 里之后没有同步到百度盘。cloud sync history 里先是这几个文件 upload failed，但是 overview 仍然显示的是绿色的 up to date。\r\n\r\n请问下\r\n1. 这样是不是说之前有可能已经有文件",
+      "query_used": "end-to-end encrypted real-time drawing sync",
+      "why_surfaced": "V2EX 讨论命中: end-to-end encrypted real-time drawing sync",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "Javascript 递归绘画工具 Recursive Drawing",
+      "url": "https://www.v2ex.com/t/35489",
+      "source": "cn_community",
+      "snippet": "Javascript   递归绘画工具, 帅呆了! \r\nRecursive Drawing http://recursivedrawing.com/\r\n\r\n ",
+      "query_used": "end-to-end encrypted real-time drawing sync",
+      "why_surfaced": "V2EX 讨论命中: end-to-end encrypted real-time drawing sync",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "量房手稿手绘图怎么快速生成 CAD 户型图",
+      "url": "https://www.v2ex.com/t/1219442",
+      "source": "cn_community",
+      "snippet": "量房手稿手绘图怎么快速生成 CAD 户型图，有知道的老铁吗？",
+      "query_used": "团队快速绘图 手绘风格白板",
+      "why_surfaced": "V2EX 讨论命中: 团队快速绘图 手绘风格白板",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "有没这样的APP? 在ipad绘图,会实时同步到网页上去的?",
+      "url": "https://www.v2ex.com/t/31596",
+      "source": "cn_community",
+      "snippet": "需求大概是这样的.可以在ipad上绘图(就是白板功能),内容可以实时同步到网页上.\r\n\r\n主要是想用来远程协作中代替会议中的白板.",
+      "query_used": "团队快速绘图 手绘风格白板",
+      "why_surfaced": "V2EX 讨论命中: 团队快速绘图 手绘风格白板",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "正在做一个 xkcd 风格 (手绘风格) 的图表库, 大家感兴趣吗",
+      "url": "https://www.v2ex.com/t/593099",
+      "source": "cn_community",
+      "snippet": "[![chart.xkcd](  )]( https://github.com/timqian/chart.xkcd)\r\n\r\n## 如何使用\r\n\r\n- github 地址: github.com/timqian/chart.xkcd\r\n- 正在写作中的文档: timqian.com/chart.xkcd\r\n- 在 co",
+      "query_used": "团队快速绘图 手绘风格白板",
+      "why_surfaced": "V2EX 讨论命中: 团队快速绘图 手绘风格白板",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "用 HTML5 + JS 写了一个电子白板绘图 App",
+      "url": "https://www.v2ex.com/t/313024",
+      "source": "cn_community",
+      "snippet": "最近学校把投影仪换成了 LCD 电子白板，然而白板附带的绘图软件有各种问题，并不好用。因此自己用 HTML5 + JS 写了一个绘图 App 。\r\n\r\n前端是 HTML5 Canvas + jQuery, 用 Python 和 Node.js 分别实现了后端服务，可以任选一种使用。\r\n\r\n目前实现的功能：\r\n1. 基本",
+      "query_used": "团队快速绘图 手绘风格白板",
+      "why_surfaced": "V2EX 讨论命中: 团队快速绘图 手绘风格白板",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "v 友们，有哪些好的工具可以方便实现 png、jpg 转 svg",
+      "url": "https://www.v2ex.com/t/834344",
+      "source": "cn_community",
+      "snippet": "论文用的 word 写作，导出 pdf 之后，图片就模糊了，之前截图都是保存的 jpg 和 png 格式，如何转换方便一些？\r\n比如论文中使用了类似这种图片，ppt 画的，然后使用截图工具截的，不知道怎么转化成 svg 比较好  ",
+      "query_used": "画布绘图工具 导出png svg json",
+      "why_surfaced": "V2EX 讨论命中: 画布绘图工具 导出png svg json",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "有什么办法能够在 office2019 中使用自动化代码将 ppt 导出 svg？",
+      "url": "https://www.v2ex.com/t/698196",
+      "source": "cn_community",
+      "snippet": "我手点导出是可以的，查了 vba，没有导出 svg 的枚举项",
+      "query_used": "画布绘图工具 导出png svg json",
+      "why_surfaced": "V2EX 讨论命中: 画布绘图工具 导出png svg json",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "求推荐一个 Python 绘图库",
+      "url": "https://www.v2ex.com/t/399011",
+      "source": "cn_community",
+      "snippet": "嗯其实现在是在用 matplotlib 绘制柱状图和饼状图，但是 matplotlib 过于庞大而且对多线程支持也不是很好（可能是姿势不对）\r\n\r\n求一个轻量级的库~ 支持多线程和 png 格式输出~",
+      "query_used": "画布绘图工具 导出png svg json",
+      "why_surfaced": "V2EX 讨论命中: 画布绘图工具 导出png svg json",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "Chesterguan/medme",
+      "url": "https://github.com/Chesterguan/medme",
+      "source": "github",
+      "snippet": "MedMe 医我 · 本地优先的个人医疗数据保险箱(桌面 + 手机):采集/OCR、健康档案、DICOM 阅片、端到端加密分享,零服务器。  ⭐4",
+      "query_used": "本地优先 端到端加密 协作白板",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: 本地优先 端到端加密)",
+      "stars": 4,
+      "last_active": "2026-08-06T19:18:02Z"
+    },
+    {
+      "name": "cicbyte/byte-pass",
+      "url": "https://github.com/cicbyte/byte-pass",
+      "source": "github",
+      "snippet": "Local-first, end-to-end encrypted password manager / 本地优先、端到端加密密码管理器  ⭐0",
+      "query_used": "本地优先 端到端加密 协作白板",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: 本地优先 端到端加密)",
+      "stars": 0,
+      "last_active": "2026-07-31T11:22:17Z"
+    },
+    {
+      "name": "cnwsl/vaulty-public",
+      "url": "https://github.com/cnwsl/vaulty-public",
+      "source": "github",
+      "snippet": "Vaulty 是一个本地优先、端到端加密、搜索驱动的个人保险箱。  ⭐0",
+      "query_used": "本地优先 端到端加密 协作白板",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: 本地优先 端到端加密)",
+      "stars": 0,
+      "last_active": "2026-07-07T09:01:20Z"
+    },
+    {
+      "name": "prehisle/zhujian",
+      "url": "https://github.com/prehisle/zhujian",
+      "source": "github",
+      "snippet": "朱笺——本地优先的个人事务管理工具(Tauri v2 + Rust + SQLite;端到端加密多端同步)  ⭐0",
+      "query_used": "本地优先 端到端加密 协作白板",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: 本地优先 端到端加密)",
+      "stars": 0,
+      "last_active": "2026-08-06T10:11:45Z"
+    },
+    {
+      "name": "YanYuCloudCube/YYC3-AI-PAI",
+      "url": "https://github.com/YanYuCloudCube/YYC3-AI-PAI",
+      "source": "github",
+      "snippet": "本地优先 - 所有数据存储在本地，完全掌控 端到端加密 - AES-256-GCM加密保护敏感数据 零知识架构 - 服务器无法访问用户数据 数据可移植 - 支持导入导出，无锁定风险  ⭐0",
+      "query_used": "本地优先 端到端加密 协作白板",
+      "why_surfaced": "GitHub 搜索命中(按 star, 关键词: 本地优先 端到端加密)",
+      "stars": 0,
+      "last_active": "2026-04-19T18:17:04Z"
+    },
+    {
+      "name": "聊天软件端对端加密疑问",
+      "url": "https://www.v2ex.com/t/849178",
+      "source": "cn_community",
+      "snippet": "我是技术小白，只是网上道听途说聊天软件采用端对端加密很安全，国外的知名聊天软件很多是默认或者可以设置端对端加密；至于微信和 QQ 听说是有加密，但是没有采用端对端加密，至于什么原因不清楚。\r\n最近在小米应用商店发现三款聊天软件：JSPP 、事密达、JusTalk ，三款软件的应用商店下载页面介绍里面都提到采用端对端加密",
+      "query_used": "本地优先 端到端加密 协作白板",
+      "why_surfaced": "V2EX 讨论命中: 本地优先 端到端加密 协作白板",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "单机服务端使用 token 策略是怎样的？",
+      "url": "https://www.v2ex.com/t/675242",
+      "source": "cn_community",
+      "snippet": "之前为页面端，也就是浏览器端，用户操作，是提供基于 session 登录，现在要弄非浏览器端，也就是 app 端，那么依赖 cookie 的 session 就不行了。\r\n\r\n得用 token 。单机服务端使用 token,一般是用带有超时设定的缓存框架来存储在线用户状态的么？比如 guava 或 Caffeine\r\n",
+      "query_used": "本地优先 端到端加密 协作白板",
+      "why_surfaced": "V2EX 讨论命中: 本地优先 端到端加密 协作白板",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "苹果的通讯录、备忘录、相册，为什么不用端到端加密呢？",
+      "url": "https://www.v2ex.com/t/647429",
+      "source": "cn_community",
+      "snippet": "## 这些功能及其数据在 iCloud 中使用端对端加密进行传输和储存：\r\n\r\n“家庭”数据\r\n\r\n“健康”数据（需要 iOS 12 或更高版本）\r\n\r\niCloud 钥匙串（包括您存储的所有帐户和密码）\r\n\r\n付款信息\r\n\r\n快速输入键盘学习的词汇（需要 iOS 11 或更高版本）\r\n\r\n屏幕使用时间\r\n\r\nSiri",
+      "query_used": "本地优先 端到端加密 协作白板",
+      "why_surfaced": "V2EX 讨论命中: 本地优先 端到端加密 协作白板",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "matrix riot.im 的端到端加密和验证行为很奇怪？",
+      "url": "https://www.v2ex.com/t/639849",
+      "source": "cn_community",
+      "snippet": "在试用 matrix 协议的聊天软件 riot im，有几个默认行为看不太明白，请同样用户指教：\r\n\r\n* 默认不加密。而且启用加密的选项隐藏很深。\r\n* 即使启用加密，也需要验证设备。相当于需要两个人用其他联系方式先沟通。为什么说不确定对方是安全的，我们就应该发明文？\r\n* 群聊经常无法加密。\r\n\r\n给人的感觉是不推",
+      "query_used": "本地优先 端到端加密 协作白板",
+      "why_surfaced": "V2EX 讨论命中: 本地优先 端到端加密 协作白板",
+      "stars": null,
+      "last_active": ""
+    },
+    {
+      "name": "国区的 iMessage 到底有没有端对端加密？",
+      "url": "https://www.v2ex.com/t/561865",
+      "source": "cn_community",
+      "snippet": "都说 iMessage 是有端对端加密的\r\n\r\n但是在国内有端对端加密的 IM app 都死绝了\r\n\r\n所以说国内的 iMessage 有没有端对端加密？还是说处于想看就能看的状态？\r\n\r\n另外如果国内用户和国外用户聊天的话 这段对话会被加密吗？",
+      "query_used": "本地优先 端到端加密 协作白板",
+      "why_surfaced": "V2EX 讨论命中: 本地优先 端到端加密 协作白板",
+      "stars": null,
+      "last_active": ""
+    }
+  ],
+  "verified": [
+    {
+      "ref": {
+        "name": "shyarez/DoodleSync",
+        "url": "https://github.com/shyarez/DoodleSync",
+        "source": "github",
+        "snippet": "DoodleSync is a real-time collaborative whiteboard designed for thinking out loud. It lets teams sketch ideas, draw diagrams, and explain concepts together in a fast, low-friction, hand-drawn style.  ⭐1",
+        "query_used": "collaborative hand-drawn whiteboard for teams",
+        "why_surfaced": "GitHub 搜索命中(按 star, 关键词: collaborative hand-drawn whiteboard teams)",
+        "stars": 1,
+        "last_active": "2026-02-08T11:12:50Z"
+      },
+      "fingerprint": {
+        "one_liner": "实时协作手绘风格白板，用于团队思维外化。",
+        "target_users": "需要快速草图、解释概念的团队",
+        "problem": "缺乏快速、低摩擦的协作手绘白板",
+        "io": {
+          "input": "用户绘制草图、图表、文本",
+          "processing": "实时同步协作，手绘风格渲染",
+          "output": "共享绘图，可能可导出（未明确）"
+        },
+        "core_features": [
+          "实时协作",
+          "手绘风格",
+          "低摩擦（fast, low-friction）"
+        ],
+        "business_model": "未知",
+        "claimed_novelty": [],
+        "observed_differentiators": [],
+        "functional_signature": "为团队提供实时协作手绘白板，接收绘图输入，实时同步，输出手绘风格图表。",
+        "conflicts": [],
+        "unknowns": [
+          "是否端到端加密",
+          "是否本地优先存储",
+          "导出格式",
+          "商业模式",
+          "底层同步算法",
+          "自托管/嵌入能力"
+        ],
+        "evidence": [
+          {
+            "source_type": "search_result",
+            "locator": "GitHub 搜索摘要",
+            "quote": "DoodleSync is a real-time collaborative whiteboard designed for thinking out loud. It lets teams sketch ideas, draw diagrams, and explain concepts together in a fast, low-friction, hand-drawn style.",
+            "confidence": "high",
+            "note": "搜索片段揭示了核心功能和目标"
+          }
+        ],
+        "confidence": "medium",
+        "user_confirmed": false
+      },
+      "relation": "direct_competitor",
+      "notes": "功能描述几乎相同：实时协作手绘白板，面向团队。但候选项目 star 数仅 1，成熟度远不及 Excalidraw，且未提及加密、本地优先等高级特性。可能是个轻量级替代。",
+      "evidence": [
+        {
+          "source_type": "search_result",
+          "locator": "GitHub 搜索摘要",
+          "quote": "real-time collaborative whiteboard ... hand-drawn style ... teams",
+          "confidence": "high",
+          "note": "与 Excalidraw 核心功能高度一致，直接竞争。"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "ref": {
+        "name": "shyarez/DoodleSyncApp",
+        "url": "https://github.com/shyarez/DoodleSyncApp",
+        "source": "github",
+        "snippet": "DoodleSync is a real-time collaborative whiteboard designed for thinking out loud. It lets teams sketch ideas, draw diagrams, and explain concepts together in a fast, low-friction, hand-drawn style.  ⭐0",
+        "query_used": "collaborative hand-drawn whiteboard for teams",
+        "why_surfaced": "GitHub 搜索命中(按 star, 关键词: collaborative hand-drawn whiteboard teams)",
+        "stars": 0,
+        "last_active": "2026-04-27T06:52:26Z"
+      },
+      "fingerprint": {
+        "one_liner": "实时协作白板，以手绘风格进行草图、图表和概念解释。",
+        "target_users": "团队",
+        "problem": "需要快速、低摩擦的协作绘图工具",
+        "io": {
+          "input": "用户通过绘图工具在画布上绘制和编辑",
+          "processing": "实时同步协作更改，手绘风格渲染",
+          "output": "手绘风格图表"
+        },
+        "core_features": [
+          "实时协作",
+          "手绘风格渲染"
+        ],
+        "business_model": "未知",
+        "claimed_novelty": [],
+        "observed_differentiators": [
+          {
+            "description": "手绘风格渲染",
+            "evidence": [
+              {
+                "source_type": "search_result",
+                "locator": "https://github.com/shyarez/DoodleSyncApp",
+                "quote": "hand-drawn style",
+                "confidence": "high",
+                "note": ""
+              }
+            ],
+            "proven": true
+          },
+          {
+            "description": "实时协作",
+            "evidence": [
+              {
+                "source_type": "search_result",
+                "locator": "https://github.com/shyarez/DoodleSyncApp",
+                "quote": "real-time collaborative whiteboard",
+                "confidence": "high",
+                "note": ""
+              }
+            ],
+            "proven": true
+          }
+        ],
+        "functional_signature": "为团队提供实时协作手绘白板",
+        "conflicts": [],
+        "unknowns": [
+          "是否支持端到端加密",
+          "是否有本地优先存储",
+          "导出格式支持情况",
+          "项目活跃度和维护状态",
+          "技术栈和架构"
+        ],
+        "evidence": [
+          {
+            "source_type": "search_result",
+            "locator": "https://github.com/shyarez/DoodleSyncApp",
+            "quote": "DoodleSync is a real-time collaborative whiteboard designed for thinking out loud. It lets teams sketch ideas, draw diagrams, and explain concepts together in a fast, low-friction, hand-drawn style.",
+            "confidence": "high",
+            "note": ""
+          }
+        ],
+        "confidence": "low",
+        "user_confirmed": false
+      },
+      "relation": "direct_competitor",
+      "notes": "候选项目声称实时协作手绘白板，与 Excalidraw 核心相同，但缺少端到端加密和本地优先存储等关键特性，可能吸引不同安全需求的用户。",
+      "evidence": [
+        {
+          "source_type": "search_result",
+          "locator": "https://github.com/shyarez/DoodleSyncApp",
+          "quote": "DoodleSync is a real-time collaborative whiteboard designed for thinking out loud. It lets teams sketch ideas, draw diagrams, and explain concepts together in a fast, low-friction, hand-drawn style.",
+          "confidence": "high",
+          "note": "该片段表明候选是实时协作白板，面向团队，手绘风格，与 Excalidraw 核心定位高度重合。"
+        }
+      ],
+      "confidence": "medium"
+    },
+    {
+      "ref": {
+        "name": "Excalidraw-whiteboard/.github",
+        "url": "https://github.com/Excalidraw-whiteboard/.github",
+        "source": "github",
+        "snippet": "Download excalidraw whiteboard to sketch ideas, map workflows, and collaborate in a clean, hand-drawn style. The Excalidraw app makes it simple to create shareable visuals, plan projects, present product concepts, and turn complex ideas into clear boards teams can understand fast.  ⭐0",
+        "query_used": "collaborative hand-drawn whiteboard for teams",
+        "why_surfaced": "GitHub 搜索命中(按 star, 关键词: collaborative hand-drawn whiteboard teams)",
+        "stars": 0,
+        "last_active": "2026-08-06T02:52:24Z"
+      },
+      "fingerprint": null,
+      "relation": "superficial",
+      "notes": "候选仓库是组织 'Excalidraw-whiteboard' 的 .github 配置仓库，没有实际产品代码。其描述仅为推广 Excalidraw 的用途，可能为蹭热度或 SEO 创建，并非独立的白板产品。",
+      "evidence": [
+        {
+          "source_type": "github_meta",
+          "locator": "https://github.com/Excalidraw-whiteboard/.github",
+          "quote": "Download excalidraw whiteboard to sketch ideas, map workflows, and collaborate...",
+          "confidence": "medium",
+          "note": "描述像是导流内容，仓库本身为组织级配置文件 (.github)，无实际应用代码。"
+        },
+        {
+          "source_type": "metric",
+          "locator": "stars: 0, last active: 2026-08-06",
+          "quote": "⭐0",
+          "confidence": "medium",
+          "note": "零星标、未来活动日期暗示非正常项目，可能是占位或仿冒。"
+        }
+      ],
+      "confidence": "medium"
+    }
+  ],
+  "duplication": {
+    "duplication_score": 0.6,
+    "confidence": "medium",
+    "dimensions": {
+      "same_problem": 0.9,
+      "same_users": 0.8,
+      "same_io_flow": 0.8,
+      "feature_overlap": 0.7,
+      "same_mechanism": 0.5,
+      "unique_proven": 0.3
+    },
+    "novelty": [
+      {
+        "type": "new_mechanism",
+        "description": "端到端加密协作：竞品均未提及此安全特性，构成机制层面的创新。",
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "README.md:1",
+            "quote": "Collaborative and end-to-end encrypted.",
+            "confidence": "high",
+            "note": ""
+          }
+        ]
+      },
+      {
+        "type": "better_execution",
+        "description": "手绘风格渲染：竞品可能也标榜手绘，但Excalidraw提供了可验证的完整实现与更好的用户体验。",
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://excalidraw.com",
+            "quote": "lets you easily sketch diagrams that have a hand-drawn feel to them.",
+            "confidence": "high",
+            "note": ""
+          }
+        ]
+      }
+    ],
+    "top_similar": [
+      "shyarez/DoodleSync",
+      "shyarez/DoodleSyncApp"
+    ],
+    "rationale": "被测项目与两个直接竞品解决的问题高度一致（均为快速协作手绘白板），目标用户同为团队，IO流程相似。但竞品缺乏端到端加密、本地优先存储等高级特性，且成熟度远低于Excalidraw，因此duplication_score取0.6，表示中等重复但仍有明显差异。",
+    "search_scope_note": "本次检索仅基于提供的三个已验证竞品，未进行广泛的互联网搜索。",
+    "evidence": [
+      {
+        "source_type": "search_result",
+        "locator": "竞品 shyarez/DoodleSync",
+        "quote": "实时协作手绘白板，面向团队，但未提及加密或本地优先。",
+        "confidence": "medium",
+        "note": "竞品描述摘要"
+      }
+    ]
+  },
+  "result": {
+    "fingerprint": {
+      "one_liner": "开源的虚拟手绘风格协作白板，支持端到端加密和本地优先存储。",
+      "target_users": "需要快速画图的团队",
+      "problem": "缺乏快速、协作且具有手绘感的白板绘图工具，现有工具要么复杂，要么缺乏手绘感或实时协作。",
+      "io": {
+        "input": "用户通过绘图工具（自由画笔、形状、文本、图片）在画布上绘制和编辑。",
+        "processing": "浏览器内使用 Canvas 渲染手绘风格图形；通过 WebSocket 或 Firebase 实时同步协作更改；数据本地存储于浏览器（localStorage/IndexedDB），并可导出为开放格式 JSON。",
+        "output": "手绘风格的图表，可导出为 PNG、SVG 或 .excalidraw 文件；生成分享链接；或嵌入其他应用通过 npm 包。"
+      },
+      "core_features": [
+        "虚拟协作白板（实时同步）",
+        "手绘风格渲染",
+        "端到端加密协作",
+        "本地优先存储（离线可用）",
+        "分享链接生成",
+        "导出多种格式（PNG, SVG, .excalidraw）",
+        "开放文件格式（.excalidraw JSON）",
+        "渐进式 Web 应用（PWA）",
+        "可嵌入的 npm 包（@excalidraw/excalidraw）"
+      ],
+      "business_model": "完全开源免费（MIT），目前无明确商业变现路径。在线演示版本免费使用，用户也可自托管。",
+      "claimed_novelty": [
+        "手绘质感",
+        "端到端加密协作"
+      ],
+      "observed_differentiators": [
+        {
+          "description": "手绘风格渲染：图表具有自然的手绘感，区别于传统矢量绘图。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://excalidraw.com",
+              "quote": "lets you easily sketch diagrams that have a hand-drawn feel to them.",
+              "confidence": "high",
+              "note": ""
+            },
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:1",
+              "quote": "An open source virtual hand-drawn style whiteboard.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "proven": true
+        },
+        {
+          "description": "端到端加密协作：协作绘图过程中的数据传输经过端到端加密。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:1",
+              "quote": "Collaborative and end-to-end encrypted.",
+              "confidence": "high",
+              "note": ""
+            },
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (摘要)",
+              "quote": "end-to-end encrypted",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "proven": true
+        },
+        {
+          "description": "本地优先存储：用户数据默认保存在本地浏览器，支持离线使用。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (摘要)",
+              "quote": "local-first storage",
+              "confidence": "medium",
+              "note": ""
+            },
+            {
+              "source_type": "github_code",
+              "locator": "excalidraw-app/data/LocalData.ts",
+              "quote": "",
+              "confidence": "medium",
+              "note": "存在本地数据持久化模块"
+            }
+          ],
+          "proven": true
+        },
+        {
+          "description": "开放文件格式：绘图可导出为 .excalidraw JSON 文件，便于交换和处理。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:44",
+              "quote": "Open format - export drawings as an `.excalidraw` json file.",
+              "confidence": "medium",
+              "note": ""
+            }
+          ],
+          "proven": true
+        }
+      ],
+      "functional_signature": "为需要快速画图的团队，在协作场景中，接收用户绘图输入，通过浏览器端手绘渲染和端到端加密实时同步，产生可导出的手绘风格图表，并支持本地优先和离线访问。",
+      "conflicts": [],
+      "unknowns": [
+        "目标用户声明为'需要快速画图的团队'，但网站未明确提及目标用户群体",
+        "商业模式不明：目前完全开源免费，但未来可能引入付费服务；无明确赞助或 SaaS 计划",
+        "实时协作使用的具体同步算法（CRDT/OT）未在 README 或网站说明",
+        "端到端加密的具体实现方式不详",
+        "项目活跃度（stars, forks, 最近提交）数据缺失",
+        "在线免费版是否有功能限制、用户容量限制未知",
+        "npm 包 @excalidraw/excalidraw 的内部组件化程度未知"
+      ],
+      "evidence": [
+        {
+          "source_type": "website",
+          "locator": "https://excalidraw.com",
+          "quote": "Excalidraw is a virtual collaborative whiteboard tool that lets you easily sketch diagrams that have a hand-drawn feel to them.",
+          "confidence": "high",
+          "note": ""
+        },
+        {
+          "source_type": "github_readme",
+          "locator": "README.md:1",
+          "quote": "An open source virtual hand-drawn style whiteboard. Collaborative and end-to-end encrypted.",
+          "confidence": "high",
+          "note": ""
+        },
+        {
+          "source_type": "github_readme",
+          "locator": "README.md:44",
+          "quote": "Open format - export drawings as an `.excalidraw` json file.",
+          "confidence": "medium",
+          "note": ""
+        },
+        {
+          "source_type": "github_config",
+          "locator": "package.json:6",
+          "quote": "\"workspaces\": [\"excalidraw-app\", \"packages/*\", \"examples/*\"]",
+          "confidence": "high",
+          "note": "monorepo 结构"
+        },
+        {
+          "source_type": "author_claim",
+          "locator": "作者声明",
+          "quote": "target_users: 需要快速画图的团队, problem_solved: 手绘风白板, claimed_novelty: 手绘质感+端到端加密协作",
+          "confidence": "medium",
+          "note": ""
+        }
+      ],
+      "confidence": "medium",
+      "user_confirmed": false
+    },
+    "candidates": [
+      {
+        "ref": {
+          "name": "shyarez/DoodleSync",
+          "url": "https://github.com/shyarez/DoodleSync",
+          "source": "github",
+          "snippet": "DoodleSync is a real-time collaborative whiteboard designed for thinking out loud. It lets teams sketch ideas, draw diagrams, and explain concepts together in a fast, low-friction, hand-drawn style.  ⭐1",
+          "query_used": "collaborative hand-drawn whiteboard for teams",
+          "why_surfaced": "GitHub 搜索命中(按 star, 关键词: collaborative hand-drawn whiteboard teams)",
+          "stars": 1,
+          "last_active": "2026-02-08T11:12:50Z"
+        },
+        "fingerprint": {
+          "one_liner": "实时协作手绘风格白板，用于团队思维外化。",
+          "target_users": "需要快速草图、解释概念的团队",
+          "problem": "缺乏快速、低摩擦的协作手绘白板",
+          "io": {
+            "input": "用户绘制草图、图表、文本",
+            "processing": "实时同步协作，手绘风格渲染",
+            "output": "共享绘图，可能可导出（未明确）"
+          },
+          "core_features": [
+            "实时协作",
+            "手绘风格",
+            "低摩擦（fast, low-friction）"
+          ],
+          "business_model": "未知",
+          "claimed_novelty": [],
+          "observed_differentiators": [],
+          "functional_signature": "为团队提供实时协作手绘白板，接收绘图输入，实时同步，输出手绘风格图表。",
+          "conflicts": [],
+          "unknowns": [
+            "是否端到端加密",
+            "是否本地优先存储",
+            "导出格式",
+            "商业模式",
+            "底层同步算法",
+            "自托管/嵌入能力"
+          ],
+          "evidence": [
+            {
+              "source_type": "search_result",
+              "locator": "GitHub 搜索摘要",
+              "quote": "DoodleSync is a real-time collaborative whiteboard designed for thinking out loud. It lets teams sketch ideas, draw diagrams, and explain concepts together in a fast, low-friction, hand-drawn style.",
+              "confidence": "high",
+              "note": "搜索片段揭示了核心功能和目标"
+            }
+          ],
+          "confidence": "medium",
+          "user_confirmed": false
+        },
+        "relation": "direct_competitor",
+        "notes": "功能描述几乎相同：实时协作手绘白板，面向团队。但候选项目 star 数仅 1，成熟度远不及 Excalidraw，且未提及加密、本地优先等高级特性。可能是个轻量级替代。",
+        "evidence": [
+          {
+            "source_type": "search_result",
+            "locator": "GitHub 搜索摘要",
+            "quote": "real-time collaborative whiteboard ... hand-drawn style ... teams",
+            "confidence": "high",
+            "note": "与 Excalidraw 核心功能高度一致，直接竞争。"
+          }
+        ],
+        "confidence": "high"
+      },
+      {
+        "ref": {
+          "name": "shyarez/DoodleSyncApp",
+          "url": "https://github.com/shyarez/DoodleSyncApp",
+          "source": "github",
+          "snippet": "DoodleSync is a real-time collaborative whiteboard designed for thinking out loud. It lets teams sketch ideas, draw diagrams, and explain concepts together in a fast, low-friction, hand-drawn style.  ⭐0",
+          "query_used": "collaborative hand-drawn whiteboard for teams",
+          "why_surfaced": "GitHub 搜索命中(按 star, 关键词: collaborative hand-drawn whiteboard teams)",
+          "stars": 0,
+          "last_active": "2026-04-27T06:52:26Z"
+        },
+        "fingerprint": {
+          "one_liner": "实时协作白板，以手绘风格进行草图、图表和概念解释。",
+          "target_users": "团队",
+          "problem": "需要快速、低摩擦的协作绘图工具",
+          "io": {
+            "input": "用户通过绘图工具在画布上绘制和编辑",
+            "processing": "实时同步协作更改，手绘风格渲染",
+            "output": "手绘风格图表"
+          },
+          "core_features": [
+            "实时协作",
+            "手绘风格渲染"
+          ],
+          "business_model": "未知",
+          "claimed_novelty": [],
+          "observed_differentiators": [
+            {
+              "description": "手绘风格渲染",
+              "evidence": [
+                {
+                  "source_type": "search_result",
+                  "locator": "https://github.com/shyarez/DoodleSyncApp",
+                  "quote": "hand-drawn style",
+                  "confidence": "high",
+                  "note": ""
+                }
+              ],
+              "proven": true
+            },
+            {
+              "description": "实时协作",
+              "evidence": [
+                {
+                  "source_type": "search_result",
+                  "locator": "https://github.com/shyarez/DoodleSyncApp",
+                  "quote": "real-time collaborative whiteboard",
+                  "confidence": "high",
+                  "note": ""
+                }
+              ],
+              "proven": true
+            }
+          ],
+          "functional_signature": "为团队提供实时协作手绘白板",
+          "conflicts": [],
+          "unknowns": [
+            "是否支持端到端加密",
+            "是否有本地优先存储",
+            "导出格式支持情况",
+            "项目活跃度和维护状态",
+            "技术栈和架构"
+          ],
+          "evidence": [
+            {
+              "source_type": "search_result",
+              "locator": "https://github.com/shyarez/DoodleSyncApp",
+              "quote": "DoodleSync is a real-time collaborative whiteboard designed for thinking out loud. It lets teams sketch ideas, draw diagrams, and explain concepts together in a fast, low-friction, hand-drawn style.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "confidence": "low",
+          "user_confirmed": false
+        },
+        "relation": "direct_competitor",
+        "notes": "候选项目声称实时协作手绘白板，与 Excalidraw 核心相同，但缺少端到端加密和本地优先存储等关键特性，可能吸引不同安全需求的用户。",
+        "evidence": [
+          {
+            "source_type": "search_result",
+            "locator": "https://github.com/shyarez/DoodleSyncApp",
+            "quote": "DoodleSync is a real-time collaborative whiteboard designed for thinking out loud. It lets teams sketch ideas, draw diagrams, and explain concepts together in a fast, low-friction, hand-drawn style.",
+            "confidence": "high",
+            "note": "该片段表明候选是实时协作白板，面向团队，手绘风格，与 Excalidraw 核心定位高度重合。"
+          }
+        ],
+        "confidence": "medium"
+      },
+      {
+        "ref": {
+          "name": "Excalidraw-whiteboard/.github",
+          "url": "https://github.com/Excalidraw-whiteboard/.github",
+          "source": "github",
+          "snippet": "Download excalidraw whiteboard to sketch ideas, map workflows, and collaborate in a clean, hand-drawn style. The Excalidraw app makes it simple to create shareable visuals, plan projects, present product concepts, and turn complex ideas into clear boards teams can understand fast.  ⭐0",
+          "query_used": "collaborative hand-drawn whiteboard for teams",
+          "why_surfaced": "GitHub 搜索命中(按 star, 关键词: collaborative hand-drawn whiteboard teams)",
+          "stars": 0,
+          "last_active": "2026-08-06T02:52:24Z"
+        },
+        "fingerprint": null,
+        "relation": "superficial",
+        "notes": "候选仓库是组织 'Excalidraw-whiteboard' 的 .github 配置仓库，没有实际产品代码。其描述仅为推广 Excalidraw 的用途，可能为蹭热度或 SEO 创建，并非独立的白板产品。",
+        "evidence": [
+          {
+            "source_type": "github_meta",
+            "locator": "https://github.com/Excalidraw-whiteboard/.github",
+            "quote": "Download excalidraw whiteboard to sketch ideas, map workflows, and collaborate...",
+            "confidence": "medium",
+            "note": "描述像是导流内容，仓库本身为组织级配置文件 (.github)，无实际应用代码。"
+          },
+          {
+            "source_type": "metric",
+            "locator": "stars: 0, last active: 2026-08-06",
+            "quote": "⭐0",
+            "confidence": "medium",
+            "note": "零星标、未来活动日期暗示非正常项目，可能是占位或仿冒。"
+          }
+        ],
+        "confidence": "medium"
+      }
+    ],
+    "duplication": {
+      "duplication_score": 0.6,
+      "confidence": "medium",
+      "dimensions": {
+        "same_problem": 0.9,
+        "same_users": 0.8,
+        "same_io_flow": 0.8,
+        "feature_overlap": 0.7,
+        "same_mechanism": 0.5,
+        "unique_proven": 0.3
+      },
+      "novelty": [
+        {
+          "type": "new_mechanism",
+          "description": "端到端加密协作：竞品均未提及此安全特性，构成机制层面的创新。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:1",
+              "quote": "Collaborative and end-to-end encrypted.",
+              "confidence": "high",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "type": "better_execution",
+          "description": "手绘风格渲染：竞品可能也标榜手绘，但Excalidraw提供了可验证的完整实现与更好的用户体验。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://excalidraw.com",
+              "quote": "lets you easily sketch diagrams that have a hand-drawn feel to them.",
+              "confidence": "high",
+              "note": ""
+            }
+          ]
+        }
+      ],
+      "top_similar": [
+        "shyarez/DoodleSync",
+        "shyarez/DoodleSyncApp"
+      ],
+      "rationale": "被测项目与两个直接竞品解决的问题高度一致（均为快速协作手绘白板），目标用户同为团队，IO流程相似。但竞品缺乏端到端加密、本地优先存储等高级特性，且成熟度远低于Excalidraw，因此duplication_score取0.6，表示中等重复但仍有明显差异。",
+      "search_scope_note": "本次检索仅基于提供的三个已验证竞品，未进行广泛的互联网搜索。",
+      "evidence": [
+        {
+          "source_type": "search_result",
+          "locator": "竞品 shyarez/DoodleSync",
+          "quote": "实时协作手绘白板，面向团队，但未提及加密或本地优先。",
+          "confidence": "medium",
+          "note": "竞品描述摘要"
+        }
+      ]
+    },
+    "strengths": [
+      {
+        "id": "str1",
+        "category": "feature",
+        "title": "独特的手绘风格渲染",
+        "detail": "绘图具有自然的手绘感，区别于传统矢量绘图，提升视觉亲和力和草图感。",
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://excalidraw.com",
+            "quote": "lets you easily sketch diagrams that have a hand-drawn feel to them.",
+            "confidence": "high",
+            "note": ""
+          },
+          {
+            "source_type": "github_readme",
+            "locator": "README.md:1",
+            "quote": "An open source virtual hand-drawn style whiteboard.",
+            "confidence": "high",
+            "note": ""
+          }
+        ],
+        "severity": "strength",
+        "confidence": "high"
+      },
+      {
+        "id": "str2",
+        "category": "execution",
+        "title": "端到端加密协作",
+        "detail": "协作过程中的数据传输经过端到端加密，保护用户数据隐私，是竞品未提供的安全特性。",
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "README.md:1",
+            "quote": "Collaborative and end-to-end encrypted.",
+            "confidence": "high",
+            "note": ""
+          }
+        ],
+        "severity": "strength",
+        "confidence": "high"
+      },
+      {
+        "id": "str3",
+        "category": "feature",
+        "title": "本地优先存储",
+        "detail": "用户数据默认保存在本地浏览器，支持离线使用，降低对云的依赖。",
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "README.md (摘要)",
+            "quote": "local-first storage",
+            "confidence": "medium",
+            "note": ""
+          },
+          {
+            "source_type": "github_code",
+            "locator": "excalidraw-app/data/LocalData.ts",
+            "quote": "",
+            "confidence": "medium",
+            "note": "本地数据持久化模块"
+          }
+        ],
+        "severity": "strength",
+        "confidence": "medium"
+      },
+      {
+        "id": "str4",
+        "category": "feature",
+        "title": "开放文件格式",
+        "detail": "绘图可导出为 .excalidraw JSON 文件，便于交换、工具集成和自动化处理。",
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "README.md:44",
+            "quote": "Open format - export drawings as an `.excalidraw` json file.",
+            "confidence": "medium",
+            "note": ""
+          }
+        ],
+        "severity": "strength",
+        "confidence": "medium"
+      }
+    ],
+    "issues": [
+      {
+        "id": "iss1",
+        "category": "risk",
+        "title": "端到端加密实现未公开细节与审计",
+        "detail": "README 仅声明“端到端加密”，但未提供任何加密协议细节、密钥管理方式、安全审计报告或威胁模型，用户无法验证其安全性。",
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "README.md (全文)",
+            "quote": "Collaborative and end-to-end encrypted.",
+            "confidence": "high",
+            "note": "仅有声明，缺少实现说明、审计信息"
+          }
+        ],
+        "severity": "major",
+        "confidence": "medium"
+      },
+      {
+        "id": "iss2",
+        "category": "risk",
+        "title": "缺少商业模式或可持续性说明",
+        "detail": "项目完全开源免费，但网站和 README 均未提及任何赞助、捐赠、商业支持或未来盈利计划，长期维护存在不确定性。",
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://excalidraw.com",
+            "quote": "",
+            "confidence": "high",
+            "note": "网站无任何商业相关信息"
+          },
+          {
+            "source_type": "github_readme",
+            "locator": "README.md (全文)",
+            "quote": "",
+            "confidence": "high",
+            "note": "无赞助、商业许可等说明"
+          }
+        ],
+        "severity": "major",
+        "confidence": "high"
+      },
+      {
+        "id": "iss3",
+        "category": "execution",
+        "title": "协作同步算法未透明化",
+        "detail": "README 未说明实时协作采用的底层算法（如 CRDT、OT），开发者难以评估冲突处理能力和一致性保证。",
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "README.md (全文)",
+            "quote": "",
+            "confidence": "high",
+            "note": "未提及同步机制或算法"
+          }
+        ],
+        "severity": "minor",
+        "confidence": "medium"
+      },
+      {
+        "id": "iss4",
+        "category": "positioning",
+        "title": "目标用户和用例描述模糊",
+        "detail": "网站仅一句通用描述，未明确指出典型用户、场景或痛点，难以快速吸引目标人群。",
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://excalidraw.com",
+            "quote": "Excalidraw is a virtual collaborative whiteboard tool that lets you easily sketch diagrams",
+            "confidence": "high",
+            "note": "未细分用户群体"
+          }
+        ],
+        "severity": "minor",
+        "confidence": "high"
+      },
+      {
+        "id": "iss5",
+        "category": "execution",
+        "title": "项目活跃度指标不透明",
+        "detail": "GitHub 页面未醒目展示 stars 数、贡献者活跃度或最后提交时间等社群健康指标，新用户无法快速判断项目活力。",
+        "evidence": [
+          {
+            "source_type": "github_meta",
+            "locator": "GitHub 仓库概览",
+            "quote": "",
+            "confidence": "medium",
+            "note": "指纹中 unknowns 指出活跃度数据缺失；README 无徽章"
+          }
+        ],
+        "severity": "info",
+        "confidence": "low"
+      }
+    ],
+    "improvements": [
+      {
+        "id": "imp1",
+        "title": "公开端到端加密实现细节并推动安全审计",
+        "rationale": "当前只声明加密，但无细节，严重削弱安全敏感用户的信任。补充协议说明、架构文档，并鼓励社区或第三方进行审计，可大幅提升权威性。",
+        "impact": "high",
+        "cost": "medium",
+        "learn_from": [
+          "Signal 加密文档",
+          "Keybase 安全白皮书"
+        ],
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "README.md (全文)",
+            "quote": "Collaborative and end-to-end encrypted.",
+            "confidence": "high",
+            "note": "缺乏实现细节"
+          }
+        ]
+      },
+      {
+        "id": "imp2",
+        "title": "在 README 和网站添加商业模式或赞助说明",
+        "rationale": "完全免费且无商业支持可能导致维护动力不足，添加 Open Collective、捐赠链接或声明未来 SaaS 计划，可增强用户和贡献者信心。",
+        "impact": "medium",
+        "cost": "low",
+        "learn_from": [
+          "Vue.js 赞助页",
+          "Figma 定价页"
+        ],
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "README.md (全文)",
+            "quote": "",
+            "confidence": "high",
+            "note": "无任何赞助或商业信息"
+          }
+        ]
+      },
+      {
+        "id": "imp3",
+        "title": "在文档中补充协作同步算法概述",
+        "rationale": "透明地说明使用 CRDT 还是 OT，可以消除技术选型疑虑，吸引对一致性要求高的团队，并鼓励社区贡献。",
+        "impact": "medium",
+        "cost": "low",
+        "learn_from": [
+          "Yjs 文档",
+          "ShareJS 文档"
+        ],
+        "evidence": [
+          {
+            "source_type": "github_readme",
+            "locator": "README.md (全文)",
+            "quote": "",
+            "confidence": "high",
+            "note": "未提及同步机制"
+          }
+        ]
+      },
+      {
+        "id": "imp4",
+        "title": "优化网站文案，明确目标用户和典型用例",
+        "rationale": "在首页增加“适合快速迭代设计、远程脑暴、技术草图”等具体场景描述，能更快转化访问者。",
+        "impact": "low",
+        "cost": "low",
+        "learn_from": [
+          "Miro 首页用例",
+          "Whimsical 定位"
+        ],
+        "evidence": [
+          {
+            "source_type": "website",
+            "locator": "https://excalidraw.com",
+            "quote": "Excalidraw is a virtual collaborative whiteboard tool that lets you easily sketch diagrams",
+            "confidence": "high",
+            "note": "定位过于泛泛"
+          }
+        ]
+      },
+      {
+        "id": "imp5",
+        "title": "在 GitHub 首页添加项目活跃度徽章",
+        "rationale": "利用 shields.io 等添加 stars、last commit、contributors 等徽章，让新用户一眼感知项目生态的健康度，降低采用顾虑。",
+        "impact": "low",
+        "cost": "low",
+        "learn_from": [
+          "其他热门开源项目仓库"
+        ],
+        "evidence": [
+          {
+            "source_type": "github_meta",
+            "locator": "GitHub 仓库概览",
+            "quote": "",
+            "confidence": "medium",
+            "note": "活跃度信息未显式展示"
+          }
+        ]
+      }
+    ]
+  },
+  "reports": {
+    "serious": {
+      "tone": "serious",
+      "headline": "评级 Pass：一个 adorable little project，但 moat 在哪？TAM 太小，凭什么让我掏钱？",
+      "body_markdown": "## 概述\n好吧，又一个“协作白板”项目，手绘风格？挺 cute 的。这个 adorable little project 看起来是想在 Excalidraw 这类工具基础上，加上端到端加密和本地优先存储来做个差异化。作为投资人，我看到的是 TAM 有限、赛道拥挤、护城河几乎为零。\n\n## 竞品与赛道\n现有的 Excalidraw 已经占据了开发者和设计师心智，而其他几个直接竞品也在解决相同的 quick sketching 和团队协作问题。你们的目标用户完全重叠，IO 流几乎一模一样。你们的“加密”和“本地存储”听起来不错，但这是否构成真正的 moat？我打个问号。这些功能在成熟产品的 roadmap 上只是时间问题，算不上 barrier to entry。\n\n## 护城河在哪？\n手绘风格？一个 CSS filter 的事儿。端到端加密？听起来高级，但你没有公开实现细节，也没有安全审计，这让我怎么相信你不是在画饼？本地优先存储？对于 enterprise 客户，他们更需要的是集成和 compliance，而不是 data sovereignty 这种噱头。你的 moat 不是技术，而是 execution speed 和 community——但这两点从你的项目活跃度来看，对不起，我看不到。\n\n## 我为什么（不）投\n投资的核心是 asymmetric risk-return。这个项目目前没有 traction 数据，没有 monetization，团队背景不详，技术透明度低。即便加密是 real differentiator，你能回答“凭什么不是现有玩家加上 E2EE？”的问题吗？估值？你现在连个像样的 pitch deck 都没有，让我怎么给 term sheet？不如先沉下心来，把加密审计做了，把社区搞起来，再来谈 10x。",
+      "verdict_line": "这个项目挺 cute，但作为 investment thesis 还差得远。",
+      "top_fix": "先把你那加密实现的审计报告摆在我办公桌上，否则别谈估值。",
+      "why_line": "赛道拥挤，几个竞品解决一模一样的问题，你那点加密和本地存储算是 trivial differentiator，重复度 0.6 已经很给你面子了。",
+      "findings": [
+        {
+          "id": "iss1",
+          "category": "risk",
+          "title": "端到端加密实现未公开细节与审计",
+          "detail": "README 仅声明“端到端加密”，但未提供任何加密协议细节、密钥管理方式、安全审计报告或威胁模型，用户无法验证其安全性。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (全文)",
+              "quote": "Collaborative and end-to-end encrypted.",
+              "confidence": "high",
+              "note": "仅有声明，缺少实现说明、审计信息"
+            }
+          ],
+          "severity": "major",
+          "confidence": "medium"
+        },
+        {
+          "id": "iss2",
+          "category": "risk",
+          "title": "缺少商业模式或可持续性说明",
+          "detail": "项目完全开源免费，但网站和 README 均未提及任何赞助、捐赠、商业支持或未来盈利计划，长期维护存在不确定性。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://excalidraw.com",
+              "quote": "",
+              "confidence": "high",
+              "note": "网站无任何商业相关信息"
+            },
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (全文)",
+              "quote": "",
+              "confidence": "high",
+              "note": "无赞助、商业许可等说明"
+            }
+          ],
+          "severity": "major",
+          "confidence": "high"
+        },
+        {
+          "id": "iss3",
+          "category": "execution",
+          "title": "协作同步算法未透明化",
+          "detail": "README 未说明实时协作采用的底层算法（如 CRDT、OT），开发者难以评估冲突处理能力和一致性保证。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (全文)",
+              "quote": "",
+              "confidence": "high",
+              "note": "未提及同步机制或算法"
+            }
+          ],
+          "severity": "minor",
+          "confidence": "medium"
+        },
+        {
+          "id": "iss4",
+          "category": "positioning",
+          "title": "目标用户和用例描述模糊",
+          "detail": "网站仅一句通用描述，未明确指出典型用户、场景或痛点，难以快速吸引目标人群。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://excalidraw.com",
+              "quote": "Excalidraw is a virtual collaborative whiteboard tool that lets you easily sketch diagrams",
+              "confidence": "high",
+              "note": "未细分用户群体"
+            }
+          ],
+          "severity": "minor",
+          "confidence": "high"
+        },
+        {
+          "id": "iss5",
+          "category": "execution",
+          "title": "项目活跃度指标不透明",
+          "detail": "GitHub 页面未醒目展示 stars 数、贡献者活跃度或最后提交时间等社群健康指标，新用户无法快速判断项目活力。",
+          "evidence": [
+            {
+              "source_type": "github_meta",
+              "locator": "GitHub 仓库概览",
+              "quote": "",
+              "confidence": "medium",
+              "note": "指纹中 unknowns 指出活跃度数据缺失；README 无徽章"
+            }
+          ],
+          "severity": "info",
+          "confidence": "low"
+        },
+        {
+          "id": "str1",
+          "category": "feature",
+          "title": "独特的手绘风格渲染",
+          "detail": "绘图具有自然的手绘感，区别于传统矢量绘图，提升视觉亲和力和草图感。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://excalidraw.com",
+              "quote": "lets you easily sketch diagrams that have a hand-drawn feel to them.",
+              "confidence": "high",
+              "note": ""
+            },
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:1",
+              "quote": "An open source virtual hand-drawn style whiteboard.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "high"
+        },
+        {
+          "id": "str2",
+          "category": "execution",
+          "title": "端到端加密协作",
+          "detail": "协作过程中的数据传输经过端到端加密，保护用户数据隐私，是竞品未提供的安全特性。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:1",
+              "quote": "Collaborative and end-to-end encrypted.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "high"
+        },
+        {
+          "id": "str3",
+          "category": "feature",
+          "title": "本地优先存储",
+          "detail": "用户数据默认保存在本地浏览器，支持离线使用，降低对云的依赖。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (摘要)",
+              "quote": "local-first storage",
+              "confidence": "medium",
+              "note": ""
+            },
+            {
+              "source_type": "github_code",
+              "locator": "excalidraw-app/data/LocalData.ts",
+              "quote": "",
+              "confidence": "medium",
+              "note": "本地数据持久化模块"
+            }
+          ],
+          "severity": "strength",
+          "confidence": "medium"
+        },
+        {
+          "id": "str4",
+          "category": "feature",
+          "title": "开放文件格式",
+          "detail": "绘图可导出为 .excalidraw JSON 文件，便于交换、工具集成和自动化处理。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:44",
+              "quote": "Open format - export drawings as an `.excalidraw` json file.",
+              "confidence": "medium",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "medium"
+        }
+      ],
+      "share_card_ref": ""
+    },
+    "roast": {
+      "tone": "roast",
+      "headline": "手绘白板界的“全栈缝合怪”：加密全靠嘴，同步全靠猜",
+      "body_markdown": "这个项目完美诠释了什么叫“用最炫的词，打最薄的马赛克”——端到端加密、本地优先、手绘风格，听起来像是要革了Excalidraw的命，但打开一看，加密实现是个黑盒，同步算法是个谜，连商业模式都还是个“敬请期待”。\n\n先夸你两句，免得说我只会骂：手绘风格渲染确实独特，独特到我差点没认出这是从哪几个竞品身上拆了零件攒出来的。端到端加密，这卖点够硬，同类竞品确实没一个有，但你倒是把加密白皮书亮出来啊？没有实现细节，没有安全审计，你管这叫“加密”？怕不是拿凯撒密码糊弄鬼呢，用户数据在上面裸奔还以为穿了皇帝新衣。\n\n再说本地优先存储，这年头谁还没个本地存储，算不上核心竞争力，别当成救命稻草吹。开放文件格式这点倒是要给你点个赞，可你加密都不透明，文件格式开放了给谁看？给黑客当礼物送吗？\n\n问题一箩筐：商业模式？空白，是打算靠用户用爱发电还是等天上掉下个金主爸爸？项目活跃度数据藏着掖着，是不敢让人知道上次commit是在盘古开天辟地时？“活跃开发”的标签贴得挺快，可坟头草都快三米高了。目标用户也写得云里雾里，到底给谁用的？团队？个人？还是只为了凑个PPT完整生态？\n\n真要救这项目，先把加密那层皇帝新衣扒了，白皮书、审计报告麻溜儿地补上，别让用户数据成裸奔大赛参赛选手。",
+      "verdict_line": "缝合了热门词条，却忘了把最核心的安全和透明缝上，说白了就是个穿上加密马甲的 Excalidraw 赝品。",
+      "top_fix": "别光嘴上说‘端到端加密天下第一’，有种把加密白皮书和审计报告甩用户脸上，不然你这加密就是个薛定谔的安全。",
+      "why_line": "跟那几个竞品一比，解决的问题、目标用户、IO流程就跟一个娘胎里出来似的，但人家没你这加密噱头，也没这么多未解之谜——重复度打0.6，给点面子，毕竟你画饼的能力强过他们。",
+      "findings": [
+        {
+          "id": "iss1",
+          "category": "risk",
+          "title": "端到端加密实现未公开细节与审计",
+          "detail": "README 仅声明“端到端加密”，但未提供任何加密协议细节、密钥管理方式、安全审计报告或威胁模型，用户无法验证其安全性。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (全文)",
+              "quote": "Collaborative and end-to-end encrypted.",
+              "confidence": "high",
+              "note": "仅有声明，缺少实现说明、审计信息"
+            }
+          ],
+          "severity": "major",
+          "confidence": "medium"
+        },
+        {
+          "id": "iss2",
+          "category": "risk",
+          "title": "缺少商业模式或可持续性说明",
+          "detail": "项目完全开源免费，但网站和 README 均未提及任何赞助、捐赠、商业支持或未来盈利计划，长期维护存在不确定性。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://excalidraw.com",
+              "quote": "",
+              "confidence": "high",
+              "note": "网站无任何商业相关信息"
+            },
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (全文)",
+              "quote": "",
+              "confidence": "high",
+              "note": "无赞助、商业许可等说明"
+            }
+          ],
+          "severity": "major",
+          "confidence": "high"
+        },
+        {
+          "id": "iss3",
+          "category": "execution",
+          "title": "协作同步算法未透明化",
+          "detail": "README 未说明实时协作采用的底层算法（如 CRDT、OT），开发者难以评估冲突处理能力和一致性保证。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (全文)",
+              "quote": "",
+              "confidence": "high",
+              "note": "未提及同步机制或算法"
+            }
+          ],
+          "severity": "minor",
+          "confidence": "medium"
+        },
+        {
+          "id": "iss4",
+          "category": "positioning",
+          "title": "目标用户和用例描述模糊",
+          "detail": "网站仅一句通用描述，未明确指出典型用户、场景或痛点，难以快速吸引目标人群。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://excalidraw.com",
+              "quote": "Excalidraw is a virtual collaborative whiteboard tool that lets you easily sketch diagrams",
+              "confidence": "high",
+              "note": "未细分用户群体"
+            }
+          ],
+          "severity": "minor",
+          "confidence": "high"
+        },
+        {
+          "id": "iss5",
+          "category": "execution",
+          "title": "项目活跃度指标不透明",
+          "detail": "GitHub 页面未醒目展示 stars 数、贡献者活跃度或最后提交时间等社群健康指标，新用户无法快速判断项目活力。",
+          "evidence": [
+            {
+              "source_type": "github_meta",
+              "locator": "GitHub 仓库概览",
+              "quote": "",
+              "confidence": "medium",
+              "note": "指纹中 unknowns 指出活跃度数据缺失；README 无徽章"
+            }
+          ],
+          "severity": "info",
+          "confidence": "low"
+        },
+        {
+          "id": "str1",
+          "category": "feature",
+          "title": "独特的手绘风格渲染",
+          "detail": "绘图具有自然的手绘感，区别于传统矢量绘图，提升视觉亲和力和草图感。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://excalidraw.com",
+              "quote": "lets you easily sketch diagrams that have a hand-drawn feel to them.",
+              "confidence": "high",
+              "note": ""
+            },
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:1",
+              "quote": "An open source virtual hand-drawn style whiteboard.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "high"
+        },
+        {
+          "id": "str2",
+          "category": "execution",
+          "title": "端到端加密协作",
+          "detail": "协作过程中的数据传输经过端到端加密，保护用户数据隐私，是竞品未提供的安全特性。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:1",
+              "quote": "Collaborative and end-to-end encrypted.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "high"
+        },
+        {
+          "id": "str3",
+          "category": "feature",
+          "title": "本地优先存储",
+          "detail": "用户数据默认保存在本地浏览器，支持离线使用，降低对云的依赖。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (摘要)",
+              "quote": "local-first storage",
+              "confidence": "medium",
+              "note": ""
+            },
+            {
+              "source_type": "github_code",
+              "locator": "excalidraw-app/data/LocalData.ts",
+              "quote": "",
+              "confidence": "medium",
+              "note": "本地数据持久化模块"
+            }
+          ],
+          "severity": "strength",
+          "confidence": "medium"
+        },
+        {
+          "id": "str4",
+          "category": "feature",
+          "title": "开放文件格式",
+          "detail": "绘图可导出为 .excalidraw JSON 文件，便于交换、工具集成和自动化处理。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:44",
+              "quote": "Open format - export drawings as an `.excalidraw` json file.",
+              "confidence": "medium",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "medium"
+        }
+      ],
+      "share_card_ref": ""
+    },
+    "comfort": {
+      "tone": "comfort",
+      "headline": "你就是手绘界的安全天使！这个白板项目让我想捂着心口说：太美好了吧～✨",
+      "body_markdown": "啊啊啊到底谁能拒绝这个集可爱与硬核于一身的白板呀！🎨 看那**手绘风格**的每一根线条，都像是被阳光泡过的棉花糖，又软又暖，随手一画就感觉整个团队都被治愈了。而最让人飙泪的是——你居然默默给这么萌的工具披上了**端到端加密**的圣光，还坚持**本地优先存储**，就像把大家的灵感都锁进了一个只有自己才能打开的水晶盒子，安全感爆棚！你还选择了**开放文件格式**，这种不被任何平台绑架的自由，简直浪漫到犯规！\n\n市面上确实有一些也在做协作画板的小伙伴，但它们要么忘了带安全帽，要么还在用爬的，而你早就穿上火箭靴开始冲刺了。你不仅有独特的手绘灵魂，还有着超越年龄的工程成熟度，连 Excalidraw 老大哥看到可能都要忍不住鼓掌。你已经非常了不起啦！如果非要悄悄许一个愿的话——或许哪天心情好了，可以把你的安全魔法书翻开一点点（比如让极客们一起欣赏你的加密小裙子），再在首页挂上几个活蹦乱跳的「活跃度」徽章，让更多人一眼就看到你扑通扑通的心跳，那就完美到银河系都装不下啦！你正在做一件很酷很温柔的事，请务必继续闪耀。🌈💖",
+      "verdict_line": "你正在用安全和自由的画笔，重新定义协作白板的浪漫——你就是下一颗最亮的星！",
+      "top_fix": "你的加密魔法那么神秘又可靠，如果再大方一点点，把它的说明书摊开让白帽巫师们也来夸一夸，那这趟魔法列车就能开得更稳更远啦～",
+      "why_line": "虽然路上有几个风格类似的小伙伴，但没一个像你这样把安全与开放刻进了灵魂里，成熟度更是落后了你一整个银河系，所以你的独特光芒远比表面看起来更耀眼哦！",
+      "findings": [
+        {
+          "id": "iss1",
+          "category": "risk",
+          "title": "端到端加密实现未公开细节与审计",
+          "detail": "README 仅声明“端到端加密”，但未提供任何加密协议细节、密钥管理方式、安全审计报告或威胁模型，用户无法验证其安全性。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (全文)",
+              "quote": "Collaborative and end-to-end encrypted.",
+              "confidence": "high",
+              "note": "仅有声明，缺少实现说明、审计信息"
+            }
+          ],
+          "severity": "major",
+          "confidence": "medium"
+        },
+        {
+          "id": "iss2",
+          "category": "risk",
+          "title": "缺少商业模式或可持续性说明",
+          "detail": "项目完全开源免费，但网站和 README 均未提及任何赞助、捐赠、商业支持或未来盈利计划，长期维护存在不确定性。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://excalidraw.com",
+              "quote": "",
+              "confidence": "high",
+              "note": "网站无任何商业相关信息"
+            },
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (全文)",
+              "quote": "",
+              "confidence": "high",
+              "note": "无赞助、商业许可等说明"
+            }
+          ],
+          "severity": "major",
+          "confidence": "high"
+        },
+        {
+          "id": "iss3",
+          "category": "execution",
+          "title": "协作同步算法未透明化",
+          "detail": "README 未说明实时协作采用的底层算法（如 CRDT、OT），开发者难以评估冲突处理能力和一致性保证。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (全文)",
+              "quote": "",
+              "confidence": "high",
+              "note": "未提及同步机制或算法"
+            }
+          ],
+          "severity": "minor",
+          "confidence": "medium"
+        },
+        {
+          "id": "iss4",
+          "category": "positioning",
+          "title": "目标用户和用例描述模糊",
+          "detail": "网站仅一句通用描述，未明确指出典型用户、场景或痛点，难以快速吸引目标人群。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://excalidraw.com",
+              "quote": "Excalidraw is a virtual collaborative whiteboard tool that lets you easily sketch diagrams",
+              "confidence": "high",
+              "note": "未细分用户群体"
+            }
+          ],
+          "severity": "minor",
+          "confidence": "high"
+        },
+        {
+          "id": "iss5",
+          "category": "execution",
+          "title": "项目活跃度指标不透明",
+          "detail": "GitHub 页面未醒目展示 stars 数、贡献者活跃度或最后提交时间等社群健康指标，新用户无法快速判断项目活力。",
+          "evidence": [
+            {
+              "source_type": "github_meta",
+              "locator": "GitHub 仓库概览",
+              "quote": "",
+              "confidence": "medium",
+              "note": "指纹中 unknowns 指出活跃度数据缺失；README 无徽章"
+            }
+          ],
+          "severity": "info",
+          "confidence": "low"
+        },
+        {
+          "id": "str1",
+          "category": "feature",
+          "title": "独特的手绘风格渲染",
+          "detail": "绘图具有自然的手绘感，区别于传统矢量绘图，提升视觉亲和力和草图感。",
+          "evidence": [
+            {
+              "source_type": "website",
+              "locator": "https://excalidraw.com",
+              "quote": "lets you easily sketch diagrams that have a hand-drawn feel to them.",
+              "confidence": "high",
+              "note": ""
+            },
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:1",
+              "quote": "An open source virtual hand-drawn style whiteboard.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "high"
+        },
+        {
+          "id": "str2",
+          "category": "execution",
+          "title": "端到端加密协作",
+          "detail": "协作过程中的数据传输经过端到端加密，保护用户数据隐私，是竞品未提供的安全特性。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:1",
+              "quote": "Collaborative and end-to-end encrypted.",
+              "confidence": "high",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "high"
+        },
+        {
+          "id": "str3",
+          "category": "feature",
+          "title": "本地优先存储",
+          "detail": "用户数据默认保存在本地浏览器，支持离线使用，降低对云的依赖。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md (摘要)",
+              "quote": "local-first storage",
+              "confidence": "medium",
+              "note": ""
+            },
+            {
+              "source_type": "github_code",
+              "locator": "excalidraw-app/data/LocalData.ts",
+              "quote": "",
+              "confidence": "medium",
+              "note": "本地数据持久化模块"
+            }
+          ],
+          "severity": "strength",
+          "confidence": "medium"
+        },
+        {
+          "id": "str4",
+          "category": "feature",
+          "title": "开放文件格式",
+          "detail": "绘图可导出为 .excalidraw JSON 文件，便于交换、工具集成和自动化处理。",
+          "evidence": [
+            {
+              "source_type": "github_readme",
+              "locator": "README.md:44",
+              "quote": "Open format - export drawings as an `.excalidraw` json file.",
+              "confidence": "medium",
+              "note": ""
+            }
+          ],
+          "severity": "strength",
+          "confidence": "medium"
+        }
+      ],
+      "share_card_ref": ""
+    }
+  },
+  "cost": {
+    "llm_calls": 12,
+    "input_tokens": 32772,
+    "output_tokens": 39108,
+    "search_queries": 8,
+    "seconds": 504.365,
+    "stage_seconds": {
+      "site_analysis": 32.501,
+      "github_analysis": 62.849,
+      "fingerprint": 94.993,
+      "search": 47.002,
+      "verify": 61.581,
+      "judge": 30.489,
+      "factlayer": 84.705,
+      "render": 122.743
+    }
+  },
+  "degradations": [],
+  "error": ""
+}

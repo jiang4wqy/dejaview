@@ -1,0 +1,64 @@
+# DejaView 生产部署: redis + backend(API) + worker(rq) + frontend  (可选 postgres)
+# 用法: cp deploy.env.example .env && 填 DEEPSEEK_API_KEY, 然后 docker compose up -d --build
+# 用 Postgres 而非 redis 存储: docker compose --profile pg up -d, 并把 DEJAVIEW_JOBSTORE=sql
+#   DEJAVIEW_SQL_URL=postgresql://dejaview:dejaview@postgres:5432/dejaview
+x-backend-env: &backend-env
+  DEJAVIEW_PROVIDER: ${DEJAVIEW_PROVIDER:-deepseek}
+  DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+  DEJAVIEW_MODEL_CHEAP: ${DEJAVIEW_MODEL_CHEAP:-deepseek-v4-flash}
+  DEJAVIEW_MODEL_STANDARD: ${DEJAVIEW_MODEL_STANDARD:-deepseek-v4-pro}
+  DEJAVIEW_MODEL_STRONG: ${DEJAVIEW_MODEL_STRONG:-deepseek-v4-pro}
+  DEJAVIEW_CRAWLER: ${DEJAVIEW_CRAWLER:-builtin}
+  DEJAVIEW_REPOMAP: builtin
+  DEJAVIEW_SEARCH_PROVIDER: ${DEJAVIEW_SEARCH_PROVIDER:-composite}
+  DEJAVIEW_SEARCH_SOURCES: ${DEJAVIEW_SEARCH_SOURCES:-github,v2ex}
+  GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+  DEJAVIEW_QUEUE: rq
+  DEJAVIEW_JOBSTORE: ${DEJAVIEW_JOBSTORE:-redis}
+  DEJAVIEW_REDIS_URL: redis://redis:6379/0
+  DEJAVIEW_SQL_URL: ${DEJAVIEW_SQL_URL:-sqlite:////data/jobs.db}
+  PYTHONPATH: /app
+
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes: [redis-data:/data]
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on: [redis]
+    environment: *backend-env
+    ports: ["8000:8000"]
+
+  worker:                       # rq worker: 真正跑流水线的进程
+    build: ./backend
+    restart: unless-stopped
+    depends_on: [redis]
+    environment: *backend-env
+    command: ["rq", "worker", "-u", "redis://redis:6379/0", "dejaview"]
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-http://localhost:8000}
+    restart: unless-stopped
+    depends_on: [backend]
+    ports: ["3000:3000"]
+
+  postgres:                     # 可选: docker compose --profile pg up
+    image: postgres:16-alpine
+    profiles: [pg]
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dejaview
+      POSTGRES_PASSWORD: dejaview
+      POSTGRES_DB: dejaview
+    volumes: [pg-data:/var/lib/postgresql/data]
+
+volumes:
+  redis-data:
+  pg-data:
