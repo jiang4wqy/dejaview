@@ -53,9 +53,7 @@ services:
     dockerfilePath: ./frontend/Dockerfile
     dockerContext: ./frontend
     envVars:
-      # 浏览器走同源 /api, 由前端服务器反代到后端。自动取后端主机名(next.config 会补 https://)。
+      # 浏览器走同源 /api, 由前端服务器反代到后端。免费档无私有网络, 直接用后端公网 URL。
+      # 注意: 若你的后端服务名/URL 不是 dejaview-backend, 把这里换成实际的后端网址。
       - key: DEJAVIEW_BACKEND
-        fromService:
-          type: web
-          name: dejaview-backend
-          property: host
+        value: https://dejaview-backend.onrender.com
