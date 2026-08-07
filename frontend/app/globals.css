@@ -1286,8 +1286,16 @@ h1.verdict {
     padding: 8px 16px 56px;
   }
   .app-topbar-inner {
-    padding: 12px 16px;
+    padding: 12px 14px;
+    gap: 8px;
   }
+  /* 手机上收掉冗余副标题，给右侧工具让位，避免整行折行 */
+  .brand { font-size: 18px; gap: 7px; }
+  .brand small { display: none; }
+  .topbar-tools { gap: 7px; }
+  .topbar-restart { padding: 6px 9px; }
+  .persona-pill { padding: 6px 10px 6px 8px; gap: 6px; }
+  .persona-swap { padding-left: 6px; }
 }
 
 /* ===== 降低动效偏好 ===== */
@@ -1555,7 +1563,7 @@ h1.verdict {
 .intro-vs-label { font-family: var(--mono, monospace); font-size: 12.5px; color: #9a90b5; letter-spacing: .06em; margin: 4px 0 10px; }
 
 /* 极简入口：单框线索 + 折叠补充 */
-.clue-input { min-height: 60px; font-size: 15.5px; line-height: 1.5; }
+.clue-input { min-height: 84px; font-size: 15.5px; line-height: 1.5; resize: vertical; }
 .more-toggle {
   align-self: flex-start; background: transparent; border: 0; color: var(--accent);
   font: inherit; font-weight: 700; cursor: pointer; padding: 2px 0;
@@ -1656,18 +1664,18 @@ body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-even
   background: color-mix(in srgb, var(--accent) 14%, var(--panel));
   border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
   color: var(--ink); border-radius: 999px; padding: 6px 12px 6px 9px;
-  font-family: var(--mono); font-size: 12.5px;
+  font-family: var(--mono); font-size: 12.5px; white-space: nowrap;
   transition: transform .12s, box-shadow .2s, background .3s;
 }
 .persona-pill:hover { transform: translateY(-1px); box-shadow: 0 4px 18px color-mix(in srgb, var(--accent) 40%, transparent); }
 .persona-emoji { font-size: 16px; }
 .persona-name { font-weight: 700; }
-.persona-swap { color: var(--faint); border-left: 1px solid var(--line); padding-left: 8px; }
-.topbar-tools { display: inline-flex; align-items: center; gap: 10px; }
+.persona-swap { color: var(--faint); border-left: 1px solid var(--line); padding-left: 8px; white-space: nowrap; }
+.topbar-tools { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .topbar-restart {
   font-family: var(--mono); font-size: 12px; color: var(--muted); background: transparent;
   border: 1px solid var(--line); padding: 6px 11px; border-radius: 999px; cursor: pointer;
-  transition: color .2s, border-color .2s;
+  white-space: nowrap; transition: color .2s, border-color .2s;
 }
 .topbar-restart:hover { color: var(--accent); border-color: var(--accent); }
 /* 返回（退一步）按钮 */
