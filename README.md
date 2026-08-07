@@ -129,6 +129,15 @@ git clone https://github.com/jiang4wqy/dejaview.git && cd dejaview
 
 > ⚠️ **成本提醒**：分析用的是**你自己的 DeepSeek key、走你的额度**。若部署成公开站点，任何访客的每次分析都消耗你的余额。为此已**内置限流**（每 IP 每小时上限 + 全站每日总额度，`docker compose` 默认开启）保护钱包，参数可调；详见下方「[公开上线前](#公开上线前成本与安全)」。
 
+**部署到 Render（永久免费网址，不依赖自己的机器）**：仓库已带 [`render.yaml`](render.yaml) 蓝图（前端 + 后端两个免费 web 服务，内存存储 + 线程执行，限流默认开）。
+
+1. 注册 [render.com](https://render.com)（可用 GitHub 登录），在 **Account → GitHub** 授权访问 `jiang4wqy/dejaview`（私有仓库需先授权）。
+2. **New → Blueprint → 选该仓库 → Apply**，Render 读 `render.yaml` 自动建两个服务。
+3. 提示处填 **`DEEPSEEK_API_KEY`**（标了 `sync:false`，是密钥、不进仓库）。
+4. 建好后把**前端服务**的网址（`https://dejaview-frontend.onrender.com`）发给朋友即可。
+
+> 免费档：服务闲置 ~15 分钟休眠，下次访问冷启动约 ~50s（首个访客稍等一下）。若前端连不上后端，去前端服务 **Environment** 确认 `DEJAVIEW_BACKEND` = 后端网址。Railway 亦可，但其免费额度已改为一次性 $5 试用，长期不如 Render 免费档。
+
 **离线零成本**（默认，无需任何 key）：直接 `make dev`，前端提交后走 mock，秒出三语气报告。前端首页还内置**预生成示例**（`frontend/public/demos/*.json`），点一下秒开、无需等待。
 
 **真实模式**（推荐）：`cp backend/.env.example backend/.env`，填 DeepSeek key（或 Claude/Qwen）。即用**真实 DeepSeek + 内置抓取 + git clone + GitHub 搜索**分析真实项目。命令行跑一次：

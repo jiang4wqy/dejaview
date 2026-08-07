@@ -13,4 +13,5 @@ COPY scripts ./scripts
 COPY pyproject.toml .
 
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# 用 $PORT(云平台如 Render 会注入; 本地/compose 缺省 8000), shell 形式才能展开变量
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

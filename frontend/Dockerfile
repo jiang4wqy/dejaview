@@ -4,8 +4,9 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci || npm install
 COPY . .
-# NEXT_PUBLIC_* 在构建期内联; 浏览器在宿主机访问, 故指向宿主机的后端端口
-ARG NEXT_PUBLIC_API_BASE=http://localhost:8000
+# 缺省留空 = 浏览器走同源相对 /api, 运行时由 next.config 反代到 DEJAVIEW_BACKEND。
+# 这样单端口/多服务(Render)都无需构建期知道后端地址。
+ARG NEXT_PUBLIC_API_BASE=
 ENV NEXT_PUBLIC_API_BASE=$NEXT_PUBLIC_API_BASE
 RUN npm run build
 
