@@ -21,6 +21,7 @@ from app.config import Settings
 from app.errors import ConfigError, CrawlError
 from app.logging import get_logger
 from app.models.schemas import CrawlResult, KeyPage
+from app.netguard import assert_public_http_url, next_redirect
 
 _UA = "Mozilla/5.0 (compatible; DejaViewBot/0.1; +https://github.com/jiang4wqy/dejaview)"
 _KEYPAGE_HINTS = {
@@ -127,11 +128,18 @@ class BuiltinCrawler(_HtmlCrawler):
     name = "builtin"
 
     def _get_html(self, url: str) -> str:
+        assert_public_http_url(url)                       # 防 SSRF：拒本机/内网/元数据
+        # 手动跟随重定向，每跳复校，避免"公网→内网"的跳转绕过。
         with httpx.Client(headers={"User-Agent": _UA}, trust_env=True,
-                          follow_redirects=True, timeout=self._timeout) as c:
-            r = c.get(url)
-            r.raise_for_status()
-            return r.text
+                          follow_redirects=False, timeout=self._timeout) as c:
+            for _ in range(5):
+                r = c.get(url)
+                if r.is_redirect and "location" in r.headers:
+                    url = next_redirect(str(r.url), r.headers["location"])
+                    continue
+                r.raise_for_status()
+                return r.text
+            raise CrawlError(f"重定向过多：{url}")
 
 
 def _find_chrome() -> str:

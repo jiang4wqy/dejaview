@@ -15,6 +15,7 @@ from app.config import Settings
 from app.errors import ConfigError, RepoError
 from app.logging import get_logger
 from app.models.schemas import RepoMapResult
+from app.netguard import safe_git_url
 
 _IGNORE_DIRS = {".git", "node_modules", "vendor", "dist", "build", ".next", "out",
                 "__pycache__", ".venv", "venv", ".idea", ".vscode", "target", ".cache"}
@@ -74,10 +75,14 @@ class BuiltinRepoMapper(RepoMapper):
             shutil.rmtree(dest, ignore_errors=True)
 
     def _clone(self, url: str, dest: str) -> None:
-        env = dict(os.environ, GIT_TERMINAL_PROMPT="0")   # 禁止交互式登录卡住
+        url = safe_git_url(url)                            # https + 主机白名单, 挡 ext::/file:// RCE
+        env = dict(os.environ,
+                   GIT_TERMINAL_PROMPT="0",               # 禁止交互式登录卡住
+                   GIT_ALLOW_PROTOCOL="https")            # 只允许 https 传输(兜底挡危险传输)
         try:
+            # "--" 分隔, 防止 url 以 "-" 开头被当成 git 选项(选项注入)
             subprocess.run(
-                ["git", "clone", "--depth", "1", "--quiet", url, dest],
+                ["git", "clone", "--depth", "1", "--quiet", "--", url, dest],
                 check=True, capture_output=True, text=True, timeout=self._timeout, env=env,
             )
         except subprocess.CalledProcessError as e:
