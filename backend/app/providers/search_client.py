@@ -110,6 +110,7 @@ class GitHubSearchClient(SearchClient):
                 name=it.get("full_name", ""), url=it.get("html_url", ""),
                 source=CandidateSource.GITHUB,
                 snippet=f"{desc}  ⭐{it.get('stargazers_count', 0)}".strip(),
+                stars=it.get("stargazers_count"), last_active=it.get("pushed_at", "") or "",
                 query_used=query, why_surfaced=f"GitHub 搜索命中(按 star, 关键词: {q})"))
         self._log.info("github %r (kw=%r) -> %d", query, q, len(out))
         return out

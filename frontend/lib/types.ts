@@ -86,6 +86,8 @@ export interface CandidateRef {
   source: string;
   snippet: string;
   why_surfaced: string;
+  stars?: number | null; // GitHub star 数
+  last_active?: string; // 最近 push 时间(ISO)
 }
 
 export interface Candidate {
@@ -181,6 +183,7 @@ export interface AuthorStatement {
 export interface AnalyzeRequest {
   website_url?: string;
   github_url?: string;
+  description?: string; // 纯想法/一句话描述(没网址没仓库时)
   author_statement: AuthorStatement;
   tone: Tone;
   confirm_fingerprint: boolean;

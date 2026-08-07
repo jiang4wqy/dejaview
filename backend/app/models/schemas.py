@@ -102,6 +102,7 @@ class AuthorStatement(BaseModel):
 class AnalysisRequest(BaseModel):
     website_url: Optional[str] = None
     github_url: Optional[str] = None
+    description: str = ""  # 纯想法/一句话描述(没网址没仓库时的线索)
     author_statement: AuthorStatement = Field(default_factory=AuthorStatement)
     tone: ToneMode = ToneMode.SERIOUS
     # 成本闸门: 生成项目指纹后是否暂停, 等用户确认再跑昂贵的搜索
@@ -110,8 +111,8 @@ class AnalysisRequest(BaseModel):
 
     @model_validator(mode="after")
     def _need_one_source(self) -> "AnalysisRequest":
-        if not self.website_url and not self.github_url:
-            raise ValueError("website_url 和 github_url 至少提供一个")
+        if not self.website_url and not self.github_url and not self.description.strip():
+            raise ValueError("website_url / github_url / description 至少提供一个")
         return self
 
 
@@ -263,6 +264,8 @@ class CandidateRef(BaseModel):
     snippet: str = ""
     query_used: str = ""
     why_surfaced: str = ""
+    stars: Optional[int] = None   # GitHub star 数(赛道热度信号)
+    last_active: str = ""         # 最近一次 push 时间(ISO), 判断竞品是否还活着
 
 
 class Relation(str, Enum):

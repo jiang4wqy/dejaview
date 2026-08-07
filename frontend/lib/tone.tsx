@@ -58,7 +58,10 @@ export function ToneProvider({ children }: { children: ReactNode }) {
     const q = new URLSearchParams(window.location.search);
     const w = q.get("world") || q.get("tone");
     const forced: Tone | null =
-      w === "roast" || w === "clown" ? "roast" : w === "serious" || w === "gilt" ? "serious" : null;
+      w === "roast" || w === "clown" ? "roast"
+        : w === "serious" || w === "gilt" ? "serious"
+          : w === "comfort" || w === "rainbow" ? "comfort"
+            : null;
     const saved = window.localStorage.getItem(KEY);
     const init = forced ?? (saved === "roast" || saved === "serious" ? (saved as Tone) : null);
     if (init) setToneState(init);

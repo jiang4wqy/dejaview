@@ -1553,6 +1553,32 @@ h1.verdict {
 /* 介绍页第三张预告卡 + 三卡布局 */
 .tz-comfort { background: linear-gradient(160deg, #ffd5ec, #d9ecff); border: 1px solid #ff9dd0; color: #6a2f52; }
 .intro-vs-label { font-family: var(--mono, monospace); font-size: 12.5px; color: #9a90b5; letter-spacing: .06em; margin: 4px 0 10px; }
+
+/* 极简入口：单框线索 + 折叠补充 */
+.clue-input { min-height: 60px; font-size: 15.5px; line-height: 1.5; }
+.more-toggle {
+  align-self: flex-start; background: transparent; border: 0; color: var(--accent);
+  font: inherit; font-weight: 700; cursor: pointer; padding: 2px 0;
+}
+.more-toggle:hover { text-decoration: underline; }
+.more-fields {
+  display: flex; flex-direction: column; gap: 14px;
+  border-top: 1px dashed var(--line); padding-top: 16px; animation: foldIn .3s ease;
+}
+
+/* 赛道信号块 */
+.track-signal {
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line)); border-radius: 16px;
+  padding: 18px 22px; background: color-mix(in srgb, var(--accent) 6%, var(--panel));
+}
+.ts-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; }
+.ts-tag {
+  font-family: var(--mono); font-weight: 700; font-size: 13px; color: var(--accent);
+  padding: 4px 12px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+}
+.ts-note { font-family: var(--mono); font-size: 11.5px; color: var(--faint); }
+.ts-text { margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink); }
+.cand-meta { margin: 4px 0 0; font-family: var(--mono); font-size: 12px; color: var(--warn); }
 .home-flow {
   display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px;
   font-family: var(--mono, ui-monospace, monospace); font-size: 12px;

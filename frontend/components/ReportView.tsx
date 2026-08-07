@@ -193,6 +193,12 @@ function CandidateCard({ c }: { c: Candidate }) {
           ref?.name || "未知项目"
         )}
       </h3>
+      {typeof ref?.stars === "number" ? (
+        <p className="cand-meta">
+          ⭐ {fmtStars(ref.stars)}
+          {ref.last_active ? ` · 最近 ${ref.last_active.slice(0, 7)}` : ""}
+        </p>
+      ) : null}
       {desc ? <p>{desc}</p> : null}
       {ref?.why_surfaced ? <p className="why">为何相关 · {ref.why_surfaced}</p> : null}
     </div>
@@ -373,6 +379,32 @@ function summaryLine(pct: number, tone: Tone): string {
     : "评级：可以聊。至少不是又一个轮子——但想让我投，还差得远。";
 }
 
+function fmtStars(n: number): string {
+  return n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k` : String(n);
+}
+
+// 赛道信号(确定性, 无 LLM): 从竞品的 star/活跃度派生"该不该继续"的半只脚。
+function trackSignal(candidates: Candidate[] | undefined): { tag: string; text: string } | null {
+  if (!candidates?.length) return null;
+  const gh = candidates.filter((c) => c.ref.source === "github" && typeof c.ref.stars === "number");
+  const direct = candidates.filter((c) => c.relation === "direct_competitor").length;
+  if (!gh.length && !direct) return null;
+  const maxStars = gh.length ? Math.max(...gh.map((c) => c.ref.stars as number)) : 0;
+  const now = Date.now();
+  const activeCnt = gh.filter(
+    (c) => c.ref.last_active && now - new Date(c.ref.last_active).getTime() < 400 * 864e5,
+  ).length;
+  const alive = gh.length ? activeCnt / gh.length : 0;
+
+  if (direct >= 2 && maxStars >= 3000 && alive >= 0.4)
+    return { tag: "赛道成熟 · 拥挤", text: `已有多个直接竞品，最高 ${fmtStars(maxStars)}★ 且还在更新——硬刚很难，值得做的前提是找到真差异化或够窄的细分。` };
+  if (gh.length && alive < 0.25)
+    return { tag: "竞品大多停更", text: `搜到的同类大多很久没动静了——可能有空位，但先想清楚"为什么没人接着做"。` };
+  if (direct === 0 && maxStars < 1000)
+    return { tag: "赛道还没挤", text: `本轮没撞到高热度的直接竞品——有机会，但先去验证是真需求还是伪需求。` };
+  return { tag: "赛道信号", text: `直接竞品 ${direct} 个，最高 ${fmtStars(maxStars)}★——不算空白，也没被锁死，差异化做对了有戏。` };
+}
+
 /* -------------------------------- 成本页脚 -------------------------------- */
 function CostFooter({ job }: { job: Job }) {
   const cost: Cost | undefined = job.cost;
@@ -507,6 +539,7 @@ export default function ReportView({ job }: { job: Job }) {
 
   // 事实层（共享，语气无关）：问题在前、优点在后。切换语气不改这里。
   const findings = [...(result?.issues ?? []), ...(result?.strengths ?? [])];
+  const signal = trackSignal(result?.candidates);
 
   // 维度：已知顺序在前，未知 key 追加在后。
   const dims = dup?.dimensions ?? {};
@@ -565,6 +598,17 @@ export default function ReportView({ job }: { job: Job }) {
         ) : null}
         {dup?.search_scope_note ? <div className="scope">{dup.search_scope_note}</div> : null}
       </section>
+
+      {/* ---------- 赛道信号：该不该继续 ---------- */}
+      {signal ? (
+        <section className="block track-signal rise" style={{ animationDelay: ".09s" }}>
+          <div className="ts-head">
+            <span className="ts-tag">📡 {signal.tag}</span>
+            <span className="ts-note">值不值得继续，光看"像不像"不够，也看竞品有多能打</span>
+          </div>
+          <p className="ts-text">{signal.text}</p>
+        </section>
+      ) : null}
 
       {/* ---------- 详情：默认折叠，需要再展开 ---------- */}
       <div className="folds rise" style={{ animationDelay: ".12s" }}>

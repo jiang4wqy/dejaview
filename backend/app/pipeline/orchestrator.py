@@ -109,7 +109,8 @@ class Pipeline:
             fp = self._stage(
                 job, Stage.FINGERPRINT, 0.35,
                 lambda: fingerprint_mod.synthesize(job.site_facts, job.repo_facts,
-                                                   req.author_statement, self.svc),
+                                                   req.author_statement, self.svc,
+                                                   description=req.description),
             )
             job.fingerprint = fp
             self._push(job)   # 指纹先亮出来

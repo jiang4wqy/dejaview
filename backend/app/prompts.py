@@ -53,13 +53,20 @@ FINGERPRINT_SYSTEM = (
 )
 
 
-def fingerprint_synthesize(site: SiteFacts, repo: RepoFacts, statement: AuthorStatement) -> tuple[str, str]:
+def fingerprint_synthesize(site: SiteFacts, repo: RepoFacts, statement: AuthorStatement,
+                           description: str = "") -> tuple[str, str]:
+    desc_block = (
+        f"用户的一句话/自由描述(主线索, 当没有网站/仓库时以此为准):\n{description}\n\n"
+        if description.strip() else ""
+    )
     user = (
+        f"{desc_block}"
         f"网站事实:\n{site.model_dump_json(indent=2)}\n\n"
         f"仓库事实:\n{repo.model_dump_json(indent=2)}\n\n"
         f"作者声明:\n{statement.model_dump()}\n\n"
         "请合成项目核心指纹: 一句话定义 / 目标用户 / 问题 / 输入-处理-输出 / 核心功能 / 商业模式 / "
         "作者声称的创新 / 系统观察到的差异(带证据+是否 proven) / functional_signature / 冲突 / 未知项。"
+        "\n若只有描述、没有网站/仓库证据, 就基于描述合成, 并把'缺乏可核验证据'写进 unknowns、相应降低 confidence。"
     )
     return FINGERPRINT_SYSTEM, user
 

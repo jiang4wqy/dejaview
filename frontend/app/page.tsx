@@ -35,9 +35,9 @@ const HERO = {
 
 // 预生成的示例报告（public/demos/*.json），点一下秒开，无需等待跑分析。
 const DEMOS = [
-  { slug: "gitingest", label: "Gitingest", dup: "0.35" },
-  { slug: "excalidraw", label: "Excalidraw", dup: "0.85" },
-  { slug: "kutt", label: "Kutt", dup: "0.70" },
+  { slug: "gitingest", label: "Gitingest", dup: "0.65" },
+  { slug: "excalidraw", label: "Excalidraw", dup: "0.60" },
+  { slug: "kutt", label: "Kutt", dup: "0.15" },
 ];
 
 const EXAMPLES = [
@@ -53,41 +53,59 @@ export default function HomePage() {
   const router = useRouter();
   const { tone, ready, seenIntro, reset } = useTone();
 
-  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [clue, setClue] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
   const [targetUsers, setTargetUsers] = useState("");
   const [problemSolved, setProblemSolved] = useState("");
   const [claimedNovelty, setClaimedNovelty] = useState("");
   const [confirmFingerprint, setConfirmFingerprint] = useState(false);
+  const [showMore, setShowMore] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function fillExample(ex: (typeof EXAMPLES)[number]) {
-    setWebsiteUrl(ex.website);
+    setClue(ex.website);
     setGithubUrl(ex.github);
     setTargetUsers(ex.users);
     setProblemSolved(ex.problem);
     setClaimedNovelty(ex.novelty);
+    setShowMore(true);
     setError(null);
+  }
+
+  // 主线索：像 URL 就当网址/GitHub，否则当作一句话描述
+  function parseClue(raw: string): { website_url?: string; github_url?: string; description?: string } {
+    const s = raw.trim();
+    if (!s) return {};
+    const looksUrl = /^https?:\/\//i.test(s) || /^[\w-]+(\.[\w-]+)+(\/|$)/.test(s);
+    if (!looksUrl) return { description: s };
+    const url = /^https?:\/\//i.test(s) ? s : `https://${s}`;
+    return /github\.com/i.test(url) ? { github_url: url } : { website_url: url };
   }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!websiteUrl.trim() && !githubUrl.trim()) {
-      setError("至少给一条线索：网站链接或 GitHub 仓库，二选一。");
+    const parsed = parseClue(clue);
+    const web = parsed.website_url;
+    const gh = githubUrl.trim() || parsed.github_url;
+    const desc = parsed.description || "";
+    if (!web && !gh && !desc) {
+      setError("给一条线索就行：贴个网址、GitHub，或直接一句话描述你的项目。");
       return;
     }
-    // 提交特效：毒舌撒彩带 / 镀金金光
+    // 提交特效：毒舌撒彩带 / 镀金金光 / 彩虹撒爱心
     if (tone === "roast") window.__djBurst?.(window.innerWidth / 2, window.innerHeight * 0.7);
+    else if (tone === "comfort") window.__djHearts?.(window.innerWidth / 2, window.innerHeight * 0.7);
     else window.__djGold?.();
 
     setSubmitting(true);
     try {
       const { job_id } = await analyze({
-        website_url: websiteUrl.trim() || undefined,
-        github_url: githubUrl.trim() || undefined,
+        website_url: web,
+        github_url: gh,
+        description: desc || undefined,
         author_statement: {
           target_users: targetUsers.trim(),
           problem_solved: problemSolved.trim(),
@@ -159,48 +177,51 @@ export default function HomePage() {
       <form className="panel form" onSubmit={onSubmit}>
         <label className="field">
           <span>
-            网站链接 <span className="req">*</span>
+            贴上你的项目 <span className="req">*</span>
           </span>
-          <input type="url" inputMode="url" placeholder="https://your-project.com"
-            value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} />
+          <textarea
+            className="clue-input"
+            rows={2}
+            placeholder="网址 / GitHub 链接 / 或直接一句话描述（例：一个帮宠物主记疫苗时间的小程序）"
+            value={clue}
+            onChange={(e) => setClue(e.target.value)}
+          />
+          <span className="hint">一条线索就够 —— 有网址最准，纯想法也能测。</span>
         </label>
 
-        <label className="field">
-          <span>
-            GitHub 仓库 <span className="req">*</span>
-          </span>
-          <input type="url" inputMode="url" placeholder="https://github.com/owner/repo"
-            value={githubUrl} onChange={(e) => setGithubUrl(e.target.value)} />
-        </label>
-        <p className="faint small mono">* 网站与 GitHub 至少填一个，两个都给结论更准。</p>
+        <button type="button" className="more-toggle" onClick={() => setShowMore((v) => !v)}>
+          {showMore ? "－ 收起补充线索" : "＋ 补充更多线索（可选，结论更准）"}
+        </button>
 
-        <div className="divider" />
-
-        <label className="field">
-          <span>你的目标用户是谁？</span>
-          <textarea rows={2} placeholder="例如：需要快速整理会议纪要的产品经理"
-            value={targetUsers} onChange={(e) => setTargetUsers(e.target.value)} />
-        </label>
-
-        <label className="field">
-          <span>你解决了什么问题？</span>
-          <textarea rows={2} placeholder="例如：把散乱的语音记录一键转成结构化纪要"
-            value={problemSolved} onChange={(e) => setProblemSolved(e.target.value)} />
-        </label>
-
-        <label className="field">
-          <span>你认为的创新点是什么？</span>
-          <textarea rows={2} placeholder="例如：本地推理 + 说话人分离，隐私不出端"
-            value={claimedNovelty} onChange={(e) => setClaimedNovelty(e.target.value)} />
-        </label>
-
-        <div className="divider" />
-
-        <label className="checkbox">
-          <input type="checkbox" checked={confirmFingerprint}
-            onChange={(e) => setConfirmFingerprint(e.target.checked)} />
-          <span>提交前让我确认项目指纹（省 token，也更准）</span>
-        </label>
+        {showMore ? (
+          <div className="more-fields">
+            <label className="field">
+              <span>GitHub 仓库（可选）</span>
+              <input type="url" inputMode="url" placeholder="https://github.com/owner/repo"
+                value={githubUrl} onChange={(e) => setGithubUrl(e.target.value)} />
+            </label>
+            <label className="field">
+              <span>目标用户是谁？</span>
+              <textarea rows={2} placeholder="例如：需要快速整理会议纪要的产品经理"
+                value={targetUsers} onChange={(e) => setTargetUsers(e.target.value)} />
+            </label>
+            <label className="field">
+              <span>解决了什么问题？</span>
+              <textarea rows={2} placeholder="例如：把散乱的语音记录一键转成结构化纪要"
+                value={problemSolved} onChange={(e) => setProblemSolved(e.target.value)} />
+            </label>
+            <label className="field">
+              <span>你认为的创新点？</span>
+              <textarea rows={2} placeholder="例如：本地推理 + 说话人分离，隐私不出端"
+                value={claimedNovelty} onChange={(e) => setClaimedNovelty(e.target.value)} />
+            </label>
+            <label className="checkbox">
+              <input type="checkbox" checked={confirmFingerprint}
+                onChange={(e) => setConfirmFingerprint(e.target.checked)} />
+              <span>提交前让我确认项目指纹（省 token，也更准）</span>
+            </label>
+          </div>
+        ) : null}
 
         {error ? <p className="error">{error}</p> : null}
 
