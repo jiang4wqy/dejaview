@@ -11,13 +11,14 @@ MVP: 用后台线程 + 内存 JobStore 跑; 生产应换任务队列 (见 docs/T
 """
 from __future__ import annotations
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.jobs import make_job_store
 from app.models.schemas import AnalysisRequest, Job, JobStatus, ProjectFingerprint, Report
 from app.queue import submit_resume, submit_run
+from app.ratelimit import make_rate_limiter
 
 app = FastAPI(title="DejaView API", version="0.1.0")
 app.add_middleware(
@@ -28,10 +29,23 @@ app.add_middleware(
 )
 
 store = make_job_store(get_settings())   # memory | redis | sql(由 DEJAVIEW_JOBSTORE 决定)
+limiter = make_rate_limiter(get_settings())  # 默认 Noop; DEJAVIEW_RATE_LIMIT_ENABLED=true 才限流
+
+
+def _client_ip(req: Request) -> str:
+    """反代之后取真实客户端 IP(X-Forwarded-For 首跳), 否则用直连地址。"""
+    xff = req.headers.get("x-forwarded-for", "")
+    if xff:
+        return xff.split(",")[0].strip()
+    return req.client.host if req.client else "unknown"
 
 
 @app.post("/api/analyze")
-def analyze(request: AnalysisRequest) -> dict:
+def analyze(request: AnalysisRequest, http_request: Request) -> dict:
+    decision = limiter.check(_client_ip(http_request))   # 模式A 限流: 保护部署者额度
+    if not decision.allowed:
+        raise HTTPException(status_code=429, detail=decision.reason,
+                            headers={"Retry-After": str(decision.retry_after)})
     job = store.create(request)
     submit_run(get_settings(), store, job)   # thread 或 rq(由 DEJAVIEW_QUEUE 决定)
     return {"job_id": job.id}

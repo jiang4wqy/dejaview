@@ -34,10 +34,18 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!res.ok) {
     let detail = "";
     try {
-      detail = await res.text();
+      const body = await res.text();
+      // FastAPI 错误体是 {"detail": "..."}; 取出人类可读文案。
+      try {
+        detail = (JSON.parse(body)?.detail as string) ?? body;
+      } catch {
+        detail = body;
+      }
     } catch {
       detail = "";
     }
+    // 429 限流：直接展示后端给的友好提示。
+    if (res.status === 429 && detail) throw new Error(detail);
     throw new Error(`请求失败（${res.status}）：${detail || res.statusText}`);
   }
 

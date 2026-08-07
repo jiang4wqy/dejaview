@@ -64,6 +64,11 @@ class Settings(BaseSettings):
     # ---- 任务执行: thread(默认后台线程) | rq(Redis 队列 + worker) ----
     queue: str = "thread"
 
+    # ---- API 限流(模式A "部署者请客": 保护自己的 LLM 额度; 生产用 env 打开) ----
+    rate_limit_enabled: bool = False       # DEJAVIEW_RATE_LIMIT_ENABLED=true 开启
+    rate_limit_per_ip_hourly: int = 10     # 每 IP 每小时最多几次分析 (0=不限)
+    rate_limit_daily_total: int = 200      # 全站每天最多几次分析, 到顶当天停 (0=不限)
+
     # ---- 其它 ----
     cache_dir: str = ""            # 空 = 关闭磁盘缓存
     max_candidates_deep_read: int = 5
