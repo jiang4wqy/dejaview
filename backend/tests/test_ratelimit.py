@@ -47,6 +47,28 @@ def test_denied_request_does_not_consume_daily_quota():
     assert rl._day_count == 1
 
 
+def test_per_ip_daily_cap():
+    # 每个 IP 每天最多 5 次(不设小时闸): 第 6 次当天被拦, 换 IP 不受影响。
+    rl = MemoryRateLimiter(per_ip_hourly=0, daily_total=0, per_ip_daily=5)
+    assert all(rl.check("5.5.5.5").allowed for _ in range(5))
+    d = rl.check("5.5.5.5")
+    assert not d.allowed and "今天" in d.reason and d.retry_after > 0
+    assert rl.check("6.6.6.6").allowed              # 另一个 IP 仍可用
+
+
+def test_per_ip_daily_denied_not_double_counted():
+    rl = MemoryRateLimiter(per_ip_hourly=0, daily_total=0, per_ip_daily=1)
+    assert rl.check("7.7.7.7").allowed
+    assert not rl.check("7.7.7.7").allowed
+    assert rl._ip_day["7.7.7.7"] == 1               # 被拦的那次没有计数
+
+
 def test_factory_enabled_memory_backend():
     rl = make_rate_limiter(Settings(rate_limit_enabled=True, jobstore="memory", queue="thread"))
     assert isinstance(rl, MemoryRateLimiter)
+
+
+def test_factory_passes_per_ip_daily():
+    rl = make_rate_limiter(Settings(rate_limit_enabled=True, jobstore="memory",
+                                    queue="thread", rate_limit_per_ip_daily=5))
+    assert isinstance(rl, MemoryRateLimiter) and rl.per_ip_daily == 5

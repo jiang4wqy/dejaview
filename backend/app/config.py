@@ -67,6 +67,7 @@ class Settings(BaseSettings):
     # ---- API 限流(模式A "部署者请客": 保护自己的 LLM 额度; 生产用 env 打开) ----
     rate_limit_enabled: bool = False       # DEJAVIEW_RATE_LIMIT_ENABLED=true 开启
     rate_limit_per_ip_hourly: int = 10     # 每 IP 每小时最多几次分析 (0=不限)
+    rate_limit_per_ip_daily: int = 0       # 每 IP 每天最多几次分析, 当天用完即止 (0=不限)
     rate_limit_daily_total: int = 200      # 全站每天最多几次分析, 到顶当天停 (0=不限)
 
     # ---- 其它 ----

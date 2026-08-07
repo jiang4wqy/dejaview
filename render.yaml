@@ -40,7 +40,9 @@ services:
       - key: DEJAVIEW_RATE_LIMIT_ENABLED
         value: "true"
       - key: DEJAVIEW_RATE_LIMIT_PER_IP_HOURLY
-        value: "5"
+        value: "0"
+      - key: DEJAVIEW_RATE_LIMIT_PER_IP_DAILY
+        value: "5"                    # 每个 IP 每天最多 5 次, 当天用完即止
       - key: DEJAVIEW_RATE_LIMIT_DAILY_TOTAL
         value: "200"
 
