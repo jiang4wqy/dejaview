@@ -14,6 +14,39 @@ import type {
 // 需要直连别的后端时再设 NEXT_PUBLIC_API_BASE。
 export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE ?? "").replace(/\/+$/, "");
 
+// ===== 访问码：进站门 + 每次分析请求带上，后端强制校验（前端只是体验层）=====
+const ACCESS_KEY = "dejaview_access";
+
+export function getAccessCode(): string {
+  if (typeof window === "undefined") return "";
+  return window.localStorage.getItem(ACCESS_KEY) || "";
+}
+export function setAccessCode(code: string): void {
+  window.localStorage.setItem(ACCESS_KEY, code);
+}
+export function clearAccessCode(): void {
+  window.localStorage.removeItem(ACCESS_KEY);
+}
+function accessHeaders(): Record<string, string> {
+  const c = getAccessCode();
+  return c ? { "X-Access-Code": c } : {};
+}
+
+/** 校验一个口令是否正确（进站门用）。 */
+export async function checkAccess(code: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE}/api/access`, {
+      method: "POST",
+      cache: "no-store",
+      headers: { "X-Access-Code": code },
+    });
+    if (!res.ok) return false;
+    return !!(await res.json())?.ok;
+  } catch {
+    return false;
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let res: Response;
   try {
@@ -57,6 +90,7 @@ export function analyze(body: AnalyzeRequest): Promise<AnalyzeResponse> {
   return request<AnalyzeResponse>("/api/analyze", {
     method: "POST",
     body: JSON.stringify(body),
+    headers: accessHeaders(),
   });
 }
 
@@ -82,6 +116,7 @@ export function confirmFingerprint(
   return request<Job>(`/api/jobs/${encodeURIComponent(jobId)}/confirm`, {
     method: "POST",
     body: JSON.stringify(fingerprint),
+    headers: accessHeaders(),
   });
 }
 

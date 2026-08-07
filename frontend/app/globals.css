@@ -1990,3 +1990,47 @@ body.dj-shake .main { animation: djshake 0.46s cubic-bezier(.36,.07,.19,.97); }
   .intro-teasers { flex-direction: column; }
   .intro-vs { writing-mode: horizontal-tb; }
 }
+
+/* ===== 访问码进站门 ===== */
+.access-gate {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center; padding: 24px;
+  background: radial-gradient(1200px 700px at 50% -10%, #1a1030, #0a0a10 62%);
+}
+.access-card {
+  width: min(360px, 92vw);
+  display: flex; flex-direction: column; align-items: center; gap: 13px;
+  padding: 34px 28px 30px; text-align: center;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.55);
+}
+.access-emoji { font-size: 32px; }
+.access-card h1 {
+  margin: 0; color: #fff; font-size: 30px; font-weight: 800; letter-spacing: -.02em;
+}
+.access-sub { margin: -4px 0 6px; color: rgba(255,255,255,.6); font-size: 13.5px; }
+.access-input {
+  width: 100%; padding: 12px 14px; font-size: 15px; outline: none;
+  color: #fff; background: rgba(0,0,0,.35);
+  border: 1px solid rgba(255,255,255,.18); border-radius: 12px;
+  transition: border-color .2s;
+}
+.access-input:focus { border-color: #b98bff; }
+.access-input::placeholder { color: rgba(255,255,255,.35); }
+.access-err { margin: -3px 0 0; color: #ff8a8a; font-size: 12.5px; }
+.access-btn {
+  width: 100%; padding: 12px; font-size: 15px; font-weight: 700; cursor: pointer;
+  color: #12101a; border: none; border-radius: 12px;
+  background: linear-gradient(120deg, #f4d78a, #b98bff);
+  transition: transform .12s, opacity .2s;
+}
+.access-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.access-btn:disabled { opacity: .5; cursor: not-allowed; }
+.access-card.shake { animation: access-shake .4s; }
+@keyframes access-shake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); } 40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); } 80% { transform: translateX(5px); }
+}

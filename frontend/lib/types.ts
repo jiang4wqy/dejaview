@@ -197,4 +197,5 @@ export interface AnalyzeResponse {
 export interface Health {
   ok: boolean;
   provider: string;
+  access_required?: boolean; // 后端设了访问码 → 前端进站需输口令
 }

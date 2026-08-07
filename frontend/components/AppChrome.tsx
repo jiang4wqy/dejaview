@@ -3,6 +3,7 @@
 // 客户端外壳：注入世界主题上下文、世界感知的顶栏、全局特效层。
 import type { ReactNode } from "react";
 import { PERSONA, TONE_CYCLE, ToneProvider, useTone } from "@/lib/tone";
+import AccessGate from "./AccessGate";
 import WorldFx from "./WorldFx";
 
 function TopBar() {
@@ -39,15 +40,17 @@ function TopBar() {
 export default function AppChrome({ children }: { children: ReactNode }) {
   return (
     <ToneProvider>
-      {/* 舞台氛围层：漂移聚光 + 胶片颗粒，纯装饰 */}
-      <div className="stage-fx" aria-hidden="true">
-        <span className="fx-spot a" />
-        <span className="fx-spot b" />
-      </div>
-      <div className="fx-grain" aria-hidden="true" />
-      <WorldFx />
-      <TopBar />
-      <main className="main">{children}</main>
+      <AccessGate>
+        {/* 舞台氛围层：漂移聚光 + 胶片颗粒，纯装饰 */}
+        <div className="stage-fx" aria-hidden="true">
+          <span className="fx-spot a" />
+          <span className="fx-spot b" />
+        </div>
+        <div className="fx-grain" aria-hidden="true" />
+        <WorldFx />
+        <TopBar />
+        <main className="main">{children}</main>
+      </AccessGate>
     </ToneProvider>
   );
 }

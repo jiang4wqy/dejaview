@@ -70,6 +70,9 @@ class Settings(BaseSettings):
     rate_limit_per_ip_daily: int = 0       # 每 IP 每天最多几次分析, 当天用完即止 (0=不限)
     rate_limit_daily_total: int = 200      # 全站每天最多几次分析, 到顶当天停 (0=不限)
 
+    # ---- 访问码(可选): 设了就要求进站输口令, 后端在 /api/analyze 强制校验(锁成本给认识的人) ----
+    access_code: str = ""                  # 空=不设门槛; 设 DEJAVIEW_ACCESS_CODE 即开启
+
     # ---- 其它 ----
     cache_dir: str = ""            # 空 = 关闭磁盘缓存
     max_candidates_deep_read: int = 5
