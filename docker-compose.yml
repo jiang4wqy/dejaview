@@ -1,5 +1,7 @@
 # DejaView 生产部署: redis + backend(API) + worker(rq) + frontend  (可选 postgres)
-# 用法: cp deploy.env.example .env && 填 DEEPSEEK_API_KEY, 然后 docker compose up -d --build
+# 最简用法: ./deploy.sh           (自动生成 .env → 提示填 key → 构建启动 → 打印访问地址)
+# 或手动:   cp deploy.env.example .env && 填 DEEPSEEK_API_KEY, 然后 docker compose up -d --build
+# 单端口: 只需对外开放前端 :3000，浏览器走同源 /api 反代到后端(见 frontend 服务)。
 # 用 Postgres 而非 redis 存储: docker compose --profile pg up -d, 并把 DEJAVIEW_JOBSTORE=sql
 #   DEJAVIEW_SQL_URL=postgresql://dejaview:dejaview@postgres:5432/dejaview
 x-backend-env: &backend-env
@@ -44,9 +46,13 @@ services:
     build:
       context: ./frontend
       args:
-        NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-http://localhost:8000}
+        # 留空 = 浏览器走同源相对 /api，由 next.config 反代到 backend 服务。
+        # 单端口即可对外，无需知道/配置公网地址，后端端口也不必暴露。
+        NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-}
     restart: unless-stopped
     depends_on: [backend]
+    environment:
+      DEJAVIEW_BACKEND: http://backend:8000   # next.config 把 /api/* 反代到后端
     ports: ["3000:3000"]
 
   postgres:                     # 可选: docker compose --profile pg up

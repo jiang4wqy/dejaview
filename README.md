@@ -118,8 +118,16 @@ make test        # 后端测试(20 个)
 make eval        # 评测 harness(默认 mock; 配 .env 后跑真实校准)
 ```
 
-**生产部署**（docker-compose：redis + backend + frontend）：`cp deploy.env.example .env` 填 key，再 `docker compose up -d --build`。
-Job 用 Redis 持久化(`DEJAVIEW_JOBSTORE=redis`)；搜索用多源合并(`DEJAVIEW_SEARCH_PROVIDER=composite`, github+v2ex)。
+**一键部署**（自建服务器 / VPS，装好 Docker 即可）——只需两步：
+
+```bash
+git clone https://github.com/jiang4wqy/dejaview.git && cd dejaview
+./deploy.sh        # 首次自动生成 .env → 填入 DEEPSEEK_API_KEY → 再跑一次即启动
+```
+
+起来后浏览器打开 `http://<你的服务器IP>:3000` 即可用。**单端口**：只需对外开放 `3000`，浏览器走同源 `/api` 由前端反代到后端，无需配置公网地址、后端端口也不必暴露。整套是 redis + 后端 API + rq worker + 前端（`docker compose`）；Job 用 Redis 持久化、搜索多源合并(github+v2ex)。
+
+> ⚠️ **成本提醒**：分析用的是**你自己的 DeepSeek key、走你的额度**。若部署成公开站点，任何访客的每次分析都消耗你的余额——上线前建议加**限流 / 每日额度上限**，或改成**让用户各自填自己的 key**（见下方「公开上线前」）。
 
 **离线零成本**（默认，无需任何 key）：直接 `make dev`，前端提交后走 mock，秒出三语气报告。前端首页还内置**预生成示例**（`frontend/public/demos/*.json`），点一下秒开、无需等待。
 
@@ -129,6 +137,19 @@ Job 用 Redis 持久化(`DEJAVIEW_JOBSTORE=redis`)；搜索用多源合并(`DEJA
 cd backend && ./.venv/bin/python scripts/run_pipeline.py \
   --website https://gitingest.com --github https://github.com/cyclotruc/gitingest
 ```
+
+## 公开上线前（成本与安全）
+
+分析每次会调用 LLM，**默认走部署者自己配置的 DeepSeek key 与额度**。放到公网「供大家用」前，先想清楚谁来买单：
+
+| 模式 | 谁付费 | 适合 | 要做的防护 |
+|:--|:--|:--|:--|
+| **A. 你请客**（默认） | 你的 DeepSeek 余额 | 小范围 / 演示 / 朋友试用 | **必须**加限流 + 每日总额度上限，否则会被刷爆 |
+| **B. 用户自带 key（BYO）** | 每个用户自己 | 真正公开、放心让陌生人用 | 前端加一个「填你的 key」输入框，只在本次请求用、不落库 |
+| **C. 仅演示** | 你 | 只想展示效果 | 关掉真实分析、只放「秒开示例」(`public/demos/*.json`) |
+
+- **密钥安全**：key 只存在服务端（`backend/.env` / 部署 `.env`，均已 gitignore），**绝不进前端、不进仓库**。本仓库历史已核验无任何真实 key。
+- 想上 A：加个 IP/时间窗限流（如每 IP 每小时 N 次）+ 成本闸门；想上 B：加 key 输入框 + 后端按请求透传。两种我都能接着实现。
 
 ## 现状
 
