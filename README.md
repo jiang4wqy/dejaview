@@ -2,7 +2,9 @@
 
 <img src="docs/assets/hero.jpg" alt="DejaView — 一个项目，三种审判：认真·镀金 / 毒舌·马戏团 / 安慰·彩虹" width="840">
 
-# DejaView · 项目照妖镜 🪞
+<img src="docs/assets/logo.png" alt="DejaView logo" width="76">
+
+# DejaView · 项目照妖镜
 
 ### 在你 all in 之前，先照照这轮子有没有人造过。
 
