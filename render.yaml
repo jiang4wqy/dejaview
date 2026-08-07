@@ -40,7 +40,7 @@ services:
       - key: DEJAVIEW_RATE_LIMIT_ENABLED
         value: "true"
       - key: DEJAVIEW_RATE_LIMIT_PER_IP_HOURLY
-        value: "10"
+        value: "5"
       - key: DEJAVIEW_RATE_LIMIT_DAILY_TOTAL
         value: "200"
 
