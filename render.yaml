@@ -21,9 +21,9 @@ services:
       - key: DEJAVIEW_MODEL_CHEAP
         value: deepseek-v4-flash
       - key: DEJAVIEW_MODEL_STANDARD
-        value: deepseek-v4-pro
+        value: deepseek-v4-flash       # 全部用 flash(更快更省)
       - key: DEJAVIEW_MODEL_STRONG
-        value: deepseek-v4-pro
+        value: deepseek-v4-flash
       - key: DEJAVIEW_CRAWLER
         value: builtin
       - key: DEJAVIEW_REPOMAP
