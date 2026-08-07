@@ -11,6 +11,7 @@ const CLOWN = ["#ff2e88", "#00f5a0", "#ffe600", "#00e5ff", "#b14aff", "#ff7a00"]
 const GOLD = ["#f2dd93", "#d4af37", "#fff6d8", "#e9c96a"];
 const BALLOONS = ["🎈", "🤡", "🎪", "🎠", "🎉", "🃏"];
 const COINS = ["🪙", "💰", "💵", "📈", "💎"];
+const HEARTS = ["💖", "💕", "✨", "🌈", "🥰", "💗", "⭐"];
 
 type P = {
   x: number; y: number; vx: number; vy: number; g: number; r: number;
@@ -76,6 +77,13 @@ export default function WorldFx() {
       parts.push({ x: Math.random() * W(), y: -8, vx: (Math.random() - 0.5) * 0.3, vy: 0.5 + Math.random() * 0.8,
         g: 0.002, r: Math.random() * 2.6 + 1, c: rnd(GOLD), rot: 0, vr: 0, life: 1, decay: 0.0011, kind: "dust", tw: Math.random() * 6 });
     }
+    function hearts(x: number, y: number, n: number) {
+      for (let i = 0; i < n; i++)
+        parts.push({ x, y, vx: (Math.random() - 0.5) * 8, vy: Math.random() * -9 - 2, g: 0.16,
+          r: Math.random() * 16 + 18, c: "", rot: (Math.random() - 0.5) * 0.6, vr: (Math.random() - 0.5) * 0.1,
+          life: 1, decay: 0.008, kind: "emoji", char: rnd(HEARTS), tw: 0 });
+      cap();
+    }
     function shake() {
       document.body.classList.add("dj-shake");
       window.setTimeout(() => document.body.classList.remove("dj-shake"), 460);
@@ -90,6 +98,10 @@ export default function WorldFx() {
       setGold(true);
       window.setTimeout(() => setGold(false), 1150);
       if (!reduce) { goldFountain(W() / 2, H() * 0.55); shake(); }
+    };
+    window.__djHearts = (x?: number, y?: number) => {
+      if (reduce) return;
+      hearts(x ?? W() / 2, y ?? H() / 3, 46);
     };
 
     let lastMove = 0;
@@ -119,6 +131,10 @@ export default function WorldFx() {
         if (f % 85 === 0) balloon();
       }
       if (!reduce && t === "serious" && f % 2 === 0) dust();
+      if (!reduce && t === "comfort" && f % 16 === 0)
+        parts.push({ x: Math.random() * W(), y: -24, vx: (Math.random() - 0.5) * 0.5, vy: 0.6 + Math.random() * 0.7,
+          g: 0.004, r: Math.random() * 10 + 14, c: "", rot: (Math.random() - 0.5) * 0.3, vr: (Math.random() - 0.5) * 0.04,
+          life: 1, decay: 0.0012, kind: "emoji", char: rnd(HEARTS), tw: 0 });
       parts = parts.filter((p) => p.life > 0 && p.y < H() + 70 && p.y > -90);
       for (const p of parts) {
         p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life -= p.decay; p.tw += 0.2;

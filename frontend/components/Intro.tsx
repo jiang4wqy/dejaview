@@ -37,17 +37,24 @@ export default function Intro() {
           ))}
         </div>
 
+        <div className="intro-vs-label rise" style={{ animationDelay: ".24s" }}>
+          同一份事实，三副面孔 →
+        </div>
         <div className="intro-teasers rise" style={{ animationDelay: ".28s" }}>
           <div className="intro-teaser tz-gilt">
             <span className="tz-emoji">💰</span>
             <b>镀金 · 华尔街</b>
-            <span>体面地告诉你，这轮子值几个钱</span>
+            <span>体面地告诉你值几个钱</span>
           </div>
-          <div className="intro-vs">同一份事实</div>
           <div className="intro-teaser tz-clown">
             <span className="tz-emoji">🤡</span>
             <b>毒舌 · 马戏团</b>
-            <span>当着全场，把你的轮子拆穿</span>
+            <span>当着全场拆穿你的轮子</span>
+          </div>
+          <div className="intro-teaser tz-comfort">
+            <span className="tz-emoji">🌈</span>
+            <b>彩虹 · 夸夸群</b>
+            <span>无条件捧你、专治 emo</span>
           </div>
         </div>
 

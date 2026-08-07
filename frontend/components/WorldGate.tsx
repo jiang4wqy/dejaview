@@ -9,6 +9,7 @@ declare global {
   interface Window {
     __djBurst?: (x?: number, y?: number) => void;
     __djGold?: () => void;
+    __djHearts?: (x?: number, y?: number) => void;
   }
 }
 
@@ -16,8 +17,9 @@ export default function WorldGate() {
   const { setTone, backToIntro } = useTone();
 
   function choose(t: Tone, e: React.MouseEvent) {
-    // 入场特效：毒舌撒彩带（在点击处炸开），镀金金光扫屏
+    // 入场特效：毒舌撒彩带 / 镀金金光 / 彩虹撒爱心
     if (t === "roast") window.__djBurst?.(e.clientX, e.clientY);
+    else if (t === "comfort") window.__djHearts?.(e.clientX, e.clientY);
     else window.__djGold?.();
     // 稍等特效起势再换肤，观感更连贯
     window.setTimeout(() => setTone(t), 260);
@@ -50,6 +52,14 @@ export default function WorldGate() {
           <div className="door-venue">马戏团 · 嘲讽现场</div>
           <p className="door-desc">彩带、汽笛与暴击。当着全场，把你的轮子拆穿。</p>
           <span className="door-cta">掀开帐篷 →</span>
+        </button>
+
+        <button className="door door-comfort" onClick={(e) => choose("comfort", e)}>
+          <div className="door-emoji">🌈</div>
+          <div className="door-name">彩虹</div>
+          <div className="door-venue">夸夸群 · 无条件捧场</div>
+          <p className="door-desc">只夸不评、彩虹屁拉满。专治 emo，给你无条件的爱。</p>
+          <span className="door-cta">抱抱我 →</span>
         </button>
       </div>
 

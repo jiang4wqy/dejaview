@@ -43,7 +43,7 @@ export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Ton
     try {
       const url = await toPng(cardRef.current, {
         pixelRatio: 2, cacheBust: true, width: 1080, height: 1080,
-        backgroundColor: tone === "roast" ? "#150a29" : "#0a0a0c",
+        backgroundColor: tone === "comfort" ? "#ffe3f2" : tone === "roast" ? "#150a29" : "#0a0a0c",
       });
       const a = document.createElement("a");
       a.href = url;
@@ -82,7 +82,9 @@ export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Ton
             {report?.verdict_line ? <p className="sc-line">{report.verdict_line}</p> : null}
             <div className="sc-foot">
               <span className="sc-persona">{persona.emoji} {persona.name} · {persona.venue}</span>
-              <span className="sc-tag">{tone === "roast" ? "🤡 当众处刑" : "💰 郑重估值"}</span>
+              <span className="sc-tag">
+                {tone === "roast" ? "🤡 当众处刑" : tone === "comfort" ? "🌈 无条件捧场" : "💰 郑重估值"}
+              </span>
             </div>
           </div>
           </div>

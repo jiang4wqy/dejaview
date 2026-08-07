@@ -150,27 +150,27 @@ function ToneToggle({
   tone: Tone;
   onChange: (t: Tone) => void;
 }) {
+  const opts: { v: Tone; label: string }[] = [
+    { v: "serious", label: "认真" },
+    { v: "roast", label: "毒舌" },
+    { v: "comfort", label: "安慰" },
+  ];
   return (
     <div className="tonerow">
-      <span className="tonetip">同一份事实，两种语气 →</span>
-      <div className="toggle" data-sel={tone} role="group" aria-label="语气">
+      <span className="tonetip">同一份事实，三副嘴脸 →</span>
+      <div className="toggle t3" data-sel={tone} role="group" aria-label="语气">
         <span className="knob" aria-hidden="true" />
-        <button
-          type="button"
-          aria-pressed={tone === "serious"}
-          disabled={!available.includes("serious")}
-          onClick={() => onChange("serious")}
-        >
-          认真
-        </button>
-        <button
-          type="button"
-          aria-pressed={tone === "roast"}
-          disabled={!available.includes("roast")}
-          onClick={() => onChange("roast")}
-        >
-          毒舌
-        </button>
+        {opts.map((o) => (
+          <button
+            key={o.v}
+            type="button"
+            aria-pressed={tone === o.v}
+            disabled={!available.includes(o.v)}
+            onClick={() => onChange(o.v)}
+          >
+            {o.label}
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -355,8 +355,10 @@ function Fold({ title, hint, defaultOpen = false, children }: {
   );
 }
 
-// 一句话总结：按重复度分档 + 语气。毒舌=段子暴击，镀金=装腔华尔街投资人。
+// 一句话总结：按重复度分档 + 语气。毒舌=段子暴击，镀金=装腔投资人，彩虹=无条件夸。
 function summaryLine(pct: number, tone: Tone): string {
+  if (tone === "comfort")
+    return "🌈 别管那些数字啦——你能把想法真做出来，这份勇气就已经赢过一大半人了，超棒的！";
   const roast = tone === "roast";
   if (pct >= 60)
     return roast
@@ -405,6 +407,7 @@ export default function ReportView({ job }: { job: Job }) {
   const available: Tone[] = [];
   if (reports.serious) available.push("serious");
   if (reports.roast) available.push("roast");
+  if (reports.comfort) available.push("comfort");
 
   // 语气来自全局世界主题：报告页的一键切换 → 整站在镀金/毒舌之间变形。
   const { tone: ctxTone, setTone } = useTone();
@@ -461,6 +464,7 @@ export default function ReportView({ job }: { job: Job }) {
   useEffect(() => {
     const t = window.setTimeout(() => {
       if (tone === "roast") window.__djBurst?.(window.innerWidth / 2, 170);
+      else if (tone === "comfort") window.__djHearts?.(window.innerWidth / 2, 170);
       else window.__djGold?.();
     }, 480);
     return () => window.clearTimeout(t);
@@ -536,7 +540,9 @@ export default function ReportView({ job }: { job: Job }) {
       {/* ---------- 核心总结（最重要，放最显眼） ---------- */}
       <section className="block summary rise" style={{ animationDelay: ".06s" }}>
         <div className="shead">
-          <span className="eyebrow">{tone === "roast" ? "// 一句话，别绕弯" : "// 一句话总结"}</span>
+          <span className="eyebrow">
+            {tone === "roast" ? "// 一句话，别绕弯" : tone === "comfort" ? "// 抱抱你 · 纯情绪价值" : "// 一句话总结"}
+          </span>
           <span className="line" />
           <span className="eyebrow">重复度 {pct}%</span>
         </div>
@@ -544,7 +550,7 @@ export default function ReportView({ job }: { job: Job }) {
         {report.top_fix || result?.improvements?.[0] ? (
           <div className="summary-do">
             <span className="summary-do-k">
-              {tone === "roast" ? "先补最露怯的一处" : "想让我投，先做这个"}
+              {tone === "roast" ? "先补最露怯的一处" : tone === "comfort" ? "顺手加一点点就更棒" : "想让我投，先做这个"}
             </span>
             <span className="summary-do-v">
               {report.top_fix || result?.improvements?.[0]?.title}
@@ -553,7 +559,7 @@ export default function ReportView({ job }: { job: Job }) {
         ) : null}
         {report.why_line || dup?.rationale ? (
           <p className="summary-why">
-            <b>{tone === "roast" ? "凭啥这么说 · " : "评级依据 · "}</b>
+            <b>{tone === "roast" ? "凭啥这么说 · " : tone === "comfort" ? "为什么你值得被夸 · " : "评级依据 · "}</b>
             {report.why_line || dup?.rationale}
           </p>
         ) : null}

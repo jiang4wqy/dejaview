@@ -1,7 +1,7 @@
 // DejaView 后端接口的 TypeScript 类型定义。
 // 与 FastAPI 契约保持一致，字段命名沿用 snake_case。
 
-export type Tone = "serious" | "roast";
+export type Tone = "serious" | "roast" | "comfort";
 
 export type JobStatus =
   | "queued"
@@ -131,6 +131,7 @@ export interface Cost {
 export interface Reports {
   serious?: Report;
   roast?: Report;
+  comfort?: Report;
 }
 
 export interface Job {

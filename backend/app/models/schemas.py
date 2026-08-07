@@ -46,6 +46,7 @@ class Confidence(str, Enum):
 class ToneMode(str, Enum):
     SERIOUS = "serious"   # 认真探讨
     ROAST = "roast"       # 毒舌锐评
+    COMFORT = "comfort"   # 安慰/彩虹屁(无条件吹捧, 仅情绪价值)
 
 
 class SourceType(str, Enum):

@@ -12,7 +12,7 @@ from app.services import Services
 
 
 def render(result: AnalysisResult, tone: ToneMode, svc: Services) -> Report:
-    task = "render_roast" if tone is ToneMode.ROAST else "render_serious"
+    task = f"render_{tone.value}"
     system, prompt = prompts.render(result, tone)
     report = svc.llm.structured(task=task, schema_cls=Report,
                                 system=system, prompt=prompt, tier=ModelTier.STANDARD)

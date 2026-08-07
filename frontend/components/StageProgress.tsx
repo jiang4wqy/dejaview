@@ -123,11 +123,39 @@ const QUIZ: Record<Tone, QA[]> = {
       { t: "找他们懒得做的细分", r: "📈 田忌赛马，聪明。" },
       { t: "融更多钱对轰", r: "烧钱大战没有赢家。" }]},
   ],
+  comfort: [
+    { q: "做到现在，你觉得自己？", correct: 0, opts: [
+      { t: "已经很努力了，值得抱抱", r: "💖 对！先抱抱自己，你真的很棒。" },
+      { t: "还差得远，好焦虑", r: "🌈 别急，你已经比昨天的自己更强了。" },
+      { t: "又想放弃了", r: "🌈 想歇会儿也没关系，我等你回来。" },
+      { t: "不知道有没有意义", r: "💖 你愿意开始，本身就很有意义。" }]},
+    { q: "项目暂时没人用，你会？", correct: 1, opts: [
+      { t: "怀疑自己", r: "🌈 别怀疑，是还没被看见而已。" },
+      { t: "继续做，我喜欢就好", r: "💖 就是这个劲儿！热爱本身无敌。" },
+      { t: "偷偷 emo", r: "🌈 emo 完记得回来，宝藏在等你。" },
+      { t: "删库跑路", r: "💖 别删！它是你努力的证明。" }]},
+    { q: "被说「你这是重复造轮子」，你？", correct: 2, opts: [
+      { t: "很受伤", r: "🌈 他们不懂，你的轮子有你的温度。" },
+      { t: "开始自我怀疑", r: "💖 每个伟大的东西都被说过『早有人做了』。" },
+      { t: "轮子怎么了，我造得开心", r: "💖 这才对！开心 + 成长比什么都值。" },
+      { t: "想反驳但没底气", r: "🌈 你不用向谁证明，你已经在路上了。" }]},
+    { q: "此刻最想听到哪句话？", correct: 0, opts: [
+      { t: "你已经很棒了", r: "💖 你！已！经！很！棒！了！真的。" },
+      { t: "再坚持一下", r: "🌈 再坚持一下，也记得对自己温柔。" },
+      { t: "没关系慢慢来", r: "💖 没关系，慢慢来，都来得及。" },
+      { t: "我相信你", r: "🌈 我，相信，你。无条件的。" }]},
+    { q: "给现在的自己打几分？", correct: 3, opts: [
+      { t: "60 分及格吧", r: "💖 至少 90 分！你对自己太严了。" },
+      { t: "不敢打，怕难过", r: "🌈 那我替你打——满分，因为你在坚持。" },
+      { t: "0 分，摆烂了", r: "💖 摆烂也 100 分，你只是累了不是不行。" },
+      { t: "满分！我为自己骄傲", r: "🌈 这就对了！为你骄傲！！" }]},
+  ],
 };
 
 const NARR: Record<Tone, string> = {
   roast: "🤡 后台正在扒你的皮，先来道题醒醒神（答对有惊喜）：",
   serious: "💰 分析师正在给你估值，顺便做份问卷（答对有彩头）：",
+  comfort: "🌈 夸夸群正在集合，先来道暖心小题（答对有抱抱）：",
 };
 
 function Quiz({ tone }: { tone: Tone }) {
@@ -146,6 +174,7 @@ function Quiz({ tone }: { tone: Tone }) {
       setRight((r) => r + 1);
       // 答对 → 触发本世界特效
       if (tone === "roast") window.__djBurst?.(e.clientX, e.clientY);
+      else if (tone === "comfort") window.__djHearts?.(e.clientX, e.clientY);
       else window.__djGold?.();
     }
   }
@@ -179,7 +208,9 @@ function Quiz({ tone }: { tone: Tone }) {
       {picked !== null ? (
         <div className={`quiz-reaction${correctPicked ? " hit" : ""}`}>
           <span className="quiz-verdict">
-            {correctPicked ? (tone === "roast" ? "🎉 答对！" : "🥂 高见。") : tone === "roast" ? "🃏 " : "— "}
+            {correctPicked
+              ? tone === "roast" ? "🎉 答对！" : tone === "comfort" ? "💖 抱抱！" : "🥂 高见。"
+              : tone === "roast" ? "🃏 " : tone === "comfort" ? "🌈 " : "— "}
             {q.opts[picked].r}
           </span>
           <button type="button" className="quiz-next" onClick={next}>换一题 →</button>
@@ -278,12 +309,15 @@ export default function StageProgress({ job }: { job: Job }) {
   return (
     <div className="panel waitroom">
       <div className="wait-top">
-        <div className={`mascot ${tone === "roast" ? "m-clown" : "m-gilt"}`} aria-hidden="true">
-          {tone === "roast" ? "🤡" : "💰"}
+        <div
+          className={`mascot ${tone === "roast" ? "m-clown" : tone === "comfort" ? "m-comfort" : "m-gilt"}`}
+          aria-hidden="true"
+        >
+          {tone === "roast" ? "🤡" : tone === "comfort" ? "🌈" : "💰"}
         </div>
         <div className="wait-head">
           <span className="invest-kicker">
-            {tone === "roast" ? "// 后台正在开嘲…" : "// 委员会正在评估…"}
+            {tone === "roast" ? "// 后台正在开嘲…" : tone === "comfort" ? "// 夸夸群正在集合…" : "// 委员会正在评估…"}
           </span>
           <div className="progress-head">
             <span className="progress-stage">{queued ? "排队中" : label}</span>

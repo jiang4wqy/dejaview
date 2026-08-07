@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import time
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from typing import Callable, Optional, TypeVar
 
@@ -80,16 +81,31 @@ class Pipeline:
         self._t0 = time.time() - job.cost.seconds
         req = job.request
         try:
-            job.site_facts = self._stage(
-                job, Stage.SITE_ANALYSIS, 0.10,
-                lambda: site_analyzer.analyze(req, self.svc),
-                critical=False, fallback=lambda: site_analyzer.empty(req),
-            )
-            job.repo_facts = self._stage(
-                job, Stage.GITHUB_ANALYSIS, 0.20,
-                lambda: github_analyzer.analyze(req, self.svc),
-                critical=False, fallback=lambda: github_analyzer.empty(req),
-            )
+            # 网站/仓库分析相互独立 → 并行跑, 缩短端到端耗时
+            self._tick(job, Stage.SITE_ANALYSIS, 0.10)
+
+            def _safe(name: str, fn: Callable[[], R], fallback: Callable[[], R]) -> R:
+                t = time.time()
+                try:
+                    return fn()
+                except Exception as e:  # noqa: BLE001
+                    self.svc.log.warning("阶段 %s 失败: %s", name, e)
+                    job.degradations.append(f"{name}: {e}")
+                    return fallback()
+                finally:
+                    self.meter.stage_seconds[name] = round(time.time() - t, 3)
+
+            with ThreadPoolExecutor(max_workers=2) as ex:
+                fs = ex.submit(_safe, "site_analysis",
+                               lambda: site_analyzer.analyze(req, self.svc),
+                               lambda: site_analyzer.empty(req))
+                fr = ex.submit(_safe, "github_analysis",
+                               lambda: github_analyzer.analyze(req, self.svc),
+                               lambda: github_analyzer.empty(req))
+                job.site_facts = fs.result()
+                job.repo_facts = fr.result()
+            self._tick(job, Stage.GITHUB_ANALYSIS, 0.22)
+
             fp = self._stage(
                 job, Stage.FINGERPRINT, 0.35,
                 lambda: fingerprint_mod.synthesize(job.site_facts, job.repo_facts,
@@ -151,9 +167,11 @@ class Pipeline:
         self._push(job)
 
         def _render() -> None:
-            # 同一事实层渲染两种语气; 毒舌版不新增未证实结论(见 report.py)
-            job.reports[ToneMode.SERIOUS.value] = report_mod.render(result, ToneMode.SERIOUS, self.svc)
-            job.reports[ToneMode.ROAST.value] = report_mod.render(result, ToneMode.ROAST, self.svc)
+            # 同一事实层渲染所有语气(并行); 各版都不新增未证实结论(见 report.py)
+            with ThreadPoolExecutor(max_workers=3) as ex:
+                futs = {t.value: ex.submit(report_mod.render, result, t, self.svc) for t in ToneMode}
+                for k, f in futs.items():
+                    job.reports[k] = f.result()
 
         self._stage(job, Stage.RENDER, 0.95, _render)
         self._tick(job, Stage.DONE, 1.0, status=JobStatus.DONE)
