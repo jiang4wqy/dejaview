@@ -18,6 +18,9 @@ async function proxy(req: NextRequest, path: string[]): Promise<Response> {
   // 透传真实客户端 IP，后端按 IP 限流才准
   const xff = req.headers.get("x-forwarded-for");
   if (xff) headers["x-forwarded-for"] = xff;
+  // 透传访问码，后端才校验得到（否则进站门永远判错）
+  const ac = req.headers.get("x-access-code");
+  if (ac) headers["x-access-code"] = ac;
 
   const init: RequestInit = { method: req.method, headers, cache: "no-store" };
   if (req.method !== "GET" && req.method !== "HEAD") init.body = await req.text();
