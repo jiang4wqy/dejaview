@@ -1,177 +1,156 @@
 <div align="center">
 
-<img src="docs/assets/hero.jpg" alt="DejaView — 一个项目，三种审判：认真·镀金 / 毒舌·马戏团 / 安慰·彩虹" width="840">
+<img src="docs/assets/hero.jpg" alt="DejaView：一个项目，三种审判人格" width="840">
 
-<img src="docs/assets/logo.png" alt="DejaView logo" width="76">
+# DejaView · 证据化项目锐评
 
-# DejaView · 项目照妖镜
+**在你 all in 之前，先查查这个轮子有没有人造过。**
 
-### 在你 all in 之前，先照照这轮子有没有人造过。
+[English](README_EN.md) · [架构](docs/ARCHITECTURE.md) · [部署](docs/DEPLOYMENT.md) · [贡献指南](CONTRIBUTING.md)
 
-*证据化的项目鉴定 —— 刻薄可以主观，事实不能主观；锐评项目，不攻击开发者本人。*
-
-<sub>DejaView = déjà vu + view · "我是不是见过这个？"</sub>
+[![CI](https://github.com/jiang4wqy/dejaview/actions/workflows/ci.yml/badge.svg)](https://github.com/jiang4wqy/dejaview/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-f2c94c.svg)](LICENSE)
 
 </div>
 
----
+输入一个公开网站、GitHub 仓库或一句话想法，DejaView 会提取项目指纹、搜索并核验同类项目，从六个维度判断重复度，再生成带证据的改进建议。
 
-AI 让人人都能造东西了。于是——
-**从前是十个人合力做一个有用的工具，现在是一个人一晚上做十个没用的。**
+它不是单纯让大模型“说得更毒”。核心原则是：**先形成统一事实层，最后才切换表达；语气会变，事实不会变。**
 
-<div align="center"><img src="docs/assets/flood.jpg" alt="AI 时代：一个人一晚上造十个没用的 App" width="90%"></div>
+## 先看效果
 
-你有没有过这种时刻：熬了三个通宵做完一个项目，兴冲冲发到群里，第一条回复是——
-
-> **「这不就是 XXX 吗？」**
-
-那一瞬间的尴尬，**DejaView 想帮你提前避免**。
-
-## 它会做什么
-
-把你的项目丢进来（一个网址 / 一个 GitHub 仓库 / 甚至只是一句话想法），它像一面照妖镜，照出你项目在全网的"同类倒影"：
-
-<div align="center"><img src="docs/assets/mirror.jpg" alt="照妖镜：照出你项目的同类与它们的评分" width="620"></div>
-
-1. 🔍 **提取核心** —— 一句话说清你到底在做什么；
-2. 🌐 **全网找同类** —— 有没有人已经做过一模一样的事；
-3. ⚖️ **判重复度** —— 你是不是在重复造轮子：别人做到哪了、功能是不是更全、你还有没有位置；
-4. 💡 **给改进意见** —— 你真正的创新点在哪、有什么能偷师优化的地方。
-
-**每一条结论都能点开看证据。**
-
-## 同一份事实，三副面孔，一键切换
-
-| 💰 认真·镀金 | 🤡 毒舌·马戏团 | 🌈 安慰·彩虹 |
+| 💰 镀金 · 华尔街 | 🤡 毒舌 · 马戏团 | 🌈 彩虹 · 夸夸群 |
 |:--:|:--:|:--:|
-| 华尔街评级委员会的口吻，给你的项目做一次冷静「尽调」 | 脱口秀吐槽现场，往死里刻薄——但只踩事实、不踩你 | 无条件夸夸群，需要情绪价值时来一发 |
-| <img src="docs/assets/world-serious.png" alt="认真·镀金" width="260"> | <img src="docs/assets/world-roast.png" alt="毒舌·马戏团" width="260"> | <img src="docs/assets/world-comfort.png" alt="安慰·彩虹" width="260"> |
+| 冷静尽调与估值口吻 | 刻薄但只攻击项目 | 只提供情绪价值 |
+| <img src="docs/assets/world-serious.png" alt="镀金主题" width="270"> | <img src="docs/assets/world-roast.png" alt="毒舌主题" width="270"> | <img src="docs/assets/world-comfort.png" alt="彩虹主题" width="270"> |
 
-> 三套皮肤共享**同一个事实层**：换脸不换事实。想被夸就夸，想挨骂就骂，结论永远站在证据上。
+本仓库内置 Gitingest、Excalidraw、Kutt 三份预生成报告。启动前端后，在首页点击“示例”即可秒开，不调用模型、不消耗 API Key。仓库目前不承诺长期在线的公共实例，自托管方式见[部署指南](docs/DEPLOYMENT.md)。
 
----
+## 工作方式
 
-## 为什么做这个
-
-竞品调研结论（见 [`docs/DESIGN.md`](docs/DESIGN.md)）：
-「输入网址 → AI 毒舌点评」已经非常拥挤、门槛极低（GitHub 上 ~69 个同类仓库）。
-真正没人做通的、也是我们要占的位置，是这条完整链路：
-
-**网站 + GitHub 双源理解 → 可核验的竞品搜索 → 创新点校准 → 证据化改进 → 认真/毒舌/安慰同源切换。**
-
-## 核心设计（已锁定）
-
-1. **先形成统一、可追溯的事实判断，最后才切换语气。** 三种语气（认真/毒舌/安慰）共享同一事实层，
-   换皮不换事实——任何语气都不新增未经证实的说法（此不变量在 `report.py` 里用代码强制，并有测试守护）。
-2. **确定性流水线 + 少量专用模型调用**（而非一堆自治 Agent）：每个模块固定输入输出，
-   易缓存、易测试、易替换，最适合控制 token。
-3. **每条结论都带证据**（Evidence：来源定位 + 置信度），UI 上可点开。
-4. **缺信息就显式降低置信度**，不假装"全面理解"；GitHub 可选，缺失时降置信度。
-
-## 流水线
-
-```
-提交(网址 + GitHub? + 作者三问 + 语气)
-  ├─ site_analyzer   → SiteFacts
-  ├─ github_analyzer → RepoFacts
-  └─ fingerprint     → ProjectFingerprint   ← 成本闸门:可让用户确认/修正后再往下
-        ├─ search    → 候选(只召回)
-        ├─ verify    → 深读 + 关系分类
-        ├─ judge     → 重复度裁判(概率 + 维度 + 证据)
-        └─ factlayer → 统一事实层(优点/问题/改进)
-              └─ report → 认真版 & 毒舌版(共享事实层)
+```mermaid
+flowchart LR
+  I["网站 / GitHub / 一句话想法"] --> U["网站与仓库理解"]
+  U --> F["项目指纹"]
+  F --> S["搜索同类"]
+  S --> V["逐个核验"]
+  V --> J["六维重复度裁判"]
+  J --> L["统一事实层"]
+  L --> A["💰 镀金"]
+  L --> B["🤡 毒舌"]
+  L --> C["🌈 彩虹"]
 ```
 
-## 目录结构
+- 结论带来源、定位、引文和置信度，前端可展开核对。
+- 缺少网站、仓库或证据时显式降低置信度，不声称“全网没有竞品”。
+- 可在昂贵的搜索和裁判之前暂停，让用户确认项目指纹。
+- 确定性流水线替代自治 Agent 群，便于测试、缓存、替换 provider 和控制成本。
 
+## 与普通 AI 锐评工具的区别
+
+| 维度 | 常见做法 | DejaView |
+|---|---|---|
+| 输入 | 截图或一句话 | 网站 + GitHub + 作者说明，也支持单线索 |
+| 竞品 | 模型凭记忆列举 | 先召回，再抓取和分类核验 |
+| 结论 | 一段不可追溯文案 | 统一事实层 + 可展开证据 |
+| 语气 | 直接改写，可能新增说法 | 三种报告共享同一事实层 |
+| 本地体验 | 必须配置付费 Key | 默认 mock，零成本端到端运行 |
+| 自托管 | 通常未覆盖 | Docker Compose、访问码、限流和内部后端端口 |
+
+## 十分钟本地启动（mock，零成本）
+
+要求：Python 3.12、Node.js 20.9+（推荐 Node 22）和 Git。
+
+```bash
+git clone https://github.com/jiang4wqy/dejaview.git
+cd dejaview
 ```
+
+终端 1，启动后端：
+
+```bash
+cd backend
+python -m venv .venv
+
+# macOS / Linux
+./.venv/bin/python -m pip install -r requirements-dev.txt
+./.venv/bin/python -m uvicorn app.main:app --reload --port 8000
+
+# Windows PowerShell 使用：
+# .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+# .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+```
+
+终端 2，启动前端：
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+打开 [http://localhost:3000](http://localhost:3000)。API 文档位于 [http://localhost:8000/docs](http://localhost:8000/docs)。默认 `DEJAVIEW_PROVIDER=mock`，无需创建 `.env`。
+
+macOS / Linux 也可执行：
+
+```bash
+make install
+make dev
+```
+
+## 真实分析模式
+
+复制示例配置，真实密钥只写入被 Git 忽略的 `backend/.env`：
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+在文件中启用 DeepSeek、Claude 或 Qwen，并按需选择 `builtin` 抓取、仓库解析和搜索 provider。不要分析私有仓库、内网地址或敏感业务资料。真实分析会消耗部署者的模型额度，公开部署前请同时设置访问码、单 IP 限流和全站每日上限。
+
+完整变量和部署方案见 [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)。
+
+## 验证
+
+```bash
+# 后端
+cd backend
+./.venv/bin/python -m pytest -q
+
+# 前端
+cd ../frontend
+npm run typecheck
+npm run audit
+npm run build
+```
+
+CI 还会执行 Gitleaks 秘密扫描和 `docker compose config`。贡献代码前请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)；安全问题请按 [SECURITY.md](SECURITY.md) 私下报告。
+
+## 架构与目录
+
+```text
 dejaview/
-├── README.md                  ← 本文件
+├── backend/                  FastAPI、流水线、provider、任务存储与测试
+├── frontend/                 Next.js App Router、三套主题与预生成报告
 ├── docs/
-│   ├── DESIGN.md              ← 完整设计:原则/流程/模块契约/借鉴分工/MVP边界/验收
-│   ├── ARCHITECTURE.md        ← 底层框架:DI 容器 / 可插拔点 / 错误降级 / 观测 ★
-│   ├── BACKLOG.md             ← 可拆分任务清单(团队认领用) ★
-│   └── TODO.md                ← 明确暂缓项 / 已知限制 / 合规边界 / 当前 stub 清单
-├── backend/                   ← Python(FastAPI) 确定性流水线  ← 已可运行(mock)
-│   ├── app/
-│   │   ├── models/schemas.py  ← 数据契约(所有模块的地基) ★
-│   │   ├── services.py        ← 依赖注入容器 Services ★
-│   │   ├── config/logging/errors/prompts.py  ← 配置 / 日志 / 异常 / 提示词
-│   │   ├── providers/         ← LLM(mock/claude/deepseek/qwen)·抓取·repomap·搜索(全可插拔)
-│   │   ├── pipeline/          ← 7 个模块 + orchestrator(降级/计时/成本闸门)
-│   │   ├── jobs.py  cache.py  ← JobStore 抽象 / 内容 hash 缓存
-│   │   ├── fixtures/mocks.py  ← mock 数据(零成本跑通)
-│   │   └── main.py            ← FastAPI 端点
-│   ├── scripts/run_pipeline.py← CLI:端到端跑通
-│   └── tests/                 ← pytest 20 个(不变量 + 框架 + 内置 provider)
-└── frontend/                  ← Next.js(提交→进度→报告, 认真/毒舌/安慰三世界换肤, 点开证据)
+│   ├── ARCHITECTURE.md       数据流、模块边界和不变量
+│   ├── DEPLOYMENT.md         本地、Docker、Render 与安全配置
+│   ├── TODO.md               当前限制
+│   └── BACKLOG.md            可认领的后续工作
+├── docker-compose.yml        Redis + API + RQ worker + frontend
+└── render.yaml               两服务 Render Blueprint
 ```
 
-## 快速开始
+主要可替换点包括 LLM（mock / DeepSeek / Claude / Qwen）、抓取、repo map、搜索、JobStore 和队列。契约与扩展方式见[架构文档](docs/ARCHITECTURE.md)。
 
-一键（需 `python3` + `node`）：
+## 项目状态
 
-```bash
-make install     # 装前后端依赖(venv + npm)
-make dev         # 同时起后端(:8000) + 前端(:3000)
-make test        # 后端测试(20 个)
-make eval        # 评测 harness(默认 mock; 配 .env 后跑真实校准)
-```
+- 已有：mock 与真实 provider、网站/公开仓库理解、多源搜索、候选核验、六维裁判、统一事实层、三种报告、Redis/SQL JobStore、线程/RQ 队列、访问码和限流。
+- 仍需加强：更大的真实评测集、评分稳定性回归、完整 token/成本计量、更多可靠搜索源和自动化端到端浏览器测试。
+- 真实搜索是尽力而为，报告代表“本次检索范围内”的证据，不是法律、投资或市场保证。
 
-**一键部署**（自建服务器 / VPS，装好 Docker 即可）——只需两步：
+路线图见 [docs/BACKLOG.md](docs/BACKLOG.md)，已知限制见 [docs/TODO.md](docs/TODO.md)。
 
-```bash
-git clone https://github.com/jiang4wqy/dejaview.git && cd dejaview
-./deploy.sh        # 首次自动生成 .env → 填入 DEEPSEEK_API_KEY → 再跑一次即启动
-```
+## 许可证
 
-起来后浏览器打开 `http://<你的服务器IP>:3000` 即可用。**单端口**：只需对外开放 `3000`，浏览器走同源 `/api` 由前端反代到后端，无需配置公网地址、后端端口也不必暴露。整套是 redis + 后端 API + rq worker + 前端（`docker compose`）；Job 用 Redis 持久化、搜索多源合并(github+v2ex)。
-
-> ⚠️ **成本提醒**：分析用的是**你自己的 DeepSeek key、走你的额度**。若部署成公开站点，任何访客的每次分析都消耗你的余额。为此已**内置限流**（每 IP 每小时上限 + 全站每日总额度，`docker compose` 默认开启）保护钱包，参数可调；详见下方「[公开上线前](#公开上线前成本与安全)」。
-
-**部署到 Render（永久免费网址，不依赖自己的机器）**：仓库已带 [`render.yaml`](render.yaml) 蓝图（前端 + 后端两个免费 web 服务，内存存储 + 线程执行，限流默认开）。
-
-1. 注册 [render.com](https://render.com)（可用 GitHub 登录），在 **Account → GitHub** 授权访问 `jiang4wqy/dejaview`（私有仓库需先授权）。
-2. **New → Blueprint → 选该仓库 → Apply**，Render 读 `render.yaml` 自动建两个服务。
-3. 提示处填 **`DEEPSEEK_API_KEY`**（标了 `sync:false`，是密钥、不进仓库）。
-4. 建好后把**前端服务**的网址（`https://dejaview-frontend.onrender.com`）发给朋友即可。
-
-> 免费档：服务闲置 ~15 分钟休眠，下次访问冷启动约 ~50s（首个访客稍等一下）。若前端连不上后端，去前端服务 **Environment** 确认 `DEJAVIEW_BACKEND` = 后端网址。Railway 亦可，但其免费额度已改为一次性 $5 试用，长期不如 Render 免费档。
-
-**离线零成本**（默认，无需任何 key）：直接 `make dev`，前端提交后走 mock，秒出三语气报告。前端首页还内置**预生成示例**（`frontend/public/demos/*.json`），点一下秒开、无需等待。
-
-**真实模式**（推荐）：`cp backend/.env.example backend/.env`，填 DeepSeek key（或 Claude/Qwen）。即用**真实 DeepSeek + 内置抓取 + git clone + GitHub 搜索**分析真实项目。命令行跑一次：
-
-```bash
-cd backend && ./.venv/bin/python scripts/run_pipeline.py \
-  --website https://gitingest.com --github https://github.com/cyclotruc/gitingest
-```
-
-## 公开上线前（成本与安全）
-
-分析每次会调用 LLM，**默认走部署者自己配置的 DeepSeek key 与额度**。放到公网「供大家用」前，先想清楚谁来买单：
-
-| 模式 | 谁付费 | 适合 | 防护现状 |
-|:--|:--|:--|:--|
-| **A. 你请客**（默认） | 你的 DeepSeek 余额 | 小范围 / 演示 / 朋友试用 | ✅ **已内置限流**：每 IP 每小时上限 + 全站每日总额度(到顶当天停)，`docker compose` 默认开启 |
-| **B. 用户自带 key（BYO）** | 每个用户自己 | 真正公开、放心让陌生人用 | ⏳ 待接：前端「填你的 key」输入框，只在本次请求用、不落库 |
-| **C. 仅演示** | 你 | 只想展示效果 | ✅ 现成：首页「秒开示例」(`public/demos/*.json`)，无需真实分析 |
-
-模式 A 的限流已实现（`app/ratelimit.py`，redis / 内存双后端），用环境变量调：
-
-```bash
-DEJAVIEW_RATE_LIMIT_ENABLED=true       # 公开部署默认开
-DEJAVIEW_RATE_LIMIT_PER_IP_HOURLY=10   # 每 IP 每小时最多几次(0=不限)
-DEJAVIEW_RATE_LIMIT_DAILY_TOTAL=200    # 全站每天最多几次,到顶当天停(0=不限)
-```
-
-- **每日全站额度**是钱包的硬保护：不管来多少 IP，一天到顶就停——即使反代未透传真实 IP、每 IP 闸失效，这道闸仍然兜底。
-- **密钥安全**：key 只存在服务端（`backend/.env` / 部署 `.env`，均已 gitignore），**绝不进前端、不进仓库**。本仓库历史已核验无任何真实 key。
-- 另建议在 DeepSeek 后台设**账户级消费上限**，多一层保险；想上模式 B（BYO key）我可以接着加。
-
-## 现状
-
-- ✅ **基本可运行**：真实模式端到端跑通 —— 真实 DeepSeek(v4) + 内置网站抓取 + `git clone` 仓库理解 + 真实 GitHub 搜索，对真实项目产出证据化的三语气报告；前端 `npm run build` 通过、API 契约端到端验证。
-- ✅ **体验迭代**：① 三世界换肤——认真·镀金（华尔街评级委员会）/ 毒舌·马戏团 / 安慰·彩虹（无条件夸夸），每套独立字体+特效，事实层共享；② 赛道信号——由竞品 star/活跃度确定性推「该不该做」；③ 极简灵活输入——单线索框自动识别 网址/仓库/纯想法（idea-only 也能测，缺口显式降置信）；④ 一键生成分享战报海报。
-- ✅ 底层框架完善：依赖注入容器（Services）、LLM/抓取/repomap/搜索/存储全部可插拔、错误优雅降级、成本/阶段观测、pydantic-settings 配置、集中提示词；20 测试通过。
-- ⏳ 后续（见 [`docs/BACKLOG.md`](docs/BACKLOG.md)）：生产部署、Job 持久化、更多搜索源（中文社区）、Firecrawl/Aider 增强、评测集。
+[MIT](LICENSE) © jiang4wqy

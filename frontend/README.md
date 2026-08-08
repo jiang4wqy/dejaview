@@ -1,72 +1,60 @@
-# DejaView · 项目锐评（前端）
+# DejaView Frontend
 
-DejaView 是一个"锐评"用户提交项目的网站：提交一个网站链接（可选 GitHub 仓库）并回答 3 个问题，
-选择语气（认真 / 毒舌），后端跑一条流水线并返回一份报告：项目指纹、相似项目、重复度裁判、
-亮点、问题与改进建议。
+Next.js App Router frontend for the intro → persona → project → progress → report flow. It uses TypeScript and repository-native CSS without a component framework.
 
-本仓库是 **Next.js（App Router + TypeScript）** 编写的纯前端，零第三方 UI 库、纯 CSS，界面为中文。
+See the [top-level README](../README.md) for the complete project and [Deployment](../docs/DEPLOYMENT.md) for server configuration.
 
-## 运行
+## Run locally
 
-前端本身不含后端。你需要先启动 FastAPI 后端（默认监听 `http://localhost:8000`）。
+Start the backend on `http://localhost:8000`, then:
 
 ```bash
-# 1) 安装依赖
-npm install
-
-# 2)（可选）配置后端地址
-cp .env.local.example .env.local
-# 编辑 .env.local，设置 NEXT_PUBLIC_API_BASE 指向你的后端
-
-# 3) 启动开发服务器（默认 http://localhost:3000）
+npm ci
 npm run dev
 ```
 
-生产构建：
+Open `http://localhost:3000`. The runtime `/api` route proxies to the local backend, so no frontend environment file is required.
+
+## Checks
 
 ```bash
+npm run typecheck
+npm run audit
 npm run build
 npm run start
 ```
 
-## 环境变量
+Requires Node.js 20.9+; CI and Docker use Node 22.
 
-| 变量 | 说明 | 默认值 |
-| --- | --- | --- |
-| `NEXT_PUBLIC_API_BASE` | 后端 FastAPI 基础地址（不要以斜杠结尾） | `http://localhost:8000` |
+## Runtime variables
 
-## 后端接口约定
+| Variable | Scope | Purpose |
+|---|---|---|
+| `DEJAVIEW_BACKEND` | Next.js server runtime | Backend origin used by the same-origin `/api` proxy; defaults to `http://localhost:8000` |
+| `NEXT_PUBLIC_API_BASE` | Browser build-time | Optional separate public API origin; leave empty for the bundled same-origin setup |
 
-- `POST /api/analyze` → `{ job_id }`
-- `GET /api/jobs/{job_id}` → `Job`
-- `POST /api/jobs/{job_id}/confirm` （提交编辑后的项目指纹，恢复流水线）→ `Job`
-- `GET /api/health` → `{ ok, provider }`
+Never put a model credential in a `NEXT_PUBLIC_*` variable.
 
-类型定义见 `lib/types.ts`，请求封装见 `lib/api.ts`。
+## Code map
 
-## 目录结构
-
-```
+```text
 app/
-  layout.tsx              顶栏 + 全局布局
-  globals.css             全局样式（浅色/深色自适应）
-  page.tsx                提交表单
-  report/[jobId]/page.tsx 报告页（轮询 + 状态机）
+├── page.tsx                    coordinates the three-stage home flow
+├── report/[jobId]/page.tsx     polling and terminal states
+├── api/[...path]/route.ts      runtime backend proxy
+└── globals.css                 ordered imports only
 components/
-  StageProgress.tsx       进度条 + 阶段
-  FingerprintEditor.tsx   等待确认时可编辑的"项目指纹"卡片
-  ReportView.tsx          完成时的报告（认真/毒舌前端切换）
-  FindingCard.tsx         可展开证据的"发现"卡片
-  Markdown.tsx            极简 Markdown 渲染
+├── ProjectForm.tsx             validation and submission
+├── DemoPicker.tsx              pre-generated report links
+├── StageProgress.tsx           live job state
+└── ReportView.tsx              shared-fact report presentation
 lib/
-  types.ts                TypeScript 接口
-  api.ts                  fetch 封装
-  markdown.ts             极简 Markdown → HTML
+├── api.ts                      typed requests and friendly API errors
+├── showcase-data.ts            homepage copy and examples
+└── types.ts                    API contracts
+styles/
+├── base.css, intro.css, worlds.css
+└── form.css, report.css, responsive.css
 ```
 
-## 关键交互
-
-1. **认真 / 毒舌 前端切换**：报告完成后 `reports.serious` 与 `reports.roast` 一并返回，
-   切换语气不会重新请求后端，纯前端切换已获取的两份报告。
-2. **逐条证据展开**：每条"发现"（finding）可点击"点开证据"展开其 `evidence[]`
-   （来源定位 locator、原文引用 quote、置信度 confidence）。
+The serious, roast and comfort themes can change copy and presentation. They must not invent or mutate facts returned by the backend.

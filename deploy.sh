@@ -15,16 +15,21 @@ fi
 # 1) 首次：从模板生成 .env
 if [ ! -f .env ]; then
   cp deploy.env.example .env
-  echo "📝 已生成 .env。请填入你的 DeepSeek key，然后重新运行 ./deploy.sh"
-  echo "   编辑：  nano .env      # 把 DEEPSEEK_API_KEY=sk-xxx 换成真实 key"
+  echo "📝 已生成 .env。请填入 DeepSeek key 和访问码，然后重新运行 ./deploy.sh"
+  echo "   编辑：  nano .env"
   exit 1
 fi
 
 # 2) 校验 key 已填
-if grep -qE '^DEEPSEEK_API_KEY=sk-xxx$' .env || ! grep -qE '^DEEPSEEK_API_KEY=.+' .env; then
-  echo "⚠️  .env 里的 DEEPSEEK_API_KEY 还没填真实值（仍是占位符 sk-xxx）。"
+if grep -qE '^DEJAVIEW_PROVIDER=deepseek$' .env && \
+   { grep -qE '^DEEPSEEK_API_KEY=(<your-deepseek-api-key>|sk-xxx)?$' .env || ! grep -qE '^DEEPSEEK_API_KEY=.+' .env; }; then
+  echo "⚠️  .env 里的 DEEPSEEK_API_KEY 还没填真实值。"
   echo "   编辑：  nano .env"
   exit 1
+fi
+
+if grep -qE '^DEJAVIEW_ACCESS_CODE=(<choose-a-strong-access-code>)?$' .env; then
+  echo "⚠️  建议先设置 DEJAVIEW_ACCESS_CODE，再把服务开放到公网。"
 fi
 
 # 3) 构建并启动

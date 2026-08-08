@@ -5,7 +5,7 @@ import { type NextRequest } from "next/server";
 export const dynamic = "force-dynamic";
 
 function backend(): string {
-  let b = process.env.DEJAVIEW_BACKEND || "http://localhost:8010";
+  let b = process.env.DEJAVIEW_BACKEND || "http://localhost:8000";
   if (!/^https?:\/\//.test(b)) b = `https://${b}`; // 只给主机名时补 https://
   return b.replace(/\/+$/, "");
 }

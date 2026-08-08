@@ -1,84 +1,74 @@
 # DejaView Backend
 
-Python(FastAPI)确定性流水线 + 依赖注入 + 处处可插拔。默认 `mock` provider —— 无需任何 key 就能端到端跑通。
+FastAPI API and deterministic analysis pipeline. The local default uses the mock LLM, stub inputs, an in-memory JobStore and a background thread, so it runs without credentials.
 
-底层框架细节见 [`../docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md)。
+See [Architecture](../docs/ARCHITECTURE.md) and [Deployment](../docs/DEPLOYMENT.md) for system-level details.
 
-## 跑起来
-
-```bash
-python3 -m venv .venv
-./.venv/bin/pip install -r requirements.txt
-
-./.venv/bin/python scripts/run_pipeline.py       # 端到端 (mock, 打印认真版+毒舌版+成本/观测)
-./.venv/bin/python -m pytest                      # 14 个测试 (流水线 8 + 框架 6)
-./.venv/bin/uvicorn app.main:app --reload         # API → http://localhost:8000/docs
-```
-
-## 切 provider(claude / deepseek / qwen)
+## Run locally
 
 ```bash
-cp .env.example .env    # 编辑
-export DEJAVIEW_PROVIDER=claude   ANTHROPIC_API_KEY=sk-ant-...
-# 或 deepseek: DEJAVIEW_PROVIDER=deepseek DEEPSEEK_API_KEY=... 并把 DEJAVIEW_MODEL_* 设成 deepseek-chat 等
+python -m venv .venv
+./.venv/bin/python -m pip install -r requirements-dev.txt
+./.venv/bin/python -m uvicorn app.main:app --reload --port 8000
 ```
 
-配置全走 `DEJAVIEW_` 前缀环境变量(pydantic-settings),见 `.env.example`。
+Windows PowerShell:
 
-**真实搜索**(已实现):`DEJAVIEW_SEARCH_PROVIDER=github` —— 免 key 可用,设 `GITHUB_TOKEN` 提额;代理环境需 `pip install "httpx[socks]"`。例:
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+```
+
+API docs: `http://localhost:8000/docs`.
+
+## Test and run the CLI
+
 ```bash
-DEJAVIEW_SEARCH_PROVIDER=github GITHUB_TOKEN=ghp_xxx ./.venv/bin/python scripts/run_pipeline.py
+./.venv/bin/python -m pytest -q
+./.venv/bin/python scripts/run_pipeline.py
 ```
 
-## 目录
+Use `--basetemp .pytest-tmp` if the system temporary directory is not writable.
 
-```
+## Configuration
+
+Copy `.env.example` to `.env` only when you need real providers. Settings use the `DEJAVIEW_` prefix; provider credentials such as `DEEPSEEK_API_KEY`, `ANTHROPIC_API_KEY` and `GITHUB_TOKEN` are read server-side.
+
+The main replaceable capabilities are:
+
+- LLM: mock, Claude, DeepSeek and Qwen-compatible endpoints;
+- crawler: stub, built-in HTTP, browser and registered integrations;
+- repository mapper: stub, built-in shallow-clone mapper and registered integrations;
+- search: mock, GitHub, V2EX, Juejin and composite;
+- JobStore: memory, Redis or SQL;
+- queue: thread or RQ.
+
+## API
+
+| Method | Path | Access-code behavior |
+|---|---|---|
+| `GET` | `/api/health` | always public |
+| `POST` | `/api/access` | always public; validates `X-Access-Code` |
+| `POST` | `/api/analyze` | protected when a code is configured |
+| `GET` | `/api/jobs` | protected |
+| `GET` | `/api/jobs/{id}` | protected |
+| `POST` | `/api/jobs/{id}/confirm` | protected |
+| `GET` | `/api/jobs/{id}/report` | protected |
+
+“Protected” means open when `DEJAVIEW_ACCESS_CODE` is empty and requires the matching `X-Access-Code` header when it is set.
+
+## Code map
+
+```text
 app/
-├── models/schemas.py     数据契约(所有模块的地基, 改它要通知所有人)
-├── config.py             pydantic-settings 配置
-├── logging.py  errors.py 日志 / 异常
-├── prompts.py            集中所有 system prompt 与 prompt 构造(prompt 工程只改这里)
-├── services.py           ★ 依赖注入容器 Services + build_services
-├── cache.py              内容 hash 缓存(可插拔/可关)
-├── jobs.py               JobStore 抽象 + InMemory 实现
-├── providers/
-│   ├── base.py           LLMProvider 接口 + 重试
-│   ├── mock_provider.py  claude_provider.py  openai_compatible.py(deepseek/qwen)
-│   ├── llm_router.py     ModelTier + LLMRouter + provider 注册表
-│   ├── crawler.py        Crawler 接口 + stub/firecrawl/crawl4ai
-│   ├── repomap.py        RepoMapper 接口 + stub/gitingest/aider
-│   └── search_client.py  SearchClient 接口 + mock/tavily/github
-├── pipeline/             7 模块 + orchestrator(编排+降级+计时+成本闸门)
-└── fixtures/mocks.py     mock 数据(零成本跑通)
+├── main.py, security.py, ratelimit.py  HTTP and cost boundary
+├── models/schemas.py                   shared contracts
+├── jobs.py, queue.py                   storage and execution
+├── services.py                         dependency construction
+├── providers/                          external capability implementations
+├── pipeline/                           fixed analysis stages and orchestrator
+└── fixtures/mocks.py                   zero-cost deterministic fixtures
 ```
 
-## API 契约
-
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| POST | `/api/analyze` | body=`AnalysisRequest` → `{job_id}`;后台线程跑流水线 |
-| GET | `/api/jobs/{id}` | 轮询进度/结果(含 `reports.serious`/`reports.roast`、`cost`、`degradations`) |
-| POST | `/api/jobs/{id}/confirm` | 成本闸门:提交(修正后的)`ProjectFingerprint`,从 search 继续 |
-| GET | `/api/jobs/{id}/report?tone=` | 便捷取单个语气报告 |
-| GET | `/api/health` | `{ok, provider}` |
-
-## 模块契约(输入 → 输出;都收 `svc: Services`)
-
-| 模块 | `analyze/…(输入, svc)` → 输出 | 模型层级 |
-|---|---|---|
-| `site_analyzer` | `AnalysisRequest` → `SiteFacts` | cheap(+ `svc.crawler`) |
-| `github_analyzer` | `AnalysisRequest` → `RepoFacts` | cheap(+ `svc.repomap`) |
-| `fingerprint` | `SiteFacts+RepoFacts+作者声明` → `ProjectFingerprint` | standard |
-| `search` | `ProjectFingerprint` → `list[CandidateRef]` | cheap(+ `svc.search`) |
-| `verify` | `候选+指纹` → `list[VerifiedCandidate]` | standard |
-| `judge` | `指纹+已验证竞品` → `DuplicationVerdict` | strong + thinking |
-| `factlayer` | `指纹+竞品+裁判` → `AnalysisResult` | standard |
-| `report` | `AnalysisResult+语气` → `Report` | standard |
-
-## 扩展套路(其余模块零改动)
-
-- **加 LLM provider**:`providers/` 写 `LLMProvider` 子类 → `llm_router.make_provider()` 注册 → `DEJAVIEW_PROVIDER=<name>`。
-- **加抓取 / repo map / 搜索**:继承 `Crawler` / `RepoMapper` / `SearchClient`,在对应 `make_xxx` 的 `_REGISTRY` 加一行。
-- **换任务存储**:实现 `jobs.JobStore`(Redis/SQL),替换 `store` 单例。
-
-`app/prompts.py` 里的 SYSTEM/prompt 与 `providers/*` 的 stub 就是**留给对应负责人填的坑**;接口已固定,可并行开发。详见 `docs/BACKLOG.md`。
+Tone-specific reports must not add facts outside the shared fact layer. Preserve that invariant when editing schemas, prompts, scoring or report rendering.
