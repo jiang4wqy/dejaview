@@ -1,0 +1,238 @@
+/* Gilt, roast, and comfort theme tokens and effects. */
+/* ===========================================================================
+   美学加强：漂移聚光 / 胶片颗粒 / 表盘刻度 / 落章冲击 / 卡片微交互
+   =========================================================================== */
+/* 漂移聚光只放在开场深色戏台(介绍/大门)，内容页保持深色可读 */
+.stage-fx { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.fx-spot { position: absolute; width: 42vmax; height: 42vmax; border-radius: 50%; filter: blur(66px); opacity: 0; will-change: transform; }
+:root[data-splash] .fx-spot { opacity: .5; }
+:root[data-splash] .fx-spot.a { background: radial-gradient(circle, rgba(185,139,255,.55), transparent 64%); animation: spotA 26s ease-in-out infinite; }
+:root[data-splash] .fx-spot.b { background: radial-gradient(circle, rgba(255,46,136,.42), transparent 64%); animation: spotB 32s ease-in-out infinite; }
+/* 内容页只在最边缘留一点极淡的世界色氛围, 不进中心 */
+:root[data-tone] .fx-spot { opacity: .14; width: 34vmax; height: 34vmax; }
+:root[data-tone="roast"] .fx-spot.a { background: radial-gradient(circle, rgba(255,46,136,.5), transparent 60%); animation: spotA 30s ease-in-out infinite; }
+:root[data-tone="roast"] .fx-spot.b { background: radial-gradient(circle, rgba(0,229,255,.4), transparent 60%); animation: spotB 36s ease-in-out infinite; }
+:root[data-tone="serious"] .fx-spot.a { background: radial-gradient(circle, rgba(212,175,55,.45), transparent 60%); animation: spotA 30s ease-in-out infinite; }
+:root[data-tone="serious"] .fx-spot.b { background: radial-gradient(circle, rgba(150,110,30,.4), transparent 60%); animation: spotB 36s ease-in-out infinite; }
+/* 贴着屏幕四角游走, 不侵入中心内容 */
+@keyframes spotA { 0%,100%{transform:translate(-30vw,-32vh) scale(1)} 50%{transform:translate(-14vw,-18vh) scale(1.1)} }
+@keyframes spotB { 0%,100%{transform:translate(96vw,84vh) scale(1.1)} 50%{transform:translate(82vw,66vh) scale(.92)} }
+.fx-grain {
+  position: fixed; inset: 0; z-index: 9994; pointer-events: none; opacity: .05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ===========================================================================
+   第三世界：彩虹 · 夸夸群（安慰）—— 柔和马卡龙浅色
+   =========================================================================== */
+:root[data-tone="comfort"] {
+  color-scheme: light;
+  --bg: #fff1f7; --panel: #ffffff; --panel-2: #fff7fb; --line: #f4d9e8;
+  --ink: #5b3a54; --muted: #9c7a92; --faint: #c3a9bb;
+  --accent: #ff7ec2; --accent-2: #ffcf6b;
+  --good: #4bbf98; --warn: #efab4c; --crit: #ef7a90;
+  --display: "Fredoka", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --sans: "Fredoka", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  background: #fff1f7;
+}
+:root[data-tone="comfort"] body {
+  min-height: 100vh; color: var(--ink);
+  background: linear-gradient(160deg, #fff1f7, #eef6ff 48%, #fff7ec);
+}
+:root[data-tone="comfort"] body::before {
+  background-image: radial-gradient(circle at 22px 22px, rgba(255,126,194,.12) 3px, transparent 3px);
+  background-size: 46px 46px; animation: none;
+}
+:root[data-tone="comfort"] .btn { color: #6a2f52; }
+:root[data-tone="comfort"] .home-title .hl,
+:root[data-tone="comfort"] h1.verdict {
+  background: linear-gradient(100deg, #ff7ec2, #ffcf6b, #7ec8ff, #b58cff);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+:root[data-tone="comfort"] .stamp { border-radius: 16px; border-style: solid; }
+
+/* 大门第三扇：彩虹 */
+.door-comfort {
+  background: linear-gradient(160deg, #ffd5ec, #d9ecff 55%, #fff0d6);
+  border-color: #ff9dd0; color: #5b3a54; box-shadow: 0 20px 50px rgba(255,126,194,.35);
+  font-family: "Fredoka", "PingFang SC", sans-serif;
+}
+.door-comfort .door-name { color: #ff5fb0; text-shadow: 2px 2px 0 #fff, 4px 4px 0 rgba(255,126,194,.3); }
+.door-comfort:hover { box-shadow: 0 26px 64px rgba(255,126,194,.5); }
+
+/* 三选切换：knob 三档 */
+.toggle.t3 .knob { width: calc(33.333% - 3px); }
+.toggle.t3[data-sel="serious"] .knob { transform: translateX(0); }
+.toggle.t3[data-sel="roast"] .knob { transform: translateX(100%); }
+.toggle.t3[data-sel="comfort"] .knob { transform: translateX(200%); }
+.toggle.t3 button { padding: 8px 15px; }
+
+/* 安慰吉祥物 */
+.m-comfort { animation: comfortBob 2.2s ease-in-out infinite; }
+@keyframes comfortBob { 0%,100%{transform:translateY(0) rotate(-4deg)} 50%{transform:translateY(-8px) rotate(4deg)} }
+
+/* 战报卡：彩虹皮肤 */
+.sharecard[data-tone="comfort"] { background: linear-gradient(160deg, #ffe3f2, #e3f0ff 55%, #fff4de); color: #5b3a54; }
+.sharecard[data-tone="comfort"] .sc-brand { font-family: "Fredoka", sans-serif; color: #ff5fb0; }
+.sharecard[data-tone="comfort"] .sc-pct { color: #ff5fb0; }
+.sharecard[data-tone="comfort"] .sc-headline { font-family: "Fredoka", "PingFang SC", sans-serif; }
+.sharecard[data-tone="comfort"] .sc-foot { border-top-color: rgba(91,58,84,.18); }
+.sharecard[data-tone="comfort"] .sc-tag { color: #ff5fb0; font-weight: 700; }
+
+/* 介绍页第三张预告卡 + 三卡布局 */
+.tz-comfort { background: linear-gradient(160deg, #ffd5ec, #d9ecff); border: 1px solid #ff9dd0; color: #6a2f52; }
+.intro-vs-label { font-family: var(--mono, monospace); font-size: 12.5px; color: #9a90b5; letter-spacing: .06em; margin: 4px 0 10px; }
+
+/* ===========================================================================
+   两个世界 —— 镀金·华尔街(serious) vs 毒舌·马戏团(roast)
+   开场 <WorldGate> 选定；<html data-tone> 驱动整站换肤；报告页一键切换即变形。
+   =========================================================================== */
+@font-face { font-family: "Bungee"; src: url("/fonts/Bungee.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Playfair"; src: url("/fonts/Playfair.ttf") format("truetype"); font-weight: 400 900; font-display: swap; }
+@font-face { font-family: "Fredoka"; src: url("/fonts/Fredoka.ttf") format("truetype"); font-weight: 300 700; font-display: swap; }
+
+/* ---- 世界令牌 ---- */
+:root[data-tone="serious"] {
+  color-scheme: dark;
+  --bg: #0a0a0c; --panel: #131217; --panel-2: #1c1a20;
+  --line: #33301f; --ink: #f4ecd8; --muted: #b7a880; --faint: #8a7d5c;
+  --accent: #d4af37; --accent-2: #f2dd93;
+  --good: #46a877; --warn: #d7a63f; --crit: #c1503f;
+  --display: "Playfair", "Didot", "Songti SC", "Noto Serif SC", Georgia, serif;
+  --sans: "Songti SC", "Noto Serif SC", Georgia, "PingFang SC", serif;
+}
+:root[data-tone="roast"] {
+  color-scheme: dark;
+  --bg: #150a29; --panel: #21103e; --panel-2: #2c1551;
+  --line: #4a2a7c; --ink: #fdf0ff; --muted: #d7a6ff; --faint: #a87fd4;
+  --accent: #ff2e88; --accent-2: #ffe600;
+  --good: #00f5a0; --warn: #ffb020; --crit: #ff3b6b;
+  --display: "Bungee", "Arial Black", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --sans: "Fredoka", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+/* ---- 世界背景 ---- */
+:root[data-tone="serious"] body {
+  background: radial-gradient(130% 80% at 50% -12%, rgba(212,175,55,.12), transparent 58%), var(--bg);
+}
+:root[data-tone="roast"] body {
+  background:
+    radial-gradient(60% 55% at 14% -5%, rgba(255,46,136,.16), transparent 60%),
+    radial-gradient(55% 50% at 88% 8%, rgba(0,229,255,.12), transparent 60%), var(--bg);
+}
+:root[data-tone] { background: var(--bg); } /* html 兜底, 防止页面底部露出浅色 */
+:root[data-tone] body { min-height: 100vh; background-color: var(--bg); } /* 内容短时也铺满深色 */
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+:root[data-tone="serious"] body::before {
+  background-image: repeating-linear-gradient(90deg, transparent 0 21px, rgba(212,175,55,.05) 21px 22px);
+}
+:root[data-tone="roast"] body::before {
+  background-image:
+    repeating-linear-gradient(45deg, rgba(255,255,255,.045) 0 26px, transparent 26px 52px),
+    repeating-linear-gradient(-45deg, rgba(255,255,255,.045) 0 26px, transparent 26px 52px);
+  animation: harlequin 26s linear infinite;
+}
+@keyframes harlequin { to { background-position: 52px 0, -52px 0; } }
+
+/* ---- 显示字体 ---- */
+:root[data-tone] .brand,
+:root[data-tone] .home-title,
+:root[data-tone] h1.verdict,
+:root[data-tone] .shead h2,
+:root[data-tone] .panel-title,
+:root[data-tone] .progress-stage,
+:root[data-tone] .dial .pct { font-family: var(--display); }
+:root[data-tone="serious"] .home-title,
+:root[data-tone="serious"] h1.verdict { font-weight: 800; }
+
+/* ---- 顶栏 persona 药丸 ---- */
+.persona-pill {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  background: color-mix(in srgb, var(--accent) 14%, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  color: var(--ink); border-radius: 999px; padding: 6px 12px 6px 9px;
+  font-family: var(--mono); font-size: 12.5px; white-space: nowrap;
+  transition: transform .12s, box-shadow .2s, background .3s;
+}
+.persona-pill:hover { transform: translateY(-1px); box-shadow: 0 4px 18px color-mix(in srgb, var(--accent) 40%, transparent); }
+.persona-emoji { font-size: 16px; }
+.persona-name { font-weight: 700; }
+.persona-swap { color: var(--faint); border-left: 1px solid var(--line); padding-left: 8px; white-space: nowrap; }
+.topbar-tools { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.topbar-restart {
+  font-family: var(--mono); font-size: 12px; color: var(--muted); background: transparent;
+  border: 1px solid var(--line); padding: 6px 11px; border-radius: 999px; cursor: pointer;
+  white-space: nowrap; transition: color .2s, border-color .2s;
+}
+.topbar-restart:hover { color: var(--accent); border-color: var(--accent); }
+/* 返回（退一步）按钮 */
+.splash-back {
+  position: fixed; top: 72px; left: 20px; z-index: 5;
+  font-family: var(--mono, monospace); font-size: 13px; color: #c9c0dc;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.16);
+  padding: 7px 14px; border-radius: 999px; cursor: pointer; transition: color .2s, border-color .2s;
+}
+.splash-back:hover { color: #fff; border-color: rgba(255,255,255,.45); }
+.home-back {
+  display: inline-block; margin: 2px 0 10px;
+  font-family: var(--mono); font-size: 13px; color: var(--muted);
+  background: transparent; border: 1px solid var(--line);
+  padding: 7px 14px; border-radius: 999px; cursor: pointer; transition: color .2s, border-color .2s;
+}
+.home-back:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ---- 特效层 ---- */
+.fx-confetti { position: fixed; inset: 0; z-index: 9990; pointer-events: none; }
+.fx-gold {
+  position: fixed; inset: 0; z-index: 9989; pointer-events: none; opacity: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,225,140,.55) 48%, rgba(212,175,55,0) 66%);
+  background-size: 300% 100%; background-position: 120% 0;
+}
+.fx-gold.on { animation: goldsweep 1.05s ease-out; }
+@keyframes goldsweep { 0%{opacity:0;background-position:120% 0} 15%{opacity:1} 100%{opacity:0;background-position:-40% 0} }
+.fx-ticker {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; height: 30px; overflow: hidden;
+  background: linear-gradient(#000, #0a0a0c); border-top: 1px solid color-mix(in srgb, var(--accent) 40%, #000);
+  display: flex; align-items: center;
+}
+.fx-ticker-track {
+  display: inline-flex; gap: 30px; white-space: nowrap; padding-left: 100%;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .05em;
+  animation: ticker 42s linear infinite;
+}
+.fx-ticker-track .up { color: #46a877; }
+.fx-ticker-track .down { color: #c1503f; }
+@keyframes ticker { to { transform: translateX(-50%); } }
+
+/* ---- 世界化按钮 ---- */
+:root[data-tone="serious"] .btn {
+  background: linear-gradient(#e9c96a, #c69b2e); color: #201700; position: relative; overflow: hidden;
+  box-shadow: 0 8px 24px rgba(198,155,46,.35), inset 0 1px 0 rgba(255,255,255,.4);
+}
+:root[data-tone="serious"] .btn::after {
+  content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.6) 50%, transparent 60%);
+  background-size: 250% 100%; background-position: 130% 0; transition: background-position .8s;
+}
+:root[data-tone="serious"] .btn:hover::after { background-position: -30% 0; }
+:root[data-tone="roast"] .btn {
+  background: var(--accent); color: #180018; border: 2px solid var(--accent-2);
+  box-shadow: 0 6px 0 #b7185e, 0 12px 26px rgba(255,46,136,.4);
+}
+:root[data-tone="roast"] .btn:hover { animation: btn-wobble .45s ease-in-out; }
+:root[data-tone="roast"] .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b7185e; }
+@keyframes btn-wobble { 0%,100%{transform:rotate(0)} 30%{transform:rotate(-2deg) scale(1.03)} 70%{transform:rotate(2deg) scale(1.03)} }
+
+/* ---- 世界化标题 ---- */
+:root[data-tone="serious"] .home-title .hl,
+:root[data-tone="serious"] h1.verdict {
+  background: linear-gradient(100deg, #e9c96a, #fff6d8, #c69b2e);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+:root[data-tone="roast"] .home-title .hl { color: var(--accent-2); text-shadow: 3px 3px 0 var(--accent); }
+
+/* ---- 报告印章 / 面板 ---- */
+:root[data-tone="serious"] .stamp { border-radius: 50%; border-width: 3px; border-color: var(--accent); color: var(--accent); background: radial-gradient(circle, rgba(212,175,55,.18), transparent 70%); }
+:root[data-tone="roast"] .stamp { border-style: dashed; }
+:root[data-tone="roast"] .panel, :root[data-tone="roast"] .hero { box-shadow: 0 10px 30px rgba(120,20,90,.18); }
+:root[data-tone="serious"] .hero { box-shadow: inset 0 0 0 1px rgba(212,175,55,.14); }
+:root[data-tone="serious"] .main { padding-bottom: 74px; }

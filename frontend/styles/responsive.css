@@ -1,0 +1,111 @@
+/* Responsive and reduced-motion overrides. Keep this import last. */
+/* ===== 响应式 ===== */
+@media (max-width: 640px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .dial {
+    margin: 0 auto;
+  }
+  .stamp {
+    position: static;
+    margin: 0 auto 6px;
+    display: table;
+    transform: rotate(-11deg) scale(1);
+    opacity: 0.92;
+    animation: none;
+  }
+  .grid-3,
+  .grid-2,
+  .ledger {
+    grid-template-columns: 1fr;
+  }
+  .main {
+    padding: 8px 16px 56px;
+  }
+  .app-topbar-inner {
+    padding: 12px 14px;
+    gap: 8px;
+  }
+  /* 手机上收掉冗余副标题，给右侧工具让位，避免整行折行 */
+  .brand { font-size: 18px; gap: 7px; }
+  .brand small { display: none; }
+  .topbar-actions { gap: 8px; }
+  .topbar-nav { gap: 8px; }
+  .topbar-nav a:not(:last-child) { display: none; }
+  .topbar-tools { gap: 7px; }
+  .topbar-restart { padding: 6px 9px; }
+  .persona-pill { padding: 6px 10px 6px 8px; gap: 6px; }
+  .persona-swap { padding-left: 6px; }
+}
+
+/* ===== 降低动效偏好 ===== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .stage-fx,
+  .fx-grain,
+  .fx-confetti,
+  .fx-gold,
+  .fx-ticker {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-spot, .summary::before, .stamp.in::after, .fold[open] .fold-body,
+  .dial .val, .summary { animation: none !important; }
+  .pre-reveal { opacity: 1 !important; transform: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lb-step.run .lb-ico, .lb-chip, .lb-body, .lb-dots::after { animation: none !important; }
+}
+
+@media (max-width: 520px) { .share-preview { width: 300px; height: 300px; } .sc-scale { transform: scale(.2778); } }
+@media (prefers-reduced-motion: reduce) {
+  body::before, .fx-ticker-track, .door-clown:hover, :root[data-tone="roast"] .btn:hover { animation: none !important; }
+}
+@media (max-width: 680px) {
+  .gate-doors { flex-direction: column; max-width: 420px; }
+  .door { min-height: 300px; }
+}
+
+@media (max-width: 620px) {
+  .quiz-opts { grid-template-columns: 1fr; }
+  .wait-top { gap: 12px; }
+  .mascot { font-size: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.dj-shake .main, .progress-fill, .m-clown, .m-gilt,
+  :root[data-tone="serious"] h1.verdict, :root[data-tone="serious"] .home-title .hl { animation: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) { .rise { animation: none !important; } }
+
+@media (max-width: 640px) {
+  .intro-steps { grid-template-columns: 1fr 1fr; }
+  .intro-teasers { flex-direction: column; }
+  .intro-vs { writing-mode: horizontal-tb; }
+}
+
+@media (max-width: 420px) {
+  .main { padding-inline: 12px; }
+  .topbar-nav,
+  .topbar-restart { display: none; }
+  .persona-name { display: none; }
+  .persona-pill { padding-right: 7px; }
+  .home { padding-top: 12px; }
+  .panel { padding: 17px; }
+  .home-flow { gap: 8px 10px; }
+  .home-flow span::after { margin-left: 10px; }
+  .demo-picker,
+  .demo-picker-links { align-items: flex-start; }
+  .actions .btn { width: 100%; }
+  .door { min-height: 250px; }
+  .access-gate { padding: 14px; }
+  .access-card { padding-inline: 20px; }
+}

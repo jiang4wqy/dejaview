@@ -44,6 +44,16 @@ export default function WorldFx() {
       cx!.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     resize();
+    if (reduce) {
+      window.__djBurst = () => undefined;
+      window.__djGold = () => undefined;
+      window.__djHearts = () => undefined;
+      return () => {
+        window.__djBurst = undefined;
+        window.__djGold = undefined;
+        window.__djHearts = undefined;
+      };
+    }
     window.addEventListener("resize", resize);
 
     const cap = () => { if (parts.length > 420) parts.splice(0, parts.length - 420); };
