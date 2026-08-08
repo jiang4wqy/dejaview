@@ -73,11 +73,20 @@ class Settings(BaseSettings):
     # ---- 访问码(可选): 设了就要求进站输口令, 后端在 /api/analyze 强制校验(锁成本给认识的人) ----
     access_code: str = ""                  # 空=不设门槛; 设 DEJAVIEW_ACCESS_CODE 即开启
 
+    # ---- HTTP 边界 ----
+    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
+    trusted_proxies: str = ""              # 逗号分隔 IP/CIDR; 空=不信任转发 IP
+
     # ---- 其它 ----
     cache_dir: str = ""            # 空 = 关闭磁盘缓存
     max_candidates_deep_read: int = 5
     verify_concurrency: int = 4          # verify 并行深读的并发数
     max_queries: int = 8
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        """把逗号分隔来源转换为 Starlette CORS 配置。"""
+        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
 
 @lru_cache

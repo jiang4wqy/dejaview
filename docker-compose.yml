@@ -1,9 +1,5 @@
-# DejaView 生产部署: redis + backend(API) + worker(rq) + frontend  (可选 postgres)
-# 最简用法: ./deploy.sh           (自动生成 .env → 提示填 key → 构建启动 → 打印访问地址)
-# 或手动:   cp deploy.env.example .env && 填 DEEPSEEK_API_KEY, 然后 docker compose up -d --build
-# 单端口: 只需对外开放前端 :3000，浏览器走同源 /api 反代到后端(见 frontend 服务)。
-# 用 Postgres 而非 redis 存储: docker compose --profile pg up -d, 并把 DEJAVIEW_JOBSTORE=sql
-#   DEJAVIEW_SQL_URL=postgresql://dejaview:dejaview@postgres:5432/dejaview
+# Production-shaped local deployment: Redis + API + worker + Next.js frontend.
+# Only the frontend is published; it proxies same-origin /api requests internally.
 x-backend-env: &backend-env
   DEJAVIEW_PROVIDER: ${DEJAVIEW_PROVIDER:-deepseek}
   DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
@@ -16,11 +12,13 @@ x-backend-env: &backend-env
   DEJAVIEW_SEARCH_PROVIDER: ${DEJAVIEW_SEARCH_PROVIDER:-composite}
   DEJAVIEW_SEARCH_SOURCES: ${DEJAVIEW_SEARCH_SOURCES:-github,v2ex}
   GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+  DEJAVIEW_ACCESS_CODE: ${DEJAVIEW_ACCESS_CODE:-}
+  DEJAVIEW_CORS_ORIGINS: ${DEJAVIEW_CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+  DEJAVIEW_TRUSTED_PROXIES: ${DEJAVIEW_TRUSTED_PROXIES:-}
   DEJAVIEW_QUEUE: rq
   DEJAVIEW_JOBSTORE: ${DEJAVIEW_JOBSTORE:-redis}
   DEJAVIEW_REDIS_URL: redis://redis:6379/0
   DEJAVIEW_SQL_URL: ${DEJAVIEW_SQL_URL:-sqlite:////data/jobs.db}
-  # 限流(模式A "你请客": 保护部署者额度; 公开部署默认开启, 走 redis 计数)
   DEJAVIEW_RATE_LIMIT_ENABLED: ${DEJAVIEW_RATE_LIMIT_ENABLED:-true}
   DEJAVIEW_RATE_LIMIT_PER_IP_HOURLY: ${DEJAVIEW_RATE_LIMIT_PER_IP_HOURLY:-10}
   DEJAVIEW_RATE_LIMIT_PER_IP_DAILY: ${DEJAVIEW_RATE_LIMIT_PER_IP_DAILY:-0}
@@ -32,18 +30,33 @@ services:
     image: redis:7-alpine
     restart: unless-stopped
     volumes: [redis-data:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   backend:
     build: ./backend
     restart: unless-stopped
-    depends_on: [redis]
+    depends_on:
+      redis:
+        condition: service_healthy
     environment: *backend-env
-    ports: ["8000:8000"]
+    expose: ["8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
-  worker:                       # rq worker: 真正跑流水线的进程
+  worker:
     build: ./backend
     restart: unless-stopped
-    depends_on: [redis]
+    depends_on:
+      redis:
+        condition: service_healthy
     environment: *backend-env
     command: ["rq", "worker", "-u", "redis://redis:6379/0", "dejaview"]
 
@@ -51,16 +64,22 @@ services:
     build:
       context: ./frontend
       args:
-        # 留空 = 浏览器走同源相对 /api，由 next.config 反代到 backend 服务。
-        # 单端口即可对外，无需知道/配置公网地址，后端端口也不必暴露。
         NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-}
     restart: unless-stopped
-    depends_on: [backend]
+    depends_on:
+      backend:
+        condition: service_healthy
     environment:
-      DEJAVIEW_BACKEND: http://backend:8000   # next.config 把 /api/* 反代到后端
+      DEJAVIEW_BACKEND: http://backend:8000
     ports: ["3000:3000"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
-  postgres:                     # 可选: docker compose --profile pg up
+  postgres:
     image: postgres:16-alpine
     profiles: [pg]
     restart: unless-stopped

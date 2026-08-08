@@ -56,6 +56,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       ...init,
       headers: {
         "Content-Type": "application/json",
+        ...accessHeaders(),
         ...(init?.headers ?? {}),
       },
     });
@@ -90,7 +91,6 @@ export function analyze(body: AnalyzeRequest): Promise<AnalyzeResponse> {
   return request<AnalyzeResponse>("/api/analyze", {
     method: "POST",
     body: JSON.stringify(body),
-    headers: accessHeaders(),
   });
 }
 
@@ -116,7 +116,6 @@ export function confirmFingerprint(
   return request<Job>(`/api/jobs/${encodeURIComponent(jobId)}/confirm`, {
     method: "POST",
     body: JSON.stringify(fingerprint),
-    headers: accessHeaders(),
   });
 }
 

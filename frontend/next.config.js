@@ -3,6 +3,9 @@
 // 云平台运行时改后端地址即可生效）。这里不再用 rewrites —— 它的目标会在构建期被写死。
 const nextConfig = {
   reactStrictMode: true,
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 module.exports = nextConfig;

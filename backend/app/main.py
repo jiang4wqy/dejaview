@@ -11,9 +11,7 @@ MVP: 用后台线程 + 内存 JobStore 跑; 生产应换任务队列 (见 docs/T
 """
 from __future__ import annotations
 
-import secrets
-
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
@@ -21,11 +19,12 @@ from app.jobs import make_job_store
 from app.models.schemas import AnalysisRequest, Job, JobStatus, ProjectFingerprint, Report
 from app.queue import submit_resume, submit_run
 from app.ratelimit import make_rate_limiter
+from app.security import access_ok, client_ip, require_access
 
 app = FastAPI(title="DejaView API", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],        # MVP; 生产收紧到前端域名
+    allow_origins=get_settings().cors_origin_list,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -34,38 +33,15 @@ store = make_job_store(get_settings())   # memory | redis | sql(由 DEJAVIEW_JOB
 limiter = make_rate_limiter(get_settings())  # 默认 Noop; DEJAVIEW_RATE_LIMIT_ENABLED=true 才限流
 
 
-def _client_ip(req: Request) -> str:
-    """反代之后取真实客户端 IP(X-Forwarded-For 首跳), 否则用直连地址。"""
-    xff = req.headers.get("x-forwarded-for", "")
-    if xff:
-        return xff.split(",")[0].strip()
-    return req.client.host if req.client else "unknown"
-
-
-def _access_ok(req: Request) -> bool:
-    """访问码校验(常量时间比较)。未设访问码时恒放行。"""
-    code = get_settings().access_code
-    if not code:
-        return True
-    supplied = req.headers.get("x-access-code", "")
-    return bool(supplied) and secrets.compare_digest(supplied, code)
-
-
-def _require_access(req: Request) -> None:
-    if not _access_ok(req):
-        raise HTTPException(status_code=403, detail="访问码错误或缺失")
-
-
 @app.post("/api/access")
 def check_access(http_request: Request) -> dict:
     """给前端进站门用: 校验 X-Access-Code 头是否正确。"""
-    return {"ok": _access_ok(http_request)}
+    return {"ok": access_ok(http_request)}
 
 
-@app.post("/api/analyze")
+@app.post("/api/analyze", dependencies=[Depends(require_access)])
 def analyze(request: AnalysisRequest, http_request: Request) -> dict:
-    _require_access(http_request)                        # 访问码闸: 挡陌生人 + 锁成本
-    decision = limiter.check(_client_ip(http_request))   # 模式A 限流: 保护部署者额度
+    decision = limiter.check(client_ip(http_request))   # 模式A 限流: 保护部署者额度
     if not decision.allowed:
         raise HTTPException(status_code=429, detail=decision.reason,
                             headers={"Retry-After": str(decision.retry_after)})
@@ -74,7 +50,7 @@ def analyze(request: AnalysisRequest, http_request: Request) -> dict:
     return {"job_id": job.id}
 
 
-@app.get("/api/jobs")
+@app.get("/api/jobs", dependencies=[Depends(require_access)])
 def list_jobs(limit: int = 20) -> list[dict]:
     """最近任务列表(为历史 / 复检对比打基础)。"""
     items = []
@@ -90,7 +66,7 @@ def list_jobs(limit: int = 20) -> list[dict]:
     return items
 
 
-@app.get("/api/jobs/{job_id}", response_model=Job)
+@app.get("/api/jobs/{job_id}", response_model=Job, dependencies=[Depends(require_access)])
 def get_job(job_id: str) -> Job:
     job = store.get(job_id)
     if not job:
@@ -98,9 +74,12 @@ def get_job(job_id: str) -> Job:
     return job
 
 
-@app.post("/api/jobs/{job_id}/confirm", response_model=Job)
-def confirm_fingerprint(job_id: str, fingerprint: ProjectFingerprint, http_request: Request) -> Job:
-    _require_access(http_request)                        # 恢复流水线=继续花钱, 同样要访问码
+@app.post(
+    "/api/jobs/{job_id}/confirm",
+    response_model=Job,
+    dependencies=[Depends(require_access)],
+)
+def confirm_fingerprint(job_id: str, fingerprint: ProjectFingerprint) -> Job:
     job = store.get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="job not found")
@@ -112,7 +91,7 @@ def confirm_fingerprint(job_id: str, fingerprint: ProjectFingerprint, http_reque
     return job
 
 
-@app.get("/api/jobs/{job_id}/report", response_model=Report)
+@app.get("/api/jobs/{job_id}/report", response_model=Report, dependencies=[Depends(require_access)])
 def get_report(job_id: str, tone: str = "serious") -> Report:
     job = store.get(job_id)
     if not job or tone not in job.reports:

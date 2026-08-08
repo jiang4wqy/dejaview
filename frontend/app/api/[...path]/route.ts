@@ -39,9 +39,13 @@ async function proxy(req: NextRequest, path: string[]): Promise<Response> {
   }
 }
 
-export async function GET(req: NextRequest, ctx: { params: { path: string[] } }) {
-  return proxy(req, ctx.params.path);
+type RouteContext = { params: Promise<{ path: string[] }> };
+
+export async function GET(req: NextRequest, ctx: RouteContext) {
+  const { path } = await ctx.params;
+  return proxy(req, path);
 }
-export async function POST(req: NextRequest, ctx: { params: { path: string[] } }) {
-  return proxy(req, ctx.params.path);
+export async function POST(req: NextRequest, ctx: RouteContext) {
+  const { path } = await ctx.params;
+  return proxy(req, path);
 }

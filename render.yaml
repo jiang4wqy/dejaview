@@ -1,15 +1,11 @@
-# Render Blueprint —— 一键把 DejaView 部署成"永久免费"网址(前端 + 后端两个 web 服务)。
-# 用法: Render 控制台 → New → Blueprint → 连本仓库 → 它读这个文件建两个服务
-#   → 只需在提示处填 DEEPSEEK_API_KEY(密钥, 不进仓库) → Apply。
-# 免费档说明: 服务闲置 ~15 分钟会休眠, 下次访问冷启动约需 ~50s(首个访客稍等一下即可)。
-# 小规模够用: 用内存 JobStore + 线程执行(无需 redis/worker); 重启会丢未完成任务。
+# Render Blueprint for separate API and frontend services.
+# Add secret values in the Render dashboard; never commit real credentials.
 services:
-  # ---- 后端 API ----
   - type: web
     name: dejaview-backend
     runtime: docker
     plan: free
-    region: singapore                 # 离国内近; 可改 oregon/frankfurt 等
+    region: singapore
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     healthCheckPath: /api/health
@@ -17,11 +13,15 @@ services:
       - key: DEJAVIEW_PROVIDER
         value: deepseek
       - key: DEEPSEEK_API_KEY
-        sync: false                   # ← 部署时在 Render 控制台填(密钥, 绝不进仓库)
+        sync: false
+      - key: DEJAVIEW_ACCESS_CODE
+        sync: false
+      - key: DEJAVIEW_CORS_ORIGINS
+        value: https://dejaview-frontend.onrender.com
       - key: DEJAVIEW_MODEL_CHEAP
         value: deepseek-v4-flash
       - key: DEJAVIEW_MODEL_STANDARD
-        value: deepseek-v4-flash       # 全部用 flash(更快更省)
+        value: deepseek-v4-flash
       - key: DEJAVIEW_MODEL_STRONG
         value: deepseek-v4-flash
       - key: DEJAVIEW_CRAWLER
@@ -36,17 +36,15 @@ services:
         value: memory
       - key: DEJAVIEW_QUEUE
         value: thread
-      # 限流(模式A "你请客": 保护你的 DeepSeek 额度), 数值可在控制台调
       - key: DEJAVIEW_RATE_LIMIT_ENABLED
         value: "true"
       - key: DEJAVIEW_RATE_LIMIT_PER_IP_HOURLY
         value: "0"
       - key: DEJAVIEW_RATE_LIMIT_PER_IP_DAILY
-        value: "5"                    # 每个 IP 每天最多 5 次, 当天用完即止
+        value: "5"
       - key: DEJAVIEW_RATE_LIMIT_DAILY_TOTAL
         value: "200"
 
-  # ---- 前端(Next.js), 访客只需打开它的网址 ----
   - type: web
     name: dejaview-frontend
     runtime: docker
@@ -55,7 +53,5 @@ services:
     dockerfilePath: ./frontend/Dockerfile
     dockerContext: ./frontend
     envVars:
-      # 浏览器走同源 /api, 由前端服务器反代到后端。免费档无私有网络, 直接用后端公网 URL。
-      # 注意: 若你的后端服务名/URL 不是 dejaview-backend, 把这里换成实际的后端网址。
       - key: DEJAVIEW_BACKEND
         value: https://dejaview-backend.onrender.com
