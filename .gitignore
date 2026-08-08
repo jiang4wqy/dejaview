@@ -5,10 +5,14 @@ __pycache__/
 backend/.venv/
 *.egg-info/
 .pytest_cache/
+.pytest-tmp/
 .cache/
 dejaview_cache/
 reports/
 *.db
+.coverage
+coverage.xml
+htmlcov/
 
 # ── env / secrets (永远不要提交 token) ──
 .env
@@ -17,17 +21,26 @@ reports/
 !*.env.example
 *.local
 .ghtoken
+*.pem
+*.p12
+*.pfx
+*.key
 
 # ── Node / Next.js ──
 node_modules/
 .next/
 out/
 frontend/.env.local
+*.tsbuildinfo
 
 # ── OS / editor ──
 .DS_Store
 .idea/
 .vscode/
+
+# ── Local audit / scratch ──
+.gitleaks-report.*
+audit-report.*
 
 # 运行时日志
 *.log

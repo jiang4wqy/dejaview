@@ -1,0 +1,17 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated dependency and build directories"
+paths = ['''(^|/)(?:node_modules|\.venv|\.next)(?:/|$)''']
+
+[[allowlists]]
+description = "Expired third-party S3 presigned URL reviewed on 2026-08-08"
+condition = "AND"
+commits = [
+  "089035e9b9d90ed22088ffd1c184b0d6d5b75a35",
+  "5f6c83154e41884a98795c34c615a875dff5a2e0",
+]
+paths = ['''frontend/public/demos/gitingest\.json''']
+regexTarget = "match"
+regexes = ['''X-Amz-Credential=AKIA[A-Z0-9]{16}''']
