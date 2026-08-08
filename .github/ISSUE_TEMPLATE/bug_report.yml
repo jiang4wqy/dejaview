@@ -1,0 +1,40 @@
+name: Bug report
+description: Report a reproducible problem in DejaView
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not paste API keys, access codes, private URLs, or user data.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the observed and expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Start with ...
+        2. Submit ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Commit or version
+      placeholder: git rev-parse --short HEAD
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Docker / Render / Windows local / macOS local
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs or screenshots
+      description: Remove secrets and private project information before uploading.

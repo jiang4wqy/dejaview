@@ -1,0 +1,28 @@
+name: Feature request
+description: Propose a focused improvement
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe the smallest useful solution.
+    validations:
+      required: true
+  - type: textarea
+    id: invariant
+    attributes:
+      label: Evidence and fact-layer impact
+      description: Explain whether this changes evidence, scoring, prompts, or only presentation.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

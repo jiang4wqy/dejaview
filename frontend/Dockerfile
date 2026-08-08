@@ -2,7 +2,7 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm ci || npm install
+RUN npm ci
 COPY . .
 # 缺省留空 = 浏览器走同源相对 /api, 运行时由 next.config 反代到 DEJAVIEW_BACKEND。
 # 这样单端口/多服务(Render)都无需构建期知道后端地址。
