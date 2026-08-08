@@ -27,13 +27,18 @@ async function proxy(req: NextRequest, path: string[]): Promise<Response> {
 
   try {
     const res = await fetch(url, init);
+    const responseHeaders: Record<string, string> = {
+      "content-type": res.headers.get("content-type") || "application/json",
+    };
+    const retryAfter = res.headers.get("retry-after");
+    if (retryAfter) responseHeaders["retry-after"] = retryAfter;
     return new Response(await res.arrayBuffer(), {
       status: res.status,
-      headers: { "content-type": res.headers.get("content-type") || "application/json" },
+      headers: responseHeaders,
     });
-  } catch (e) {
+  } catch {
     return new Response(
-      JSON.stringify({ detail: `无法连接后端(${backend()})：${e instanceof Error ? e.message : e}` }),
+      JSON.stringify({ detail: "分析服务暂时不可用，请稍后重试。" }),
       { status: 502, headers: { "content-type": "application/json" } },
     );
   }

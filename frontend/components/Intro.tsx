@@ -1,15 +1,8 @@
 "use client";
 
-// 项目介绍页（最开始）：一句话讲清 DejaView 干嘛、怎么工作、双语气梗，然后引导选审判官。
-// 中性但有辨识度的排版（此时还没选世界）；从下而上的克制入场动画。
+import DemoPicker from "./DemoPicker";
+import { INTRO_STEPS } from "@/lib/showcase-data";
 import { useTone } from "@/lib/tone";
-
-const STEPS = [
-  { n: "01", t: "提取指纹", d: "扒出你项目的真正内核，不看营销话术" },
-  { n: "02", t: "检索同类", d: "全网找出干着同一件事的家伙" },
-  { n: "03", t: "判重复度", d: "六个维度打分，算算你有多「缝合」" },
-  { n: "04", t: "出锐评", d: "带证据的问题与改进，能追溯到出处" },
-];
 
 export default function Intro() {
   const { enterIntro } = useTone();
@@ -23,16 +16,16 @@ export default function Intro() {
           你的项目，是不是<br />又一个<span className="intro-hl">「轮子」</span>？
         </h1>
         <p className="intro-lede rise" style={{ animationDelay: ".12s" }}>
-          把网址和 GitHub 丢进来，AI 会扒出它的核心、全网找同类，告诉你到底有多少是
-          <b>重复造轮子</b>——每一句结论都钉着证据，点开就能查。
+          把公开网址或 GitHub 丢进来，DejaView 会提取项目指纹、搜索并核验同类，再用六个维度判断
+          <b>重复造轮子</b>的程度——结论带证据，语气会变，事实不会变。
         </p>
 
         <div className="intro-steps rise" style={{ animationDelay: ".2s" }}>
-          {STEPS.map((s) => (
-            <div key={s.n} className="intro-step">
-              <div className="intro-step-n">{s.n}</div>
-              <div className="intro-step-t">{s.t}</div>
-              <div className="intro-step-d">{s.d}</div>
+          {INTRO_STEPS.map((step) => (
+            <div key={step.number} className="intro-step">
+              <div className="intro-step-n">{step.number}</div>
+              <div className="intro-step-t">{step.title}</div>
+              <div className="intro-step-d">{step.description}</div>
             </div>
           ))}
         </div>
@@ -60,9 +53,12 @@ export default function Intro() {
 
         <div className="intro-cta-row rise" style={{ animationDelay: ".36s" }}>
           <button type="button" className="intro-cta" onClick={enterIntro}>
-            选择你的审判官 →
+            开始审判 · 选择人格 →
           </button>
-          <span className="intro-note">刻薄可以主观，事实不能主观 · 锐评项目，不攻击开发者本人</span>
+          <span className="intro-note">MIT 开源 · 默认 mock 零成本运行 · 锐评项目，不攻击开发者</span>
+        </div>
+        <div className="intro-demos rise" style={{ animationDelay: ".4s" }}>
+          <DemoPicker />
         </div>
       </div>
     </div>

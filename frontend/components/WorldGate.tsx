@@ -1,7 +1,6 @@
 "use client";
 
-// 开场：选择你的审判官。两扇对开门——左"镀金·华尔街"，右"毒舌·马戏团"。
-// 点击开门 → 触发对应世界的入场特效 → 设定 tone，整站换肤。
+import { WORLD_OPTIONS } from "@/lib/showcase-data";
 import { useTone } from "@/lib/tone";
 import type { Tone } from "@/lib/types";
 
@@ -33,34 +32,25 @@ export default function WorldGate() {
       <div className="gate-head">
         <span className="gate-kicker">DEJAVIEW · 证据化项目锐评</span>
         <h1 className="gate-title">选择你的审判官</h1>
-        <p className="gate-sub">同一份事实，两副面孔。今天，想让谁来锐评你的项目？</p>
+        <p className="gate-sub">同一份事实，三副面孔。今天，想让谁来锐评你的项目？</p>
       </div>
 
       <div className="gate-doors">
-        <button className="door door-gilt" onClick={(e) => choose("serious", e)}>
-          <div className="door-shine" aria-hidden="true" />
-          <div className="door-emoji">💰</div>
-          <div className="door-name">镀金</div>
-          <div className="door-venue">华尔街 · 评级委员会</div>
-          <p className="door-desc">西装、黄金与股票机。体面地告诉你，这轮子值几个钱。</p>
-          <span className="door-cta">推门而入 →</span>
-        </button>
-
-        <button className="door door-clown" onClick={(e) => choose("roast", e)}>
-          <div className="door-emoji">🤡</div>
-          <div className="door-name">毒舌</div>
-          <div className="door-venue">马戏团 · 嘲讽现场</div>
-          <p className="door-desc">彩带、汽笛与暴击。当着全场，把你的轮子拆穿。</p>
-          <span className="door-cta">掀开帐篷 →</span>
-        </button>
-
-        <button className="door door-comfort" onClick={(e) => choose("comfort", e)}>
-          <div className="door-emoji">🌈</div>
-          <div className="door-name">彩虹</div>
-          <div className="door-venue">夸夸群 · 无条件捧场</div>
-          <p className="door-desc">只夸不评、彩虹屁拉满。专治 emo，给你无条件的爱。</p>
-          <span className="door-cta">抱抱我 →</span>
-        </button>
+        {WORLD_OPTIONS.map((world) => (
+          <button
+            key={world.tone}
+            type="button"
+            className={`door ${world.className}`}
+            onClick={(event) => choose(world.tone, event)}
+          >
+            {world.tone === "serious" ? <div className="door-shine" aria-hidden="true" /> : null}
+            <div className="door-emoji">{world.emoji}</div>
+            <div className="door-name">{world.name}</div>
+            <div className="door-venue">{world.venue}</div>
+            <p className="door-desc">{world.description}</p>
+            <span className="door-cta">{world.action}</span>
+          </button>
+        ))}
       </div>
 
       <p className="gate-foot">

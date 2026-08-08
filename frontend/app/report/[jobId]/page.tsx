@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { analyze, confirmFingerprint, getJob } from "@/lib/api";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { analyze, ApiError, confirmFingerprint, getJob } from "@/lib/api";
 import type { Job, ProjectFingerprint } from "@/lib/types";
 import StageProgress from "@/components/StageProgress";
 import FingerprintEditor from "@/components/FingerprintEditor";
@@ -14,8 +16,8 @@ function isTerminal(status: Job["status"]): boolean {
   return status === "done" || status === "error" || status === "await_confirm";
 }
 
-export default function ReportPage({ params }: { params: { jobId: string } }) {
-  const { jobId } = params;
+export default function ReportPage() {
+  const { jobId } = useParams<{ jobId: string }>();
 
   const [job, setJob] = useState<Job | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -38,8 +40,8 @@ export default function ReportPage({ params }: { params: { jobId: string } }) {
         if (isTerminal(j.status)) return; // 停止轮询
       } catch (err) {
         if (!active) return;
-        // 轮询期间的瞬时错误：记录但继续重试。
         setError(err instanceof Error ? err.message : "获取任务失败");
+        if (err instanceof ApiError && (err.status === 403 || err.status === 404)) return;
       }
       if (active) {
         timer = setTimeout(loop, POLL_MS);
@@ -87,7 +89,13 @@ export default function ReportPage({ params }: { params: { jobId: string } }) {
         {error ? (
           <div className="panel">
             <h2 className="panel-title">出错了</h2>
-            <p className="error">{error}</p>
+            <p className="error" role="alert">{error}</p>
+            <div className="actions">
+              <button type="button" className="btn" onClick={() => setResumeToken((n) => n + 1)}>
+                重新连接
+              </button>
+              <Link href="/" className="link-btn">返回首页</Link>
+            </div>
           </div>
         ) : (
           <div className="panel">
@@ -105,7 +113,7 @@ export default function ReportPage({ params }: { params: { jobId: string } }) {
     <div className="home">
       <TopNav
         jobId={job.id}
-        onRecheck={job.status === "done" && job.request ? onRecheck : undefined}
+        onRecheck={(["done", "error"] as Job["status"][]).includes(job.status) && job.request ? onRecheck : undefined}
         rechecking={rechecking}
       />
 
@@ -118,6 +126,9 @@ export default function ReportPage({ params }: { params: { jobId: string } }) {
             分析失败
           </h2>
           <p className="error">{job.error || "未知错误。"}</p>
+          <button type="button" className="btn" onClick={onRecheck} disabled={rechecking}>
+            {rechecking ? "重新提交中…" : "重新分析这个项目"}
+          </button>
         </div>
       ) : job.status === "await_confirm" && job.pending_fingerprint ? (
         <FingerprintEditor fingerprint={job.pending_fingerprint} onConfirm={onConfirm} />
@@ -148,9 +159,9 @@ function TopNav({
 }) {
   return (
     <div className="report-top">
-      <a href="/" className="link-btn">
+      <Link href="/" className="link-btn">
         ← 返回，换个项目
-      </a>
+      </Link>
       <div className="report-top-r">
         {onRecheck ? (
           <button

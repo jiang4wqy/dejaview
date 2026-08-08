@@ -53,7 +53,17 @@ export default function AccessGate({ children }: { children: ReactNode }) {
     }
   }
 
-  if (phase === "checking") return null;
+  if (phase === "checking") {
+    return (
+      <div className="access-gate" role="status">
+        <div className="access-card access-checking">
+          <div className="access-emoji" aria-hidden="true">⌛</div>
+          <h1>DejaView</h1>
+          <p className="access-sub">正在确认公开演示的访问状态…</p>
+        </div>
+      </div>
+    );
+  }
   if (phase === "open") return <>{children}</>;
 
   return (
@@ -61,10 +71,13 @@ export default function AccessGate({ children }: { children: ReactNode }) {
       <form className={`access-card${err ? " shake" : ""}`} onSubmit={submit}>
         <div className="access-emoji" aria-hidden="true">🔒</div>
         <h1>DejaView</h1>
-        <p className="access-sub">这是邀请制内测 · 请输入访问口令</p>
+        <p className="access-sub">部署者已开启访问保护 · 请输入访问口令</p>
+        <label className="sr-only" htmlFor="dejaview-access-code">访问口令</label>
         <input
+          id="dejaview-access-code"
           className="access-input"
           type="password"
+          autoComplete="current-password"
           autoFocus
           placeholder="访问口令"
           value={code}
@@ -73,7 +86,7 @@ export default function AccessGate({ children }: { children: ReactNode }) {
             setErr(false);
           }}
         />
-        {err ? <p className="access-err">口令不对，再试一次～</p> : null}
+        {err ? <p className="access-err" role="alert">口令不对，请检查后再试。</p> : null}
         <button className="access-btn" type="submit" disabled={busy || !code.trim()}>
           {busy ? "验证中…" : "进站 →"}
         </button>

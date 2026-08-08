@@ -17,6 +17,16 @@ export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE ?? "").replace(/\/+$/,
 // ===== 访问码：进站门 + 每次分析请求带上，后端强制校验（前端只是体验层）=====
 const ACCESS_KEY = "dejaview_access";
 
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
 export function getAccessCode(): string {
   if (typeof window === "undefined") return "";
   return window.localStorage.getItem(ACCESS_KEY) || "";
@@ -61,8 +71,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       },
     });
   } catch {
-    // 网络层错误（后端未启动 / 跨域 / 断网）。
-    throw new Error(`无法连接后端（${API_BASE}），请确认后端已启动。`);
+    throw new Error("暂时无法连接分析服务。请确认后端已启动，或稍后重试。");
   }
 
   if (!res.ok) {
@@ -78,9 +87,20 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     } catch {
       detail = "";
     }
-    // 429 限流：直接展示后端给的友好提示。
-    if (res.status === 429 && detail) throw new Error(detail);
-    throw new Error(`请求失败（${res.status}）：${detail || res.statusText}`);
+    if (res.status === 403) {
+      clearAccessCode();
+      throw new ApiError("访问码已失效或无权限。请刷新页面后重新验证。", res.status);
+    }
+    if (res.status === 404) {
+      throw new ApiError("找不到这份任务或报告；它可能已过期，或服务刚刚重启。", res.status);
+    }
+    if (res.status === 429) {
+      throw new ApiError(detail || "请求过于频繁，请稍后再试。", res.status);
+    }
+    if ([502, 503, 504].includes(res.status)) {
+      throw new ApiError("分析服务暂时不可用，请稍后重试。", res.status);
+    }
+    throw new ApiError(detail || `请求失败（${res.status}）`, res.status);
   }
 
   return (await res.json()) as T;
