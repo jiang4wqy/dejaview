@@ -211,8 +211,12 @@ class StubCrawler(Crawler):
 
 
 class BuiltinCrawler(_HtmlCrawler):
-    """免 key: httpx 抓静态 HTML。"""
+    """免 key: httpx 抓静态 HTML。命中 SPA(见 crawl())时可选自动切浏览器渲染重抓。"""
     name = "builtin"
+
+    def __init__(self, spa_fallback: bool = False, **kw) -> None:
+        super().__init__(**kw)
+        self._spa_fallback = spa_fallback
 
     def _get_html(self, url: str) -> str:
         assert_public_http_url(url)                       # 防 SSRF：拒本机/内网/元数据
@@ -227,6 +231,23 @@ class BuiltinCrawler(_HtmlCrawler):
                 r.raise_for_status()
                 return r.text
             raise CrawlError(f"重定向过多：{url}")
+
+    def crawl(self, url: str) -> CrawlResult:
+        result = super().crawl(url)
+        if not (self._spa_fallback and "疑似SPA" in result.note):
+            return result                                  # 关关 / 非SPA: 原样返回
+        chrome = _find_chrome()
+        if not chrome:                                     # 没装 chrome: 优雅保留 builtin 结果
+            self._log.info("疑似SPA 但未找到 chrome, 保留 builtin 结果: %s", url)
+            return result
+        try:                                                # 等价于 BrowserCrawler 的抓取, 用渲染后的富内容替换
+            rendered = BrowserCrawler(chrome_path=chrome, timeout=self._timeout,
+                                      max_pages=self._max_pages, max_chars=self._max_chars).crawl(url)
+        except Exception as e:  # noqa: BLE001, 渲染失败也绝不报错, 保留原 builtin 结果
+            self._log.info("SPA 降级抓取失败, 保留 builtin 结果 %s: %s", url, e)
+            return result
+        rendered.note = f"{rendered.note}(SPA降级: builtin静态抓空壳, 已用浏览器渲染重抓)"
+        return rendered
 
 
 def _find_chrome() -> str:
@@ -310,7 +331,7 @@ def make_crawler(settings: Settings) -> Crawler:
     if c == "stub":
         return StubCrawler()
     if c == "builtin":
-        return BuiltinCrawler(timeout=settings.crawl_timeout)
+        return BuiltinCrawler(timeout=settings.crawl_timeout, spa_fallback=settings.crawler_spa_fallback)
     if c == "browser":
         return BrowserCrawler(chrome_path=settings.chrome_path, timeout=settings.crawl_timeout)
     if c == "firecrawl":
