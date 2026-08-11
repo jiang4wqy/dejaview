@@ -49,9 +49,9 @@ def test_rank_drops_offdomain_and_orders_by_relevance():
     assert names[0] == "mufeedvh/code2prompt"               # 重叠最多(codebase/llm/prompt/token) → 最前
 
 
-def test_rank_keeps_pool_when_all_zero_overlap():
+def test_rank_returns_empty_when_all_zero_overlap():
     cands = [_c("x/y", "totally unrelated censorship page", 100)]
-    assert len(_rank(_fp(), cands, _Svc())) == 1            # 全零重叠 → 退回原池, 不空手
+    assert _rank(_fp(), cands, _Svc()) == []                # 全零重叠 → 如实返回空, 不拿垃圾凑数
 
 
 def test_fingerprint_terms_bilingual():

@@ -22,6 +22,7 @@ class QuerySet(BaseModel):
 
 
 _SPLIT = re.compile(r"[\s,，。、/|_\-.:()（）\"'`⭐]+")
+_LATIN = re.compile(r"[a-z0-9][a-z0-9+._-]*")
 
 
 def _norm(tok: str) -> str:
@@ -52,6 +53,11 @@ def _seed_queries(fp: ProjectFingerprint) -> list[str]:
     terms = _tokens(bag) or _fingerprint_terms(fp)   # 机制描述太空就退回全量指纹词, 不空手
     if not terms:
         return []
+    # GitHub/网页仓库以英文为主, 中文 query 搜不到英文竞品; 优先只用拉丁字母词(英文/数字)生成种子,
+    # 词不够(<2)才退回原有全量词逻辑(含中文), 保证不空手。
+    latin_terms = {w for w in terms if _LATIN.fullmatch(w)}
+    if len(latin_terms) >= 2:
+        terms = latin_terms
     # 集合迭代顺序不确定(str hash 随机化), 按(词长降序, 字典序)排序保证同输入同输出;
     # 词长优先也顺带把更有区分度的专有名词(repository/codebase)排到填充词前面。
     words = sorted(terms, key=lambda w: (-len(w), w))[:6]
@@ -87,7 +93,10 @@ def _rank(fp: ProjectFingerprint, cands: list[CandidateRef], svc: Services) -> l
     if dropped:
         svc.log.info("search: 相关性过滤掉 %d/%d 个与指纹零重叠的候选(疑似无关/SEO垃圾)",
                      dropped, len(scored))
-    return relevant if relevant else [c for _, _, _, c in scored]  # 全零重叠则退回原池, 不空手
+    if not relevant and scored:
+        svc.log.info("search: 全部 %d 个候选与指纹零重叠, 判定本次未召回到相关竞品, 不再送去深读",
+                     len(scored))
+    return relevant   # 全零重叠时如实返回空, 别把垃圾原样递给 verify 深读
 
 
 def find(fingerprint: ProjectFingerprint, svc: Services) -> list[CandidateRef]:

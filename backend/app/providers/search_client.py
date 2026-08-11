@@ -5,7 +5,7 @@
 - github: 真实 GitHub 仓库搜索(免 key, 已验证)
 - v2ex:   V2EX 社区(经 sov2ex 搜索 API), 找中文讨论/替代品
 - juejin: 掘金社区(非官方搜索 API, best-effort)
-- tavily: 通用网页搜索(需 key, stub)
+- tavily: 通用网页搜索(需 key, TAVILY_API_KEY)
 多源:
 - composite: 合并上面多个(DEJAVIEW_SEARCH_SOURCES=github,v2ex,...), 单源失败不影响其它
 """
@@ -188,10 +188,35 @@ class JuejinSearchClient(SearchClient):
 
 
 class TavilySearchClient(SearchClient):
+    """通用网页搜索(需 TAVILY_API_KEY), 覆盖英文/非开源竞品(GitHub/社区源都覆盖不到的场景)。"""
     name = "tavily"
+    API = "https://api.tavily.com/search"
+
+    def __init__(self, api_key_env="TAVILY_API_KEY", per_query=5, timeout=15.0):
+        self._key = os.getenv(api_key_env, "")
+        self._per_query = per_query
+        self._timeout = timeout
+        self._log = get_logger("search.tavily")
 
     def search(self, query, source=None):
-        raise NotImplementedError("Tavily 搜索未实现 —— BACKLOG E4-2")
+        if not self._key:
+            raise SearchError("Tavily 需要 TAVILY_API_KEY")
+        try:
+            r = httpx.post(self.API, json={"api_key": self._key, "query": query,
+                           "max_results": self._per_query, "search_depth": "basic"},
+                           timeout=self._timeout, trust_env=True)
+            r.raise_for_status()
+            results = r.json().get("results", [])
+        except Exception as e:  # noqa: BLE001
+            raise SearchError(f"Tavily 搜索失败(query={query!r}): {e}") from e
+        out = []
+        for it in results:
+            out.append(CandidateRef(
+                name=(it.get("title") or "")[:80], url=it.get("url", ""),
+                source=CandidateSource.WEB, snippet=(it.get("content") or "")[:160],
+                query_used=query, why_surfaced="网页搜索命中"))
+        self._log.info("tavily %r -> %d", query, len(out))
+        return out
 
 
 class CompositeSearchClient(SearchClient):
@@ -217,7 +242,7 @@ _SINGLE = {
     "github": lambda s: GitHubSearchClient(s.github_token_env, s.github_per_query, s.search_timeout),
     "v2ex": lambda s: V2exSearchClient(s.github_per_query, s.search_timeout),
     "juejin": lambda s: JuejinSearchClient(s.github_per_query, s.search_timeout),
-    "tavily": lambda s: TavilySearchClient(),
+    "tavily": lambda s: TavilySearchClient(s.tavily_api_key_env, s.github_per_query, s.search_timeout),
 }
 
 
