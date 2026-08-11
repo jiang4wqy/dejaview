@@ -258,12 +258,15 @@ class BuiltinRepoMapper(RepoMapper):
                         lines.append(ln.rstrip()[:160])
                     if len("\n".join(lines)) >= self._per_file_sig:
                         break
-            if not lines:                                   # 无匹配 → 退化到前 20 行非空非注释
+            if not lines:                                   # 无匹配声明 → 退化: 取模块级有信号行
                 for ln in text.splitlines():
                     st = ln.strip()
-                    if st and not st.startswith(("#", "//", "/*", "*")):
-                        lines.append(ln.rstrip()[:160])
-                    if len(lines) >= 20 or len("\n".join(lines)) >= self._per_file_sig:
+                    if not st or st.startswith(("#", "//", "/*", "*", '"""', "'''", '"', "'")):
+                        continue                            # 跳过注释 / 字符串 / docstring 行
+                    if re.match(r"(?:import\s|from\s+[\w.]+\s+import\s|package\s|use\s+\w)", st):
+                        continue                            # 跳过 import/依赖声明(低信号, 别塞满预算)
+                    lines.append(ln.rstrip()[:160])
+                    if len(lines) >= 12 or len("\n".join(lines)) >= self._per_file_sig:
                         break
             if lines:
                 out.append((rel, "\n".join(lines)[: self._per_file_sig]))

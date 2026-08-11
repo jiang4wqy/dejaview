@@ -75,3 +75,18 @@ def test_readme_not_duplicated_in_maptext(repo):
 def test_budget_is_hard_cap(repo):
     r = _map(repo, budget_chars=200)
     assert len(r.map_text) <= 200                                    # 预算是硬上限
+
+
+def test_signature_fallback_skips_imports(tmp_path):
+    root = os.path.join(str(tmp_path), "r")
+    os.makedirs(root, exist_ok=True)
+    # 只有 import + __main__ 调用、没有 def/class → 走回退分支
+    _write(root, "app/boot.py",
+           "import os\nimport uvicorn\nfrom app.config import settings\n\n"
+           "logger = get_logger(__name__)\n"
+           "if __name__ == '__main__':\n    uvicorn.run(settings.app)\n")
+    r = _map(root)
+    assert "### app/boot.py" in r.map_text
+    assert "import uvicorn" not in r.map_text                        # import 行被跳过(低信号)
+    assert "from app.config import settings" not in r.map_text
+    assert "uvicorn.run" in r.map_text or "if __name__" in r.map_text  # 保留真实入口行

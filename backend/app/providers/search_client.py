@@ -94,11 +94,13 @@ class GitHubSearchClient(SearchClient):
         headers = {"Accept": "application/vnd.github+json", "User-Agent": _UA}
         if self._token:
             headers["Authorization"] = f"token {self._token}"
-        # 长 query 先收窄到 top-4 关键词; 若为空(AND 太严)再放宽到 top-2 试一次。
+        # 长 query 先收窄到 top-4 关键词; 为空(AND 太严)逐级放宽 top-2 → top-1 各试一次。
         q = keywordize(query, 4)
         items = self._fetch(q, headers)
-        if not items:
-            wide = keywordize(query, 2)
+        for n in (2, 1):                                    # 双专有名词 AND 常 0 结果, 放宽到单词兜底
+            if items:
+                break
+            wide = keywordize(query, n)
             if wide and wide != q:
                 items = self._fetch(wide, headers)
                 if items:
