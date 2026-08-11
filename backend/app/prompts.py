@@ -109,6 +109,9 @@ def verify_candidate(fp: ProjectFingerprint, candidate) -> tuple[str, str]:
 JUDGE_SYSTEM = (
     "你是重复度裁判。基于被测项目指纹与已验证竞品, 按固定维度给 0-1 分, 汇总成 duplication_score。"
     " 严禁下'市场上没有竞品'的结论 —— 只能说'本次检索范围内'。每个结论带证据。"
+    " 若已验证竞品为空、或全部被判为 superficial/无关, 这更可能是**本次召回不足**而非项目真新颖 ——"
+    " 此时应降低 confidence, 在 search_scope_note 里明确'可能未召回到真正竞品、结论不确定',"
+    " 不要据此给出'低重复度 + 高置信度'的自相矛盾结论。"
     " rationale / novelty / search_scope_note 等所有面向用户的文字一律用**简体中文**(证据引用可保留原文)。"
 )
 
