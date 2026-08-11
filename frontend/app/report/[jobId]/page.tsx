@@ -21,6 +21,8 @@ export default function ReportPage() {
 
   const [job, setJob] = useState<Job | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // 任务已过期/不存在（后端 404，比如内存态重启丢失）：停止轮询，进入终态提示，不再无限重试。
+  const [expired, setExpired] = useState(false);
   // 用户确认指纹后自增，用来重新触发轮询 effect。
   const [resumeToken, setResumeToken] = useState(0);
   const [rechecking, setRechecking] = useState(false);
@@ -40,8 +42,15 @@ export default function ReportPage() {
         if (isTerminal(j.status)) return; // 停止轮询
       } catch (err) {
         if (!active) return;
-        setError(err instanceof Error ? err.message : "获取任务失败");
-        if (err instanceof ApiError && (err.status === 403 || err.status === 404)) return;
+        const message = err instanceof Error ? err.message : "获取任务失败";
+        setError(message);
+        // 404 = 任务已过期/不存在：别再无限重试，直接进终态提示。
+        const notFound = err instanceof ApiError ? err.status === 404 : /404/.test(message);
+        if (notFound) {
+          setExpired(true);
+          return;
+        }
+        if (err instanceof ApiError && err.status === 403) return;
       }
       if (active) {
         timer = setTimeout(loop, POLL_MS);
@@ -80,6 +89,36 @@ export default function ReportPage() {
     },
     [jobId],
   );
+
+  // 任务已过期或不存在：终态提示，不再轮询。可能第一次拉取就 404，也可能中途丢失（此时 job 里还留着最后一次已知状态）。
+  if (expired) {
+    return (
+      <div className="home">
+        <TopNav jobId={job?.id ?? jobId} />
+        <div className="panel">
+          <span className="invest-kicker" style={{ color: "var(--crit)" }}>
+            // 卷宗遗失
+          </span>
+          <h2 className="panel-title" style={{ marginTop: 10 }}>
+            该分析已过期或不存在
+          </h2>
+          <p className="muted" style={{ margin: "10px 0 0" }}>
+            可能是任务已被清理、链接过期，或服务刚刚重启导致进度丢失——重新提交一次就好。
+          </p>
+          <div className="actions" style={{ marginTop: 14 }}>
+            <button
+              type="button"
+              className="btn"
+              onClick={job?.request ? onRecheck : () => { window.location.href = "/"; }}
+              disabled={rechecking}
+            >
+              {rechecking ? "重新提交中…" : job?.request ? "重新分析这个项目" : "返回首页重新开始"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // 首屏加载中。
   if (!job) {

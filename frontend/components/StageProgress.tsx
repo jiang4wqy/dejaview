@@ -228,6 +228,18 @@ function pctOf(v: number) {
   return Math.max(0, Math.min(100, Math.round(n)));
 }
 
+// relation → 中文标签 + 皮肤（与 ReportView 的 RELATION 保持同一套视觉语言，仅直接竞品用告警色）。
+const REL_LABEL: Record<string, string> = {
+  direct_competitor: "直接竞品",
+  alternative: "替代方案",
+  adjacent: "相邻",
+  abandoned: "已停更",
+  superficial: "表面相似",
+};
+function relClass(relation?: string): string {
+  return relation === "direct_competitor" ? "direct" : "adj";
+}
+
 // 渐进揭示：随后端流式推来的中间产物，一块块点亮
 function LiveBuild({ job }: { job: Job }) {
   const idx = STAGE_ORDER.indexOf(job.stage);
@@ -249,11 +261,24 @@ function LiveBuild({ job }: { job: Job }) {
       done: cands.length > 0 || reached("verify"),
       running: job.stage === "search",
       body: cands.length ? (
-        <div className="lb-chips">
-          {cands.slice(0, 8).map((c, i) => (
-            <span key={i} className="lb-chip">{c.name}</span>
-          ))}
-          {cands.length > 8 ? <span className="lb-chip more">+{cands.length - 8}</span> : null}
+        <div className="lb-cands">
+          {cands.slice(0, 6).map((c, i) => {
+            // 一旦深度核对(verify)产出，用更准的 relation/notes 顶替早期的粗召回信息。
+            const v = verified.find((x) => x.ref.url === c.url || x.ref.name === c.name);
+            const snippet = v?.notes || c.snippet;
+            return (
+              <div key={i} className="lb-cand">
+                <span className="lb-cand-name">{c.name}</span>
+                {v ? (
+                  <span className={`lb-rel ${relClass(v.relation)}`}>
+                    {REL_LABEL[v.relation] ?? v.relation}
+                  </span>
+                ) : null}
+                {snippet ? <p className="lb-cand-snip">{snippet}</p> : null}
+              </div>
+            );
+          })}
+          {cands.length > 6 ? <span className="lb-chip more">+{cands.length - 6} 个候选</span> : null}
         </div>
       ) : reached("search") ? (
         <span className="muted">本轮没召回到候选</span>

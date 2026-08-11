@@ -887,6 +887,17 @@ h1.verdict {
 .lb-note { margin: 0; color: var(--muted); font-size: 13px; }
 .lb-verdict { font-size: 15px; color: var(--ink); }
 .lb-verdict b { font-family: var(--mono); font-size: 22px; color: var(--accent); font-variant-numeric: tabular-nums; }
+/* 边跑边出 · 已召回竞品(名字+relation/snippet) */
+.lb-cands { display: flex; flex-direction: column; gap: 10px; }
+.lb-cand { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; animation: chipPop .32s cubic-bezier(.2,1.5,.4,1); }
+.lb-cand-name { font-family: var(--mono); font-weight: 700; font-size: 13px; color: var(--ink); }
+.lb-cand-snip { flex: 0 0 100%; margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+.lb-rel {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 6px; flex: 0 0 auto;
+}
+.lb-rel.direct { background: color-mix(in srgb, var(--crit) 16%, transparent); color: var(--crit); }
+.lb-rel.adj { background: color-mix(in srgb, var(--muted) 20%, transparent); color: var(--muted); }
 /* ===== 分享战报 ===== */
 .share-overlay { position: fixed; inset: 0; z-index: 10000; background: rgba(4,2,10,.72); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; animation: shOverlay .25s ease; }
 @keyframes shOverlay { from{opacity:0} to{opacity:1} }
@@ -919,8 +930,8 @@ h1.verdict {
 .sc-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 18px; font-family: ui-monospace,monospace; font-size: 26px; padding-top: 34px; border-top: 2px solid rgba(255,255,255,.16); }
 .sharecard[data-tone="roast"] .sc-tag { color: #ffe600; font-weight: 700; }
 .sharecard[data-tone="serious"] .sc-tag { color: #e9c96a; font-weight: 700; }
-/* 报告里的"生成战报"按钮 */
-.hero-actions { margin-top: 14px; }
+/* 报告里的"生成战报" + "复制报告链接"按钮 */
+.hero-actions { margin-top: 14px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .share-btn {
   appearance: none; cursor: pointer; font-family: var(--sans); font-weight: 800; font-size: 14px;
   color: #100a18; border: 0; padding: 11px 20px; border-radius: 999px;

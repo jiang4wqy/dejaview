@@ -457,6 +457,16 @@ export default function ReportView({ job }: { job: Job }) {
   const [ignited, setIgnited] = useState(false);
   const [dialNum, setDialNum] = useState(0);
   const [shareOpen, setShareOpen] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  function copyReportLink() {
+    navigator.clipboard?.writeText(window.location.href).then(
+      () => {
+        setLinkCopied(true);
+        window.setTimeout(() => setLinkCopied(false), 1800);
+      },
+      () => { /* 忽略：剪贴板权限被拒等 */ },
+    );
+  }
   useEffect(() => {
     let raf = 0;
     let to: ReturnType<typeof setTimeout> | null = null;
@@ -566,6 +576,9 @@ export default function ReportView({ job }: { job: Job }) {
         <div className="hero-actions">
           <button type="button" className="share-btn" onClick={() => setShareOpen(true)}>
             📸 生成战报 · 分享
+          </button>
+          <button type="button" className="link-btn" onClick={copyReportLink}>
+            {linkCopied ? "✓ 已复制" : "🔗 复制报告链接"}
           </button>
         </div>
       </div>
