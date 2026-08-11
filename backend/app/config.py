@@ -86,9 +86,12 @@ class Settings(BaseSettings):
 
     # ---- 其它 ----
     cache_dir: str = ""            # 空 = 关闭磁盘缓存
+    cache_ttl_seconds: int = 604800   # 缓存条目有效期(秒), 默认 7 天; 超期视为未命中(避免仓库更新后永远命中旧结果)
     max_candidates_deep_read: int = 5
+    max_deep_read_ceiling: int = 6    # 自适应深读上限: 候选多且高相关时, 最多深读到几个(≥ max_candidates_deep_read)
     verify_concurrency: int = 4          # verify 并行深读的并发数
     max_queries: int = 8
+    crawler_spa_fallback: bool = True    # crawler=builtin 遇到 SPA(静态正文空) 且有 chrome 时自动用浏览器重抓
 
     @property
     def cors_origin_list(self) -> list[str]:
