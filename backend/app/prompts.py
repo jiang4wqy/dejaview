@@ -37,7 +37,8 @@ REPO_SYSTEM = (
 def repo_extract(url: str, repomap: RepoMapResult) -> tuple[str, str]:
     user = (
         f"GitHub URL: {url}\n"
-        f"Repo map + 关键文件:\n{repomap.map_text}\n{repomap.readme}\n\n"
+        f"仓库结构与关键代码签名(实现依据, 以此为准):\n{repomap.map_text}\n\n"
+        f"README(作者叙述, 仅作参考; 与代码冲突时以代码为准):\n{repomap.readme}\n\n"
         "请提取: 描述 / topics / 语言 / 依赖 / 关键模块 / 入口 / API / 数据模型 / 活跃度 / license, "
         "并给出证据(指向文件:行号)与缺失项。"
     )
@@ -61,8 +62,8 @@ def fingerprint_synthesize(site: SiteFacts, repo: RepoFacts, statement: AuthorSt
     )
     user = (
         f"{desc_block}"
-        f"网站事实:\n{site.model_dump_json(indent=2)}\n\n"
-        f"仓库事实:\n{repo.model_dump_json(indent=2)}\n\n"
+        f"网站事实:\n{site.model_dump_json()}\n\n"
+        f"仓库事实:\n{repo.model_dump_json()}\n\n"
         f"作者声明:\n{statement.model_dump()}\n\n"
         "请合成项目核心指纹: 一句话定义 / 目标用户 / 问题 / 输入-处理-输出 / 核心功能 / 商业模式 / "
         "作者声称的创新 / 系统观察到的差异(带证据+是否 proven) / functional_signature / 冲突 / 未知项。"
@@ -97,8 +98,8 @@ VERIFY_SYSTEM = (
 
 def verify_candidate(fp: ProjectFingerprint, candidate) -> tuple[str, str]:
     user = (
-        f"被测项目指纹:\n{fp.model_dump_json(indent=2)}\n\n"
-        f"候选:\n{candidate.model_dump_json(indent=2)}\n\n"
+        f"被测项目指纹:\n{fp.model_dump_json()}\n\n"
+        f"候选:\n{candidate.model_dump_json()}\n\n"
         "请深读候选并判断 relation, 给 notes 与证据。"
     )
     return VERIFY_SYSTEM, user
@@ -115,7 +116,7 @@ JUDGE_SYSTEM = (
 def judge_duplication(fp: ProjectFingerprint, verified: list[VerifiedCandidate]) -> tuple[str, str]:
     listing = "\n".join(f"- {v.ref.name} [{v.relation.value}] {v.notes}" for v in verified)
     user = (
-        f"被测项目指纹:\n{fp.model_dump_json(indent=2)}\n\n"
+        f"被测项目指纹:\n{fp.model_dump_json()}\n\n"
         f"已验证竞品 ({len(verified)} 个):\n{listing}\n\n"
         "请给出 dimensions 各维度分数、duplication_score、novelty 拆解、top_similar、rationale、"
         "search_scope_note(检索边界声明) 与证据。"

@@ -59,6 +59,11 @@ class Settings(BaseSettings):
     firecrawl_api_key_env: str = "FIRECRAWL_API_KEY"   # crawler=firecrawl
     crawl_timeout: int = 30
 
+    # ---- repo map token 预算(builtin): 硬上限, 把预算从"文件名清单"换成"入口代码签名" ----
+    repomap_budget_chars: int = 12000      # map_text 总字符硬上限(≈喂给抽取模型的 token 预算)
+    repomap_signature_files: int = 6       # 最多对几个高信号源文件抽符号签名
+    repomap_max_readme: int = 3500         # README 截断(只喂一遍, 见 prompts.repo_extract)
+
     # ---- 任务存储: memory(默认) | redis | sql(sqlite/postgres) ----
     jobstore: str = "memory"
     redis_url: str = "redis://localhost:6379/0"
