@@ -27,10 +27,28 @@ class CandidateAssessment(BaseModel):
     evidence: list[Evidence] = []
 
 
+def _deep_read_count(n_available: int, floor: int, ceiling: int) -> int:
+    """候选池越大(已过 search._rank 的相关性筛选), 深读读的越多, 但封顶 ceiling。
+
+    - 候选数不超过 floor: 全读, 不用凑数。
+    - 候选数超过 floor: 按池子规模的一半往 ceiling 靠, 池子越大越接近上限。
+    - 最终结果 clamp 到 [0, min(n_available, ceiling)]。
+    """
+    if n_available <= floor:
+        n = n_available
+    else:
+        n = min(ceiling, floor + (n_available - floor + 1) // 2)
+    hi = min(n_available, ceiling)
+    return max(0, min(n, hi))
+
+
 def verify_candidates(
     candidates: list[CandidateRef], fingerprint: ProjectFingerprint, svc: Services
 ) -> list[VerifiedCandidate]:
-    cands = candidates[: svc.settings.max_candidates_deep_read]
+    k = _deep_read_count(
+        len(candidates), svc.settings.max_candidates_deep_read, svc.settings.max_deep_read_ceiling
+    )
+    cands = candidates[:k]
     if not cands:
         return []
 
