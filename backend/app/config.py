@@ -5,10 +5,12 @@
 """
 from __future__ import annotations
 
+import logging
 from functools import lru_cache
 from pathlib import Path
 
 from dotenv import load_dotenv
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # 让 backend/.env 里的非 DEJAVIEW_ 变量(DEEPSEEK_API_KEY / GITHUB_TOKEN 等)也进 os.environ,
@@ -87,6 +89,21 @@ class Settings(BaseSettings):
     def cors_origin_list(self) -> list[str]:
         """把逗号分隔来源转换为 Starlette CORS 配置。"""
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+
+    @model_validator(mode="after")
+    def _warn_provider_model_mismatch(self) -> "Settings":
+        """脚枪防护: 用 OpenAI 兼容端点(deepseek/qwen)却把 model_* 留成 Claude 名 →
+        这些名字会被当作该服务的模型 id 发出去、多半 400。启动时告警提醒改配置。"""
+        if self.provider in ("deepseek", "qwen"):
+            claudey = [m for m in (self.model_cheap, self.model_standard, self.model_strong)
+                       if m.startswith("claude")]
+            if claudey:
+                logging.getLogger("dejaview.config").warning(
+                    "provider=%s 但 model_* 仍是 Claude 名 %s —— 会被当作 %s 的模型名发出、多半 400。"
+                    "请设 DEJAVIEW_MODEL_CHEAP/STANDARD/STRONG 为该服务的模型名。",
+                    self.provider, claudey, self.provider,
+                )
+        return self
 
 
 @lru_cache
