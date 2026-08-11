@@ -41,6 +41,30 @@ def _fingerprint_terms(fp: ProjectFingerprint) -> set[str]:
     return _tokens(bag)
 
 
+def _seed_queries(fp: ProjectFingerprint) -> list[str]:
+    """确定性种子 query(不依赖 LLM): 从指纹的机制描述里两两/三三拼出 3~5 条高信号短语, 兜底基础召回。
+
+    LLM 生成的 query 可能因为模型抽风、指令理解偏差而漏掉关键概念; functional_signature/
+    core_features 是指纹里信息密度最高、专为驱动检索准备的字段(见 schemas.py 里的字段注释),
+    直接从这两个字段确定性抽词拼句, 保证 LLM 完全失灵时也有一轮朴素检索兜底召回。
+    """
+    bag = " ".join([fp.functional_signature, " ".join(fp.core_features)])
+    terms = _tokens(bag) or _fingerprint_terms(fp)   # 机制描述太空就退回全量指纹词, 不空手
+    if not terms:
+        return []
+    # 集合迭代顺序不确定(str hash 随机化), 按(词长降序, 字典序)排序保证同输入同输出;
+    # 词长优先也顺带把更有区分度的专有名词(repository/codebase)排到填充词前面。
+    words = sorted(terms, key=lambda w: (-len(w), w))[:6]
+
+    seeds: list[str] = []
+    for size in (3, 2):                     # 三词短语信号最强, 双词短语兜底扩大召回
+        for i in range(0, len(words) - size + 1, size):
+            phrase = " ".join(words[i:i + size])
+            if phrase and phrase not in seeds:
+                seeds.append(phrase)
+    return seeds[:5]
+
+
 def _rank(fp: ProjectFingerprint, cands: list[CandidateRef], svc: Services) -> list[CandidateRef]:
     """确定性相关性重排 + 过滤(零 LLM 开销)。
 
@@ -71,9 +95,16 @@ def find(fingerprint: ProjectFingerprint, svc: Services) -> list[CandidateRef]:
     qs = svc.llm.structured(task="generate_queries", schema_cls=QuerySet,
                             system=system, prompt=prompt, tier=ModelTier.CHEAP)
 
+    # 种子 query 放前面: LLM 抽风生成空/离谱 query 时, 确定性种子兜底基础召回不至于漏光
+    merged: list[str] = []
+    for q in _seed_queries(fingerprint) + qs.queries:
+        q = q.strip()
+        if q and q not in merged:
+            merged.append(q)
+
     seen: set[tuple[str, str]] = set()
     out: list[CandidateRef] = []
-    for q in qs.queries[: svc.settings.max_queries]:
+    for q in merged[: svc.settings.max_queries]:
         svc.meter.search_queries += 1
         try:
             hits = svc.search.search(q)
