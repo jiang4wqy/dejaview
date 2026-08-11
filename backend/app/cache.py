@@ -9,12 +9,14 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import time
 from typing import Callable, Optional
 
 
 class Cache:
-    def __init__(self, cache_dir: str = "") -> None:
+    def __init__(self, cache_dir: str = "", ttl_seconds: int = 0) -> None:
         self.dir = cache_dir
+        self.ttl_seconds = ttl_seconds
         if self.dir:
             os.makedirs(self.dir, exist_ok=True)
 
@@ -28,6 +30,10 @@ class Cache:
             return None
         path = os.path.join(self.dir, f"{key}.json")
         if not os.path.exists(path):
+            return None
+        if self.ttl_seconds > 0 and time.time() - os.path.getmtime(path) > self.ttl_seconds:
+            # 已过期: 视为未命中, 顺手清理旧文件
+            os.remove(path)
             return None
         with open(path, encoding="utf-8") as f:
             return json.load(f)

@@ -40,7 +40,7 @@ def build_services(
         search=make_search_client(settings),
         crawler=make_crawler(settings),
         repomap=make_repomapper(settings),
-        cache=Cache(settings.cache_dir),
+        cache=Cache(settings.cache_dir, ttl_seconds=settings.cache_ttl_seconds),
         log=log,
         meter=meter,
     )
