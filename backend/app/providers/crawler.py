@@ -8,11 +8,13 @@
 from __future__ import annotations
 
 import glob
+import json
 import os
 import re
 import shutil
 import subprocess
 from abc import ABC, abstractmethod
+from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urljoin, urlparse
 
 import httpx
@@ -26,9 +28,16 @@ from app.netguard import assert_public_http_url, next_redirect
 _UA = "Mozilla/5.0 (compatible; DejaViewBot/0.1; +https://github.com/jiang4wqy/dejaview)"
 _KEYPAGE_HINTS = {
     "pricing": "pricing", "price": "pricing", "plans": "pricing",
-    "docs": "docs", "documentation": "docs",
-    "about": "about", "features": "features", "feature": "features",
+    "定价": "pricing", "价格": "pricing", "收费": "pricing", "套餐": "pricing",
+    "docs": "docs", "documentation": "docs", "文档": "docs", "帮助": "docs", "手册": "docs",
+    "about": "about", "关于": "about",
+    "features": "features", "feature": "features", "功能": "features", "特性": "features",
 }
+
+# 结构化文案的高信号字段(ld+json / 框架 state blob 里挑这些 key 的字符串值)
+_STRUCT_KEYS = {"title", "description", "headline", "subheadline", "subtitle", "tagline",
+                "slogan", "summary", "name", "metadescription", "ogdescription",
+                "seotitle", "seodescription", "featurelist", "abstract"}
 
 
 # ---------- 共享解析 ----------
@@ -47,6 +56,65 @@ def _to_md(soup, md, max_chars: int) -> str:
     return re.sub(r"\n{3,}", "\n\n", text).strip()[:max_chars]
 
 
+def _json_strings(obj, keys: set, out: list, cap: int) -> None:
+    """从任意嵌套 JSON 里收集白名单 key 的字符串值(去重在外层做; 数量到 cap 即停)。"""
+    if len(out) >= cap:
+        return
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if isinstance(v, str) and k.lower().replace("_", "") in keys and 4 <= len(v) <= 300:
+                out.append(v.strip())
+            else:
+                _json_strings(v, keys, out, cap)
+    elif isinstance(obj, list):
+        for v in obj:
+            _json_strings(v, keys, out, cap)
+
+
+def _structured(soup, limit: int = 2000) -> str:
+    """抓页面里被 JS 藏起来的结构化文案(ld+json / __NEXT_DATA__ 等 state blob)。
+
+    必须在 _to_md 删 script **之前**调用。现代落地页正文常靠 JS 渲染, 静态 HTML 近乎空壳,
+    但产品文案往往就藏在这些 JSON 里 —— 捞出来就有信号, 且体积可控(默认 2000 字封顶)。
+    """
+    picked: list = []
+    # 1) JSON-LD: 结构清晰, 直接挑高信号字段
+    for tag in soup.find_all("script", attrs={"type": "application/ld+json"}):
+        try:
+            _json_strings(json.loads(tag.string or tag.get_text() or ""), _STRUCT_KEYS, picked, 40)
+        except (json.JSONDecodeError, TypeError):
+            continue
+    # 2) 框架 state blob: __NEXT_DATA__(纯 JSON) + __NUXT__/__INITIAL_STATE__(best-effort)
+    for tag in soup.find_all("script"):
+        txt = tag.string or tag.get_text() or ""
+        if len(txt) > 200_000:                            # 跳过超大 blob(省时间)
+            continue
+        blob = ""
+        if (tag.get("id") or "").lower() == "__next_data__":
+            blob = txt
+        elif "__nuxt__" in txt.lower() or "__initial_state__" in txt.lower():
+            m = re.search(r"=\s*(\{.*\})\s*;?\s*$", txt.strip(), re.S)
+            blob = m.group(1) if m else ""
+        if blob:
+            try:
+                _json_strings(json.loads(blob), _STRUCT_KEYS, picked, 40)
+            except json.JSONDecodeError:
+                pass
+    seen, out = set(), []
+    for s in picked:
+        if s and s not in seen:
+            seen.add(s)
+            out.append(s)
+    return "\n".join(f"- {s}" for s in out)[:limit]
+
+
+def _looks_like_spa(soup) -> bool:
+    """静态正文近乎为空时, 判断是否 JS 渲染的单页应用(有挂载点 / 框架 data)。"""
+    if soup.find("script", attrs={"id": "__NEXT_DATA__"}):
+        return True
+    return any(soup.find(attrs={"id": rid}) for rid in ("root", "__next", "app", "___gatsby"))
+
+
 def _discover(base: str, soup) -> list[KeyPage]:
     host = urlparse(base).netloc
     seen: set[str] = set()
@@ -55,9 +123,10 @@ def _discover(base: str, soup) -> list[KeyPage]:
         href = urljoin(base, a["href"]).split("#")[0]
         if urlparse(href).netloc != host or href in seen:
             continue
-        low = href.lower()
+        # URL 与**锚文本**一起匹配 —— <a href="/p/9">定价</a> 这种(关键词只在文字里)也能命中
+        hay = href.lower() + " " + a.get_text(" ", strip=True).lower()
         for kw, typ in _KEYPAGE_HINTS.items():
-            if kw in low:
+            if kw in hay:
                 seen.add(href)
                 out.append(KeyPage(type=typ, url=href))
                 break
@@ -95,25 +164,43 @@ class _HtmlCrawler(Crawler):
             desc = _meta_desc(home)
             requires_login = (bool(home.find("input", attrs={"type": "password"}))
                               and len(home.get_text(strip=True)) < 800)
-            key_pages = _discover(url, home)
-            parts = [f"# {title}\n\n{desc}\n\n## 首页 ({url})\n{_to_md(home, md, self._max_chars)}"]
+            key_pages = _discover(url, home)                  # 用整棵 DOM(含 nav)发现关键页
+            structured = _structured(home)                    # 删 script 前, 先捞 ld+json / __NEXT_DATA__ 里的文案
+            home_md = _to_md(home, md, self._max_chars)       # 此步会删 script/nav, 必须在上面几步之后
+            spa = len(home_md) < 200 and _looks_like_spa(home)
+            head = f"# {title}\n\n{desc}"
+            if structured:
+                head += f"\n\n## 结构化数据(页面内嵌)\n{structured}"
+            parts = [f"{head}\n\n## 首页 ({url})\n{home_md or '(静态 HTML 正文近乎为空)'}"]
             fetched = [KeyPage(type="home", url=url, title=title)]
-            for kp in key_pages[: self._max_pages - 1]:
-                try:
-                    psoup = BeautifulSoup(self._get_html(kp.url), "lxml")
-                    parts.append(f"\n\n## {kp.type} ({kp.url})\n{_to_md(psoup, md, self._max_chars)}")
-                    fetched.append(kp)
-                except Exception as e:  # noqa: BLE001
-                    self._log.info("关键页失败 %s: %s", kp.url, e)
+            targets = key_pages[: self._max_pages - 1]
+            if targets:                                       # 关键页并发抓取, 砍延迟(顺序保留)
+                with ThreadPoolExecutor(max_workers=min(4, len(targets))) as ex:
+                    for kp, text in ex.map(self._fetch_page, targets):
+                        if text is not None:
+                            parts.append(f"\n\n## {kp.type} ({kp.url})\n{text}")
+                            fetched.append(kp)
             markdown = "\n".join(parts)[: self._max_chars]
-            self._log.info("%s crawl %s -> %d 页, %d 字", self.name, url, len(fetched), len(markdown))
+            note = f"{self.name}: 首页 + {len(fetched) - 1} 关键页" + ("; 疑似SPA(静态正文少,靠结构化数据)" if spa else "")
+            self._log.info("%s crawl %s -> %d 页, %d 字%s", self.name, url, len(fetched),
+                           len(markdown), " [SPA]" if spa else "")
             return CrawlResult(url=url, reachable=True, requires_login=requires_login, title=title,
-                               description=desc, markdown=markdown, pages=fetched,
-                               note=f"{self.name}: 首页 + {len(fetched) - 1} 关键页")
+                               description=desc, markdown=markdown, pages=fetched, note=note)
         except CrawlError:
             raise
         except Exception as e:  # noqa: BLE001
             raise CrawlError(f"抓取失败 {url}: {e}") from e
+
+    def _fetch_page(self, kp: KeyPage) -> "tuple[KeyPage, str | None]":
+        """抓一个关键页 → (kp, markdown); 失败返回 (kp, None)。供 ThreadPoolExecutor 并发调用。"""
+        try:
+            from bs4 import BeautifulSoup
+            from markdownify import markdownify as md
+            psoup = BeautifulSoup(self._get_html(kp.url), "lxml")
+            return kp, _to_md(psoup, md, self._max_chars)
+        except Exception as e:  # noqa: BLE001
+            self._log.info("关键页失败 %s: %s", kp.url, e)
+            return kp, None
 
 
 class StubCrawler(Crawler):
