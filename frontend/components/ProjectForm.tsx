@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { analyze } from "@/lib/api";
 import { EXAMPLE_PROJECTS } from "@/lib/showcase-data";
 import { PERSONA } from "@/lib/tone";
+import { useLang } from "@/lib/i18n";
 import type { Tone } from "@/lib/types";
 
 function parseClue(raw: string): {
@@ -22,6 +23,7 @@ function parseClue(raw: string): {
 
 export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitLabel: string }) {
   const router = useRouter();
+  const { t } = useLang();
   const [clue, setClue] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
   const [targetUsers, setTargetUsers] = useState("");
@@ -50,7 +52,7 @@ export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitL
     const repositoryUrl = githubUrl.trim() || parsed.github_url;
     const description = parsed.description || "";
     if (!websiteUrl && !repositoryUrl && !description) {
-      setError("给一条线索就行：贴网址、GitHub，或用一句话描述你的项目。");
+      setError(t("form.errNoClue"));
       return;
     }
 
@@ -71,11 +73,10 @@ export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitL
         },
         tone,
         confirm_fingerprint: confirmFingerprint,
-        language: "zh",
       });
       router.push(`/report/${job_id}`);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "提交失败，请稍后重试。");
+      setError(caught instanceof Error ? caught.message : t("form.errSubmitFail"));
       setSubmitting(false);
     }
   }
@@ -83,7 +84,7 @@ export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitL
   return (
     <form className="panel form" onSubmit={onSubmit} aria-busy={submitting}>
       <div className="home-examples">
-        <span className="mono faint">没项目练手？填入公开示例：</span>
+        <span className="mono faint">{t("form.examplesLabel")}</span>
         {EXAMPLE_PROJECTS.map((example) => (
           <button
             key={example.label}
@@ -98,18 +99,18 @@ export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitL
 
       <label className="field">
         <span>
-          贴上你的项目 <span className="req">*</span>
+          {t("form.clueLabel")} <span className="req">*</span>
         </span>
         <textarea
           className="clue-input"
           rows={2}
-          placeholder="网址 / GitHub / 一句话描述（例：帮宠物主记录疫苗时间的小程序）"
+          placeholder={t("form.cluePlaceholder")}
           value={clue}
           onChange={(event) => setClue(event.target.value)}
           aria-describedby="project-clue-hint"
         />
         <span className="hint" id="project-clue-hint">
-          一条线索就够——有公开网址最准，纯想法也能测。
+          {t("form.clueHint")}
         </span>
       </label>
 
@@ -120,13 +121,13 @@ export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitL
         aria-controls="project-extra-fields"
         onClick={() => setShowMore((visible) => !visible)}
       >
-        {showMore ? "－ 收起补充线索" : "＋ 补充更多线索（可选，结论更准）"}
+        {showMore ? t("form.moreHide") : t("form.moreShow")}
       </button>
 
       {showMore ? (
         <div className="more-fields" id="project-extra-fields">
           <label className="field">
-            <span>GitHub 仓库（可选）</span>
+            <span>{t("form.githubLabel")}</span>
             <input
               type="url"
               inputMode="url"
@@ -137,28 +138,28 @@ export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitL
             />
           </label>
           <label className="field">
-            <span>目标用户是谁？</span>
+            <span>{t("form.targetUsersLabel")}</span>
             <textarea
               rows={2}
-              placeholder="例如：需要快速整理会议纪要的产品经理"
+              placeholder={t("form.targetUsersPlaceholder")}
               value={targetUsers}
               onChange={(event) => setTargetUsers(event.target.value)}
             />
           </label>
           <label className="field">
-            <span>解决了什么问题？</span>
+            <span>{t("form.problemLabel")}</span>
             <textarea
               rows={2}
-              placeholder="例如：把散乱语音一键转成结构化纪要"
+              placeholder={t("form.problemPlaceholder")}
               value={problemSolved}
               onChange={(event) => setProblemSolved(event.target.value)}
             />
           </label>
           <label className="field">
-            <span>你认为的创新点？</span>
+            <span>{t("form.noveltyLabel")}</span>
             <textarea
               rows={2}
-              placeholder="例如：本地推理 + 说话人分离，隐私不出端"
+              placeholder={t("form.noveltyPlaceholder")}
               value={claimedNovelty}
               onChange={(event) => setClaimedNovelty(event.target.value)}
             />
@@ -169,13 +170,13 @@ export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitL
               checked={confirmFingerprint}
               onChange={(event) => setConfirmFingerprint(event.target.checked)}
             />
-            <span>搜索前让我确认项目指纹（省 Token，也更准）</span>
+            <span>{t("form.confirmFpLabel")}</span>
           </label>
         </div>
       ) : null}
 
       <aside className="privacy-note">
-        <b>提交前请确认：</b>mock 模式不消耗 Key；真实模式会消耗部署者额度。请勿提交私有仓库、内网地址或敏感业务资料。
+        <b>{t("form.privacyBold")}</b>{t("form.privacyRest")}
       </aside>
 
       {error ? (
@@ -186,10 +187,10 @@ export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitL
 
       <div className="actions">
         <button type="submit" className="btn" disabled={submitting}>
-          {submitting ? "过堂中…" : submitLabel}
+          {submitting ? t("form.submitting") : submitLabel}
         </button>
         <span className="mono faint small">
-          审判官：{PERSONA[tone].emoji} {PERSONA[tone].name} · 顶栏可随时换脸
+          {t("form.judgeLabel")}{PERSONA[tone].emoji} {PERSONA[tone].name} {t("form.judgeSwitchHint")}
         </span>
       </div>
     </form>

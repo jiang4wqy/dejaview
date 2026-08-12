@@ -4,10 +4,12 @@
 // 真正的强制在后端 /api/analyze —— 这里只是体验层，让朋友进站输一次、之后自动带上。
 import { useEffect, useState, type ReactNode } from "react";
 import { checkAccess, clearAccessCode, getAccessCode, health, setAccessCode } from "@/lib/api";
+import { useLang } from "@/lib/i18n";
 
 type Phase = "checking" | "locked" | "open";
 
 export default function AccessGate({ children }: { children: ReactNode }) {
+  const { t } = useLang();
   const [phase, setPhase] = useState<Phase>("checking");
   const [code, setCode] = useState("");
   const [err, setErr] = useState(false);
@@ -59,7 +61,7 @@ export default function AccessGate({ children }: { children: ReactNode }) {
         <div className="access-card access-checking">
           <div className="access-emoji" aria-hidden="true">⌛</div>
           <h1>DejaView</h1>
-          <p className="access-sub">正在确认公开演示的访问状态…</p>
+          <p className="access-sub">{t("access.checkingSub")}</p>
         </div>
       </div>
     );
@@ -71,24 +73,24 @@ export default function AccessGate({ children }: { children: ReactNode }) {
       <form className={`access-card${err ? " shake" : ""}`} onSubmit={submit}>
         <div className="access-emoji" aria-hidden="true">🔒</div>
         <h1>DejaView</h1>
-        <p className="access-sub">部署者已开启访问保护 · 请输入访问口令</p>
-        <label className="sr-only" htmlFor="dejaview-access-code">访问口令</label>
+        <p className="access-sub">{t("access.lockedSub")}</p>
+        <label className="sr-only" htmlFor="dejaview-access-code">{t("access.codeLabel")}</label>
         <input
           id="dejaview-access-code"
           className="access-input"
           type="password"
           autoComplete="current-password"
           autoFocus
-          placeholder="访问口令"
+          placeholder={t("access.codePlaceholder")}
           value={code}
           onChange={(e) => {
             setCode(e.target.value);
             setErr(false);
           }}
         />
-        {err ? <p className="access-err" role="alert">口令不对，请检查后再试。</p> : null}
+        {err ? <p className="access-err" role="alert">{t("access.err")}</p> : null}
         <button className="access-btn" type="submit" disabled={busy || !code.trim()}>
-          {busy ? "验证中…" : "进站 →"}
+          {busy ? t("access.verifying") : t("access.enter")}
         </button>
       </form>
     </div>

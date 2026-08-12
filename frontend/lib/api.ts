@@ -9,6 +9,7 @@ import type {
   JobSummary,
   ProjectFingerprint,
 } from "./types";
+import { getLang, tSync } from "./i18n";
 
 // 默认走同源相对路径(经 next.config.js 的 /api 反代到后端)——单端口即可跑通。
 // 需要直连别的后端时再设 NEXT_PUBLIC_API_BASE。
@@ -71,7 +72,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       },
     });
   } catch {
-    throw new Error("暂时无法连接分析服务。请确认后端已启动，或稍后重试。");
+    throw new Error(tSync("api.connError"));
   }
 
   if (!res.ok) {
@@ -89,36 +90,48 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     }
     if (res.status === 403) {
       clearAccessCode();
-      throw new ApiError("访问码已失效或无权限。请刷新页面后重新验证。", res.status);
+      throw new ApiError(tSync("api.accessExpired"), res.status);
     }
     if (res.status === 404) {
-      throw new ApiError("找不到这份任务或报告；它可能已过期，或服务刚刚重启。", res.status);
+      throw new ApiError(tSync("api.notFound"), res.status);
     }
     if (res.status === 429) {
-      throw new ApiError(detail || "请求过于频繁，请稍后再试。", res.status);
+      throw new ApiError(detail || tSync("api.tooManyRequests"), res.status);
     }
     if ([502, 503, 504].includes(res.status)) {
-      throw new ApiError("分析服务暂时不可用，请稍后重试。", res.status);
+      throw new ApiError(tSync("api.serviceUnavailable"), res.status);
     }
-    throw new ApiError(detail || `请求失败（${res.status}）`, res.status);
+    throw new ApiError(detail || tSync("api.requestFailed", { status: res.status }), res.status);
   }
 
   return (await res.json()) as T;
 }
 
-/** 提交分析任务。 */
+/** 提交分析任务。语言统一从当前界面语言取（覆盖调用方传入的值），前后端字段名一致。 */
 export function analyze(body: AnalyzeRequest): Promise<AnalyzeResponse> {
   return request<AnalyzeResponse>("/api/analyze", {
     method: "POST",
-    body: JSON.stringify(body),
+    body: JSON.stringify({ ...body, language: getLang() }),
   });
 }
 
-/** 拉取任务状态（供报告页轮询）。demo-<slug> 直接读预生成的静态报告（秒开）。 */
+/**
+ * 拉取任务状态（供报告页轮询）。demo-<slug> 直接读预生成的静态报告（秒开）。
+ * 英文界面下优先取 /demos/en/<slug>.json；不存在(404)时回退到中文版 /demos/<slug>.json。
+ */
 export function getJob(jobId: string): Promise<Job> {
   if (jobId.startsWith("demo-")) {
     const slug = jobId.slice("demo-".length);
-    return request<Job>(`/demos/${encodeURIComponent(slug)}.json`);
+    const zhPath = `/demos/${encodeURIComponent(slug)}.json`;
+    if (getLang() === "en") {
+      return request<Job>(`/demos/en/${encodeURIComponent(slug)}.json`).catch((err) => {
+        if (err instanceof ApiError && err.status === 404) {
+          return request<Job>(zhPath);
+        }
+        throw err;
+      });
+    }
+    return request<Job>(zhPath);
   }
   return request<Job>(`/api/jobs/${encodeURIComponent(jobId)}`);
 }

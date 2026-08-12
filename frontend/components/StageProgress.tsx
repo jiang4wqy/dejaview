@@ -3,12 +3,23 @@
 import { useState } from "react";
 import type { Job, Tone } from "@/lib/types";
 import { useTone } from "@/lib/tone";
+import { useLang, type TFunc } from "@/lib/i18n";
 
-const STAGE_LABELS: Record<string, string> = {
-  site_analysis: "分析网站", github_analysis: "分析仓库", fingerprint: "合成项目指纹",
-  search: "搜索相似项目", verify: "验证候选", judge: "重复度裁判",
-  factlayer: "汇总事实层", render: "生成报告", done: "完成",
-};
+// stage id → 展示文案：语言相关，交由组件内用 t() 现取，见 stageLabel()。
+function stageLabel(stage: string, t: TFunc): string {
+  switch (stage) {
+    case "site_analysis": return t("stage.site_analysis");
+    case "github_analysis": return t("stage.github_analysis");
+    case "fingerprint": return t("stage.fingerprint");
+    case "search": return t("stage.search");
+    case "verify": return t("stage.verify");
+    case "judge": return t("stage.judge");
+    case "factlayer": return t("stage.factlayer");
+    case "render": return t("stage.render");
+    case "done": return t("stage.done");
+    default: return stage;
+  }
+}
 const STAGE_ORDER = [
   "site_analysis", "github_analysis", "fingerprint", "search",
   "verify", "judge", "factlayer", "render", "done",
@@ -229,19 +240,23 @@ function pctOf(v: number) {
 }
 
 // relation → 中文标签 + 皮肤（与 ReportView 的 RELATION 保持同一套视觉语言，仅直接竞品用告警色）。
-const REL_LABEL: Record<string, string> = {
-  direct_competitor: "直接竞品",
-  alternative: "替代方案",
-  adjacent: "相邻",
-  abandoned: "已停更",
-  superficial: "表面相似",
-};
+function relLabel(relation: string, t: TFunc): string {
+  switch (relation) {
+    case "direct_competitor": return t("relation.direct_competitor");
+    case "alternative": return t("relation.alternative");
+    case "adjacent": return t("relation.adjacent");
+    case "abandoned": return t("relation.abandoned");
+    case "superficial": return t("relation.superficial");
+    default: return relation;
+  }
+}
 function relClass(relation?: string): string {
   return relation === "direct_competitor" ? "direct" : "adj";
 }
 
 // 渐进揭示：随后端流式推来的中间产物，一块块点亮
 function LiveBuild({ job }: { job: Job }) {
+  const { t } = useLang();
   const idx = STAGE_ORDER.indexOf(job.stage);
   const reached = (s: string) => idx >= STAGE_ORDER.indexOf(s);
   const fp = job.fingerprint;
@@ -251,13 +266,13 @@ function LiveBuild({ job }: { job: Job }) {
 
   const steps = [
     {
-      key: "fp", icon: "🧬", title: "看穿你的项目",
+      key: "fp", icon: "🧬", title: t("livebuild.fingerprintTitle"),
       done: !!fp,
       running: job.stage === "fingerprint" || (reached("site_analysis") && !fp && !reached("search")),
       body: fp ? <p className="lb-one">{fp.one_liner}</p> : null,
     },
     {
-      key: "search", icon: "🔍", title: "全网揪同类",
+      key: "search", icon: "🔍", title: t("livebuild.searchTitle"),
       done: cands.length > 0 || reached("verify"),
       running: job.stage === "search",
       body: cands.length ? (
@@ -271,37 +286,41 @@ function LiveBuild({ job }: { job: Job }) {
                 <span className="lb-cand-name">{c.name}</span>
                 {v ? (
                   <span className={`lb-rel ${relClass(v.relation)}`}>
-                    {REL_LABEL[v.relation] ?? v.relation}
+                    {relLabel(v.relation, t)}
                   </span>
                 ) : null}
                 {snippet ? <p className="lb-cand-snip">{snippet}</p> : null}
               </div>
             );
           })}
-          {cands.length > 6 ? <span className="lb-chip more">+{cands.length - 6} 个候选</span> : null}
+          {cands.length > 6 ? (
+            <span className="lb-chip more">{t("livebuild.moreCandidates", { n: cands.length - 6 })}</span>
+          ) : null}
         </div>
       ) : reached("search") ? (
-        <span className="muted">本轮没召回到候选</span>
+        <span className="muted">{t("livebuild.noCandidates")}</span>
       ) : null,
     },
     {
-      key: "verify", icon: "⚖️", title: "逐个深度核对",
+      key: "verify", icon: "⚖️", title: t("livebuild.verifyTitle"),
       done: verified.length > 0 || reached("judge"),
       running: job.stage === "verify",
       body: verified.length ? (
         <p className="lb-note">
-          深读 {verified.length} 个 · 直接竞品{" "}
-          {verified.filter((v) => v.relation === "direct_competitor").length} 个
+          {t("livebuild.verifyNote", {
+            total: verified.length,
+            direct: verified.filter((v) => v.relation === "direct_competitor").length,
+          })}
         </p>
       ) : null,
     },
     {
-      key: "judge", icon: "🔨", title: "落下裁决",
+      key: "judge", icon: "🔨", title: t("livebuild.judgeTitle"),
       done: !!dup,
       running: job.stage === "judge",
       body: dup ? (
         <div className="lb-verdict">
-          重复造轮子概率 <b>{pctOf(dup.duplication_score)}%</b>
+          {t("metric.dupProb")} <b>{pctOf(dup.duplication_score)}%</b>
         </div>
       ) : null,
     },
@@ -327,8 +346,9 @@ function LiveBuild({ job }: { job: Job }) {
 
 export default function StageProgress({ job }: { job: Job }) {
   const { tone } = useTone();
+  const { t } = useLang();
   const pct = Math.max(0, Math.min(100, Math.round((job.progress ?? 0) * 100)));
-  const label = STAGE_LABELS[job.stage] ?? job.stage ?? "处理中";
+  const label = stageLabel(job.stage, t) || job.stage || t("stage.processingFallback");
   const queued = job.status === "queued";
 
   return (
@@ -342,13 +362,13 @@ export default function StageProgress({ job }: { job: Job }) {
         </div>
         <div className="wait-head">
           <span className="invest-kicker">
-            {tone === "roast" ? "// 后台正在开嘲…" : tone === "comfort" ? "// 夸夸群正在集合…" : "// 委员会正在评估…"}
+            {tone === "roast" ? t("stage.waitKickerRoast") : tone === "comfort" ? t("stage.waitKickerComfort") : t("stage.waitKickerSerious")}
           </span>
           <div className="progress-head">
-            <span className="progress-stage">{queued ? "排队中" : label}</span>
+            <span className="progress-stage">{queued ? t("stage.queued") : label}</span>
             <span className="progress-pct">{pct}%</span>
           </div>
-          <div className="progress-track" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label="分析进度">
+          <div className="progress-track" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={t("stage.progressAriaLabel")}>
             <div className="progress-fill" style={{ width: `${pct}%` }} />
           </div>
         </div>
@@ -358,7 +378,7 @@ export default function StageProgress({ job }: { job: Job }) {
 
       {tone ? <Quiz tone={tone} /> : null}
 
-      <p className="progress-caption">页面会自动刷新，先别关——马上出结果。</p>
+      <p className="progress-caption">{t("stage.caption")}</p>
     </div>
   );
 }

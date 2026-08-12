@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { analyze, ApiError, confirmFingerprint, getJob } from "@/lib/api";
 import type { Job, ProjectFingerprint } from "@/lib/types";
+import { useLang } from "@/lib/i18n";
 import StageProgress from "@/components/StageProgress";
 import FingerprintEditor from "@/components/FingerprintEditor";
 import ReportView from "@/components/ReportView";
@@ -18,6 +19,7 @@ function isTerminal(status: Job["status"]): boolean {
 
 export default function ReportPage() {
   const { jobId } = useParams<{ jobId: string }>();
+  const { t } = useLang();
 
   const [job, setJob] = useState<Job | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +44,7 @@ export default function ReportPage() {
         if (isTerminal(j.status)) return; // 停止轮询
       } catch (err) {
         if (!active) return;
-        const message = err instanceof Error ? err.message : "获取任务失败";
+        const message = err instanceof Error ? err.message : t("report.unknownError");
         setError(message);
         // 404 = 任务已过期/不存在：别再无限重试，直接进终态提示。
         const notFound = err instanceof ApiError ? err.status === 404 : /404/.test(message);
@@ -62,7 +64,7 @@ export default function ReportPage() {
       active = false;
       if (timer) clearTimeout(timer);
     };
-  }, [jobId, resumeToken]);
+  }, [jobId, resumeToken, t]);
 
   // 复检：用同一目标再跑一遍（改版后看哪些问题真正改善）。跳过成本闸门直接出报告。
   const onRecheck = useCallback(async () => {
@@ -72,10 +74,10 @@ export default function ReportPage() {
       const { job_id } = await analyze({ ...job.request, confirm_fingerprint: false });
       window.location.href = `/report/${job_id}`;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "复检失败");
+      setError(err instanceof Error ? err.message : t("report.recheckFailed"));
       setRechecking(false);
     }
-  }, [job]);
+  }, [job, t]);
 
   // 提交编辑后的指纹并恢复流水线；随后重启轮询。
   const onConfirm = useCallback(
@@ -97,13 +99,13 @@ export default function ReportPage() {
         <TopNav jobId={job?.id ?? jobId} />
         <div className="panel">
           <span className="invest-kicker" style={{ color: "var(--crit)" }}>
-            // 卷宗遗失
+            {t("report.expiredKicker")}
           </span>
           <h2 className="panel-title" style={{ marginTop: 10 }}>
-            该分析已过期或不存在
+            {t("report.expiredTitle")}
           </h2>
           <p className="muted" style={{ margin: "10px 0 0" }}>
-            可能是任务已被清理、链接过期，或服务刚刚重启导致进度丢失——重新提交一次就好。
+            {t("report.expiredBody")}
           </p>
           <div className="actions" style={{ marginTop: 14 }}>
             <button
@@ -112,7 +114,7 @@ export default function ReportPage() {
               onClick={job?.request ? onRecheck : () => { window.location.href = "/"; }}
               disabled={rechecking}
             >
-              {rechecking ? "重新提交中…" : job?.request ? "重新分析这个项目" : "返回首页重新开始"}
+              {rechecking ? t("report.resubmitting") : job?.request ? t("report.reanalyze") : t("report.backHomeRestart")}
             </button>
           </div>
         </div>
@@ -127,20 +129,20 @@ export default function ReportPage() {
         <TopNav jobId={jobId} />
         {error ? (
           <div className="panel">
-            <h2 className="panel-title">出错了</h2>
+            <h2 className="panel-title">{t("report.errorTitle")}</h2>
             <p className="error" role="alert">{error}</p>
             <div className="actions">
               <button type="button" className="btn" onClick={() => setResumeToken((n) => n + 1)}>
-                重新连接
+                {t("report.reconnect")}
               </button>
-              <Link href="/" className="link-btn">返回首页</Link>
+              <Link href="/" className="link-btn">{t("report.backHomeLink")}</Link>
             </div>
           </div>
         ) : (
           <div className="panel">
-            <span className="invest-kicker">// 调查中…</span>
+            <span className="invest-kicker">{t("report.investigatingKicker")}</span>
             <p className="muted" style={{ margin: "10px 0 0" }}>
-              正在调取卷宗…
+              {t("report.fetchingCase")}
             </p>
           </div>
         )}
@@ -159,14 +161,14 @@ export default function ReportPage() {
       {job.status === "error" ? (
         <div className="panel">
           <span className="invest-kicker" style={{ color: "var(--crit)" }}>
-            // 调查中止
+            {t("report.abortedKicker")}
           </span>
           <h2 className="panel-title" style={{ marginTop: 10 }}>
-            分析失败
+            {t("report.analysisFailedTitle")}
           </h2>
-          <p className="error">{job.error || "未知错误。"}</p>
+          <p className="error">{job.error || t("report.unknownError")}</p>
           <button type="button" className="btn" onClick={onRecheck} disabled={rechecking}>
-            {rechecking ? "重新提交中…" : "重新分析这个项目"}
+            {rechecking ? t("report.resubmitting") : t("report.reanalyze")}
           </button>
         </div>
       ) : job.status === "await_confirm" && job.pending_fingerprint ? (
@@ -180,7 +182,7 @@ export default function ReportPage() {
       {/* 非终态时的瞬时连接错误提示（仍在重试）。 */}
       {error && !isTerminal(job.status) ? (
         <p className="error small" style={{ marginTop: 12 }}>
-          连接异常：{error}（正在重试…）
+          {t("report.connIssue", { message: error })}
         </p>
       ) : null}
     </div>
@@ -196,10 +198,11 @@ function TopNav({
   onRecheck?: () => void;
   rechecking?: boolean;
 }) {
+  const { t } = useLang();
   return (
     <div className="report-top">
       <Link href="/" className="link-btn">
-        ← 返回，换个项目
+        {t("report.backHome")}
       </Link>
       <div className="report-top-r">
         {onRecheck ? (
@@ -208,12 +211,12 @@ function TopNav({
             className="link-btn"
             onClick={onRecheck}
             disabled={rechecking}
-            title="用同一目标再跑一遍，对比改版前后"
+            title={t("report.recheckTooltip")}
           >
-            {rechecking ? "复检中…" : "↻ 复检"}
+            {rechecking ? t("report.rechecking") : t("report.recheck")}
           </button>
         ) : null}
-        <span className="caseno">卷宗 {jobId}</span>
+        <span className="caseno">{t("report.caseLabel", { jobId })}</span>
       </div>
     </div>
   );

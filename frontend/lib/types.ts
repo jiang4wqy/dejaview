@@ -187,7 +187,7 @@ export interface AnalyzeRequest {
   author_statement: AuthorStatement;
   tone: Tone;
   confirm_fingerprint: boolean;
-  language: "zh";
+  language?: "zh" | "en";
 }
 
 export interface AnalyzeResponse {

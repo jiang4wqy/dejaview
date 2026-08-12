@@ -165,6 +165,16 @@ body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-even
   white-space: nowrap; transition: color .2s, border-color .2s;
 }
 .topbar-restart:hover { color: var(--accent); border-color: var(--accent); }
+/* 中 / EN 语言切换：全局可用，样式沿用 restart 药丸的克制风格，用 accent 高亮当前语言。 */
+.lang-pill {
+  display: inline-flex; align-items: center; gap: 4px; cursor: pointer;
+  font-family: var(--mono); font-size: 12px; color: var(--muted); background: transparent;
+  border: 1px solid var(--line); padding: 6px 10px; border-radius: 999px;
+  white-space: nowrap; transition: color .2s, border-color .2s, background .2s;
+}
+.lang-pill:hover { border-color: var(--accent); }
+.lang-pill .lang-sep { color: var(--line); }
+.lang-pill .on { color: var(--accent); font-weight: 700; }
 /* 返回（退一步）按钮 */
 .splash-back {
   position: fixed; top: 72px; left: 20px; z-index: 5;

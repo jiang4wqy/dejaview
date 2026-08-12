@@ -6,12 +6,14 @@ import ProjectForm from "@/components/ProjectForm";
 import WorldGate from "@/components/WorldGate";
 import { HERO } from "@/lib/showcase-data";
 import { useTone } from "@/lib/tone";
+import { useLang } from "@/lib/i18n";
 
 export default function HomePage() {
   const { tone, ready, seenIntro, reset } = useTone();
+  const { t } = useLang();
 
   if (!ready) {
-    return <div className="page-loading" role="status">正在打开卷宗…</div>;
+    return <div className="page-loading" role="status">{t("home.loading")}</div>;
   }
   if (!seenIntro) return <Intro />;
   if (!tone) return <WorldGate />;
@@ -20,7 +22,7 @@ export default function HomePage() {
   return (
     <div className="home">
       <button type="button" className="home-back" onClick={reset}>
-        ← 换个审判官
+        {t("home.back")}
       </button>
       <section className="home-hero" aria-labelledby="home-title">
         <span className="home-kicker rise">{hero.kicker}</span>
@@ -31,11 +33,11 @@ export default function HomePage() {
           {hero.description}
         </p>
         <DemoPicker compact />
-        <div className="home-flow" aria-label="分析流程">
-          <span>提取指纹</span>
-          <span>搜索同类</span>
-          <span>验证证据</span>
-          <span>裁判重复度</span>
+        <div className="home-flow" aria-label={t("home.flowAriaLabel")}>
+          <span>{t("home.flow.fingerprint")}</span>
+          <span>{t("home.flow.search")}</span>
+          <span>{t("home.flow.verify")}</span>
+          <span>{t("home.flow.judge")}</span>
         </div>
       </section>
 

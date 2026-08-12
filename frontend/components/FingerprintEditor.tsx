@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ProjectFingerprint } from "@/lib/types";
+import { useLang } from "@/lib/i18n";
 
 interface Props {
   fingerprint: ProjectFingerprint;
@@ -18,6 +19,7 @@ const linesToArr = (s: string) =>
 
 // 等待确认阶段：把 pending_fingerprint 渲染成可编辑卡片。
 export default function FingerprintEditor({ fingerprint, onConfirm }: Props) {
+  const { t } = useLang();
   const [fp, setFp] = useState<ProjectFingerprint>(fingerprint);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,25 +41,24 @@ export default function FingerprintEditor({ fingerprint, onConfirm }: Props) {
     try {
       await onConfirm({ ...fp, user_confirmed: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "确认失败，请重试。");
+      setError(err instanceof Error ? err.message : t("fpEditor.confirmErr"));
       setSubmitting(false);
     }
   }
 
   return (
     <div className="panel">
-      <span className="invest-kicker">// 成本闸门 · 请先过目</span>
+      <span className="invest-kicker">{t("fpEditor.kicker")}</span>
       <h2 className="panel-title" style={{ marginTop: 10 }}>
-        确认项目指纹
+        {t("fpEditor.title")}
       </h2>
       <p className="muted" style={{ marginTop: 0 }}>
-        下面这份"项目指纹"是我们从你的网站 / 仓库里提炼的。核对并按需修改——确认后才会去跑
-        昂贵的相似项目搜索与重复度裁判。
+        {t("fpEditor.desc")}
       </p>
 
       <div className="form" style={{ marginTop: 18 }}>
         <label className="field">
-          <span>一句话简介</span>
+          <span>{t("field.oneLiner")}</span>
           <textarea
             rows={2}
             value={fp.one_liner}
@@ -66,7 +67,7 @@ export default function FingerprintEditor({ fingerprint, onConfirm }: Props) {
         </label>
 
         <label className="field">
-          <span>目标用户</span>
+          <span>{t("field.targetUsers")}</span>
           <textarea
             rows={2}
             value={fp.target_users}
@@ -75,7 +76,7 @@ export default function FingerprintEditor({ fingerprint, onConfirm }: Props) {
         </label>
 
         <label className="field">
-          <span>解决的问题</span>
+          <span>{t("field.problem")}</span>
           <textarea
             rows={3}
             value={fp.problem}
@@ -85,7 +86,7 @@ export default function FingerprintEditor({ fingerprint, onConfirm }: Props) {
 
         <label className="field">
           <span>
-            功能签名 <span className="hint">functional signature · 驱动相似项目搜索</span>
+            {t("field.functionalSignature")} <span className="hint">{t("field.functionalSignatureHint")}</span>
           </span>
           <textarea
             rows={2}
@@ -96,24 +97,24 @@ export default function FingerprintEditor({ fingerprint, onConfirm }: Props) {
 
         <div className="grid-3">
           <label className="field">
-            <span>输入</span>
+            <span>{t("field.ioInput")}</span>
             <input value={fp.io.input} onChange={(e) => setIo("input", e.target.value)} />
           </label>
           <label className="field">
-            <span>处理</span>
+            <span>{t("field.ioProcessing")}</span>
             <input
               value={fp.io.processing}
               onChange={(e) => setIo("processing", e.target.value)}
             />
           </label>
           <label className="field">
-            <span>输出</span>
+            <span>{t("field.ioOutput")}</span>
             <input value={fp.io.output} onChange={(e) => setIo("output", e.target.value)} />
           </label>
         </div>
 
         <label className="field">
-          <span>商业模式</span>
+          <span>{t("field.businessModel")}</span>
           <input
             value={fp.business_model}
             onChange={(e) => set("business_model", e.target.value)}
@@ -122,7 +123,7 @@ export default function FingerprintEditor({ fingerprint, onConfirm }: Props) {
 
         <label className="field">
           <span>
-            核心功能 <span className="hint">每行一条</span>
+            {t("field.coreFeatures")} <span className="hint">{t("hint.perLine")}</span>
           </span>
           <textarea
             rows={4}
@@ -133,7 +134,7 @@ export default function FingerprintEditor({ fingerprint, onConfirm }: Props) {
 
         <label className="field">
           <span>
-            宣称的创新点 <span className="hint">每行一条</span>
+            {t("field.claimedNovelty")} <span className="hint">{t("hint.perLine")}</span>
           </span>
           <textarea
             rows={3}
@@ -146,7 +147,7 @@ export default function FingerprintEditor({ fingerprint, onConfirm }: Props) {
           <div className="grid-2">
             {fp.conflicts?.length ? (
               <div>
-                <h4 className="mini-title">// 冲突点</h4>
+                <h4 className="mini-title">{t("fpEditor.conflicts")}</h4>
                 <ul className="bullet small">
                   {fp.conflicts.map((c, i) => (
                     <li key={i}>{c}</li>
@@ -156,7 +157,7 @@ export default function FingerprintEditor({ fingerprint, onConfirm }: Props) {
             ) : null}
             {fp.unknowns?.length ? (
               <div>
-                <h4 className="mini-title">// 未知项</h4>
+                <h4 className="mini-title">{t("fpEditor.unknowns")}</h4>
                 <ul className="bullet small">
                   {fp.unknowns.map((c, i) => (
                     <li key={i}>{c}</li>
@@ -171,7 +172,7 @@ export default function FingerprintEditor({ fingerprint, onConfirm }: Props) {
 
         <div className="actions">
           <button type="button" className="btn" onClick={submit} disabled={submitting}>
-            {submitting ? "提交中…" : "确认并继续调查"}
+            {submitting ? t("fpEditor.submitting") : t("fpEditor.submit")}
           </button>
         </div>
       </div>
