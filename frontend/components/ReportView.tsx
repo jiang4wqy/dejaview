@@ -576,7 +576,6 @@ export default function ReportView({ job }: { job: Job }) {
     <div className="dv" data-tone={tone} lang={lang === "en" ? "en" : "zh-CN"}>
       {/* ---------- HERO ---------- */}
       <div className="hero rise">
-        <div className={`stamp ${ignited ? "in" : ""}`}>{verdictStamp(pct, tone, t)}</div>
         <div className="hero-grid">
           <div>
             <div className="subject">
@@ -584,7 +583,10 @@ export default function ReportView({ job }: { job: Job }) {
             </div>
             <h1 className="verdict">{report.headline}</h1>
           </div>
-          <Dial pct={pct} confidence={dup?.confidence} dialNum={dialNum} ignited={ignited} />
+          <div className="dial-wrap">
+            <Dial pct={pct} confidence={dup?.confidence} dialNum={dialNum} ignited={ignited} />
+            <div className={`stamp ${ignited ? "in" : ""}`}>{verdictStamp(pct, tone, t)}</div>
+          </div>
         </div>
         <ToneToggle available={available} tone={tone} onChange={setTone} />
         <div className="hero-actions">

@@ -238,11 +238,14 @@ h1.verdict {
   margin-top: 3px;
 }
 
-/* ----- 裁决印章 ----- */
+/* ----- 表盘 + 裁决印章(印章在圆盘下方, 与百分比绑定, 不再压盘) ----- */
+.dial-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
 .stamp {
-  position: absolute;
-  top: 20px;
-  right: 26px;
   font-family: var(--mono);
   font-weight: 800;
   font-size: 15px;
@@ -250,8 +253,9 @@ h1.verdict {
   color: var(--accent);
   border: 2.5px solid var(--accent);
   border-radius: 8px;
-  padding: 6px 12px;
-  transform: rotate(-11deg) scale(0.6);
+  padding: 6px 14px;
+  white-space: nowrap;
+  transform: rotate(-6deg) scale(0.6);
   opacity: 0;
   text-transform: uppercase;
   box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
@@ -262,7 +266,7 @@ h1.verdict {
 }
 @keyframes thunk {
   to {
-    transform: rotate(-11deg) scale(1);
+    transform: rotate(-6deg) scale(1);
     opacity: 0.92;
   }
 }
@@ -915,18 +919,29 @@ h1.verdict {
 .sharecard[data-tone="roast"] .sc-brand { color: #ffe600; }
 .sharecard[data-tone="serious"] .sc-brand { font-family: "Playfair",Georgia,serif; font-weight: 850; color: #e9c96a; }
 .sc-kicker { font-family: ui-monospace,monospace; font-size: 24px; opacity: .6; letter-spacing: .12em; }
-.sc-subject { font-family: ui-monospace,monospace; font-size: 26px; margin-top: 16px; opacity: .68; }
-.sc-gauge { margin: 44px 0 6px; }
-.sc-pct { font-family: ui-monospace,monospace; font-weight: 800; font-size: 210px; line-height: .86; letter-spacing: -.04em; }
+/* 内容区: 在 brand 与 foot 之间垂直居中 */
+.sc-body { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
+.sc-ontrial { font-family: ui-monospace,monospace; font-size: 27px; letter-spacing: .2em; opacity: .5; text-transform: uppercase; }
+/* 主角: 被审项目名, 大 */
+.sc-subject { font-size: 82px; font-weight: 850; line-height: 1.04; letter-spacing: -.02em; margin: 12px 0 46px; word-break: break-word;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sharecard[data-tone="serious"] .sc-subject { font-family: "Playfair",Georgia,"Songti SC",serif; }
+/* 核心结果: 百分比 + 裁决词, 绑在一起 */
+.sc-verdict { display: flex; align-items: center; gap: 36px; }
+.sc-pct { font-family: ui-monospace,monospace; font-weight: 800; font-size: 172px; line-height: .82; letter-spacing: -.04em; flex: none; }
 .sharecard[data-tone="roast"] .sc-pct { color: #ff2e88; }
 .sharecard[data-tone="serious"] .sc-pct { color: #e9c96a; }
-.sc-pct i { font-size: 96px; font-style: normal; opacity: .85; }
-.sc-glabel { font-family: ui-monospace,monospace; font-size: 30px; opacity: .6; letter-spacing: .1em; margin-top: 2px; }
-.sc-headline { font-size: 68px; font-weight: 850; line-height: 1.18; letter-spacing: -.02em; margin: 30px 0 0;
-  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.sharecard[data-tone="serious"] .sc-headline { font-family: "Playfair",Georgia,"Songti SC",serif; }
-.sc-line { font-size: 34px; line-height: 1.5; margin: 26px 0 0; opacity: .9;
-  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.sc-pct i { font-size: 82px; font-style: normal; opacity: .85; }
+.sc-vmeta { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.sc-word { font-weight: 850; font-size: 46px; line-height: 1.08; letter-spacing: -.01em;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sharecard[data-tone="roast"] .sc-word { color: #ffe600; }
+.sharecard[data-tone="serious"] .sc-word { color: #e9c96a; }
+.sc-glabel { font-family: ui-monospace,monospace; font-size: 26px; opacity: .55; letter-spacing: .08em; }
+/* 一句 zinger: 限 4 行, 永不溢出裁切 */
+.sc-line { font-size: 38px; line-height: 1.42; margin: 46px 0 0; opacity: .92; font-weight: 600;
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.sharecard[data-tone="serious"] .sc-line { font-family: "Playfair",Georgia,"Songti SC",serif; }
 .sc-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 18px; font-family: ui-monospace,monospace; font-size: 26px; padding-top: 34px; border-top: 2px solid rgba(255,255,255,.16); }
 .sharecard[data-tone="roast"] .sc-tag { color: #ffe600; font-weight: 700; }
 .sharecard[data-tone="serious"] .sc-tag { color: #e9c96a; font-weight: 700; }

@@ -301,6 +301,7 @@ const zh = {
   "share.linkCopied": "✓ 链接已复制",
   "share.copyLink": "🔗 复制公开链接",
   "share.close": "关闭",
+  "share.onTrial": "本期受审",
 
   // ===== 人格 PERSONA（lib/tone.tsx 的 personaOf()：审判官名字/场所，随语言）=====
   "persona.seriousName": "镀金",
@@ -670,6 +671,7 @@ const en: Record<DictKey, string> = {
   "share.linkCopied": "✓ Link copied",
   "share.copyLink": "🔗 Copy public link",
   "share.close": "Close",
+  "share.onTrial": "On Trial",
 
   "persona.seriousName": "Gilt",
   "persona.seriousVenue": "Wall Street · Ratings Committee",

@@ -39,6 +39,15 @@ export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Ton
   const p = pct(job.result?.duplication?.duplication_score);
   const persona = personaOf(t, tone);
   const subject = subjectName(job, t("report.subjectFallback"));
+  // 裁决词(与百分比绑定)、一句 zinger、语气标签 —— 海报的重点内容
+  const roast = tone === "roast";
+  const verdictWord =
+    p >= 60 ? (roast ? t("verdictStamp.repeatRoast") : t("verdictStamp.repeat"))
+    : p >= 40 ? (roast ? t("verdictStamp.warnRoast") : t("verdictStamp.warn"))
+    : (roast ? t("verdictStamp.okRoast") : t("verdictStamp.ok"));
+  const zinger = report?.verdict_line || report?.headline || "";
+  const tag = tone === "roast" ? t("share.tagRoast")
+    : tone === "comfort" ? t("share.tagComfort") : t("share.tagSerious");
 
   async function download() {
     if (!cardRef.current) return;
@@ -76,18 +85,21 @@ export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Ton
               <span className="sc-brand">DejaView</span>
               <span className="sc-kicker">{t("brand.tagline")}</span>
             </div>
-            <div className="sc-subject">{t("hero.caseLine", { caseNo: caseNo(job) })} {subject}</div>
-            <div className="sc-gauge">
-              <div className="sc-pct">{p}<i>%</i></div>
-              <div className="sc-glabel">{t("metric.dupProb")}</div>
+            <div className="sc-body">
+              <div className="sc-ontrial">{t("share.onTrial")} · {caseNo(job)}</div>
+              <div className="sc-subject">{subject}</div>
+              <div className="sc-verdict">
+                <div className="sc-pct">{p}<i>%</i></div>
+                <div className="sc-vmeta">
+                  <span className="sc-word">{verdictWord}</span>
+                  <span className="sc-glabel">{t("metric.dupProb")}</span>
+                </div>
+              </div>
+              {zinger ? <p className="sc-line">{zinger}</p> : null}
             </div>
-            <h1 className="sc-headline">{report?.headline}</h1>
-            {report?.verdict_line ? <p className="sc-line">{report.verdict_line}</p> : null}
             <div className="sc-foot">
               <span className="sc-persona">{persona.emoji} {persona.name} · {persona.venue}</span>
-              <span className="sc-tag">
-                {tone === "roast" ? t("share.tagRoast") : tone === "comfort" ? t("share.tagComfort") : t("share.tagSerious")}
-              </span>
+              <span className="sc-tag">{tag}</span>
             </div>
           </div>
           </div>
