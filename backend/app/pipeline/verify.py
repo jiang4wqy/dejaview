@@ -43,7 +43,8 @@ def _deep_read_count(n_available: int, floor: int, ceiling: int) -> int:
 
 
 def verify_candidates(
-    candidates: list[CandidateRef], fingerprint: ProjectFingerprint, svc: Services
+    candidates: list[CandidateRef], fingerprint: ProjectFingerprint, svc: Services,
+    language: str = "zh",
 ) -> list[VerifiedCandidate]:
     k = _deep_read_count(
         len(candidates), svc.settings.max_candidates_deep_read, svc.settings.max_deep_read_ceiling
@@ -53,7 +54,7 @@ def verify_candidates(
         return []
 
     def _one(cand: CandidateRef) -> VerifiedCandidate:
-        system, prompt = prompts.verify_candidate(fingerprint, cand)
+        system, prompt = prompts.verify_candidate(fingerprint, cand, language)
         a = svc.llm.structured(task="verify_candidate", schema_cls=CandidateAssessment,
                                system=system, prompt=prompt, tier=ModelTier.STANDARD)
         return VerifiedCandidate(

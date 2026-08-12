@@ -11,9 +11,9 @@ from app.providers.llm_router import ModelTier
 from app.services import Services
 
 
-def render(result: AnalysisResult, tone: ToneMode, svc: Services) -> Report:
+def render(result: AnalysisResult, tone: ToneMode, svc: Services, language: str = "zh") -> Report:
     task = f"render_{tone.value}"
-    system, prompt = prompts.render(result, tone)
+    system, prompt = prompts.render(result, tone, language)
     # 渲染=按语气改写既有事实层, 非硬推理; 用 cheap(flash) 更快更省 ——
     # findings 由下方代码强制取自事实层, 与用哪个模型无关, 质量风险低。
     report = svc.llm.structured(task=task, schema_cls=Report,

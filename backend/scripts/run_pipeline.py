@@ -34,13 +34,14 @@ def main() -> None:
     ap.add_argument("--users", default="用 LLM 处理代码库的开发者")
     ap.add_argument("--problem", default="把 GitHub 仓库转成适合喂给 LLM 的文本")
     ap.add_argument("--novelty", default="改 URL 的 hub→ingest 一键转换")
+    ap.add_argument("--language", choices=["zh", "en"], default="zh")
     args = ap.parse_args()
 
     req = AnalysisRequest(
         website_url=args.website or None, github_url=args.github or None,
         author_statement=AuthorStatement(
             target_users=args.users, problem_solved=args.problem, claimed_novelty=args.novelty),
-        tone=ToneMode(args.tone),
+        tone=ToneMode(args.tone), language=args.language,
     )
     settings = get_settings()
     job = store.create(req)

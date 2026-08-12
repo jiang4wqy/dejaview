@@ -110,7 +110,8 @@ class Pipeline:
                 job, Stage.FINGERPRINT, 0.35,
                 lambda: fingerprint_mod.synthesize(job.site_facts, job.repo_facts,
                                                    req.author_statement, self.svc,
-                                                   description=req.description),
+                                                   description=req.description,
+                                                   language=req.language),
             )
             job.fingerprint = fp
             self._push(job)   # 指纹先亮出来
@@ -147,6 +148,7 @@ class Pipeline:
     def _finish(self, job: Job, fp: ProjectFingerprint) -> Job:
         job.pending_fingerprint = None
         job.fingerprint = fp
+        lang = job.request.language          # 报告语言(zh/en), 贯穿到验证/裁判/事实层/渲染
         # 搜索/验证失败可降级(honest: 本轮没召回到候选), 不至于整单失败
         candidates = self._stage(job, Stage.SEARCH, 0.50,
                                  lambda: search_mod.find(fp, self.svc),
@@ -154,23 +156,23 @@ class Pipeline:
         job.candidates = candidates
         self._push(job)   # 竞品陆续揪出来
         verified = self._stage(job, Stage.VERIFY, 0.65,
-                               lambda: verify_mod.verify_candidates(candidates, fp, self.svc),
+                               lambda: verify_mod.verify_candidates(candidates, fp, self.svc, lang),
                                critical=False, fallback=list) or []
         job.verified = verified
         self._push(job)   # 深度核对完
         verdict = self._stage(job, Stage.JUDGE, 0.80,
-                              lambda: judge_mod.judge(fp, verified, self.svc))
+                              lambda: judge_mod.judge(fp, verified, self.svc, lang))
         job.duplication = verdict
         self._push(job)   # 裁决落定
         result = self._stage(job, Stage.FACTLAYER, 0.90,
-                             lambda: factlayer_mod.assemble(fp, verified, verdict, self.svc))
+                             lambda: factlayer_mod.assemble(fp, verified, verdict, self.svc, lang))
         job.result = result
         self._push(job)
 
         def _render() -> None:
             # 同一事实层渲染所有语气(并行); 各版都不新增未证实结论(见 report.py)
             with ThreadPoolExecutor(max_workers=3) as ex:
-                futs = {t.value: ex.submit(report_mod.render, result, t, self.svc) for t in ToneMode}
+                futs = {t.value: ex.submit(report_mod.render, result, t, self.svc, lang) for t in ToneMode}
                 for k, f in futs.items():
                     job.reports[k] = f.result()
 

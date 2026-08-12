@@ -8,8 +8,9 @@ from app.services import Services
 
 
 def judge(
-    fingerprint: ProjectFingerprint, verified: list[VerifiedCandidate], svc: Services
+    fingerprint: ProjectFingerprint, verified: list[VerifiedCandidate], svc: Services,
+    language: str = "zh",
 ) -> DuplicationVerdict:
-    system, prompt = prompts.judge_duplication(fingerprint, verified)
+    system, prompt = prompts.judge_duplication(fingerprint, verified, language)
     return svc.llm.structured(task="judge_duplication", schema_cls=DuplicationVerdict,
                               system=system, prompt=prompt, tier=ModelTier.STRONG, thinking=True)

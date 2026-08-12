@@ -13,8 +13,8 @@ from app.services import Services
 
 def synthesize(
     site: SiteFacts, repo: RepoFacts, statement: AuthorStatement, svc: Services,
-    description: str = "",
+    description: str = "", language: str = "zh",
 ) -> ProjectFingerprint:
-    system, prompt = prompts.fingerprint_synthesize(site, repo, statement, description)
+    system, prompt = prompts.fingerprint_synthesize(site, repo, statement, description, language)
     return svc.llm.structured(task="synthesize_fingerprint", schema_cls=ProjectFingerprint,
                               system=system, prompt=prompt, tier=ModelTier.STANDARD)

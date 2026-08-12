@@ -10,6 +10,19 @@ from app.models.schemas import (
     RepoFacts, SiteFacts, ToneMode, VerifiedCandidate,
 )
 
+
+def _lang_directive(language: str) -> str:
+    """按语言给 system prompt 追加输出语言指令; en 时覆盖上文写死的『简体中文』要求。"""
+    if language == "en":
+        return (
+            "\n\n[OUTPUT LANGUAGE] Write ALL user-facing text (headline, body_markdown, rationale, "
+            "novelty, titles, details, notes, one-liners, search scope notes, etc.) in natural, fluent "
+            "ENGLISH. This OVERRIDES any instruction above about writing in Chinese — those apply to the "
+            "Chinese edition only. Keep quoted evidence verbatim in its original language."
+        )
+    return ""
+
+
 # ─────────────────────────── 事实提取 ───────────────────────────
 SITE_SYSTEM = (
     "你是网站事实提取器。只输出能被页面证据支撑的事实; 拿不准或页面没有的, 留空并写进 missing_info。"
@@ -55,7 +68,7 @@ FINGERPRINT_SYSTEM = (
 
 
 def fingerprint_synthesize(site: SiteFacts, repo: RepoFacts, statement: AuthorStatement,
-                           description: str = "") -> tuple[str, str]:
+                           description: str = "", language: str = "zh") -> tuple[str, str]:
     desc_block = (
         f"用户的一句话/自由描述(主线索, 当没有网站/仓库时以此为准):\n{description}\n\n"
         if description.strip() else ""
@@ -69,7 +82,7 @@ def fingerprint_synthesize(site: SiteFacts, repo: RepoFacts, statement: AuthorSt
         "作者声称的创新 / 系统观察到的差异(带证据+是否 proven) / functional_signature / 冲突 / 未知项。"
         "\n若只有描述、没有网站/仓库证据, 就基于描述合成, 并把'缺乏可核验证据'写进 unknowns、相应降低 confidence。"
     )
-    return FINGERPRINT_SYSTEM, user
+    return FINGERPRINT_SYSTEM + _lang_directive(language), user
 
 
 # ─────────────────────────── 搜索 query ───────────────────────────
@@ -96,13 +109,13 @@ VERIFY_SYSTEM = (
 )
 
 
-def verify_candidate(fp: ProjectFingerprint, candidate) -> tuple[str, str]:
+def verify_candidate(fp: ProjectFingerprint, candidate, language: str = "zh") -> tuple[str, str]:
     user = (
         f"被测项目指纹:\n{fp.model_dump_json()}\n\n"
         f"候选:\n{candidate.model_dump_json()}\n\n"
         "请深读候选并判断 relation, 给 notes 与证据。"
     )
-    return VERIFY_SYSTEM, user
+    return VERIFY_SYSTEM + _lang_directive(language), user
 
 
 # ─────────────────────────── 重复度裁判 ───────────────────────────
@@ -116,7 +129,8 @@ JUDGE_SYSTEM = (
 )
 
 
-def judge_duplication(fp: ProjectFingerprint, verified: list[VerifiedCandidate]) -> tuple[str, str]:
+def judge_duplication(fp: ProjectFingerprint, verified: list[VerifiedCandidate],
+                      language: str = "zh") -> tuple[str, str]:
     listing = "\n".join(f"- {v.ref.name} [{v.relation.value}] {v.notes}" for v in verified)
     user = (
         f"被测项目指纹:\n{fp.model_dump_json()}\n\n"
@@ -124,7 +138,7 @@ def judge_duplication(fp: ProjectFingerprint, verified: list[VerifiedCandidate])
         "请给出 dimensions 各维度分数、duplication_score、novelty 拆解、top_similar、rationale、"
         "search_scope_note(检索边界声明) 与证据。"
     )
-    return JUDGE_SYSTEM, user
+    return JUDGE_SYSTEM + _lang_directive(language), user
 
 
 # ─────────────────────────── 事实层 ───────────────────────────
@@ -137,14 +151,14 @@ FACTLAYER_SYSTEM = (
 
 
 def synthesize_factlayer(fp: ProjectFingerprint, verdict: DuplicationVerdict,
-                         verified: list[VerifiedCandidate]) -> tuple[str, str]:
+                         verified: list[VerifiedCandidate], language: str = "zh") -> tuple[str, str]:
     user = (
         f"指纹:\n{fp.model_dump_json(indent=2)}\n\n"
         f"重复度裁判:\n{verdict.model_dump_json(indent=2)}\n\n"
         f"竞品: {[v.ref.name for v in verified]}\n\n"
         "请产出 strengths / issues / improvements(带证据; improvements 按 impact,cost 排序)。"
     )
-    return FACTLAYER_SYSTEM, user
+    return FACTLAYER_SYSTEM + _lang_directive(language), user
 
 
 # ─────────────────────────── 报告渲染 ───────────────────────────
@@ -191,7 +205,7 @@ COMFORT_SYSTEM = (
 )
 
 
-def render(result, tone: ToneMode) -> tuple[str, str]:
+def render(result, tone: ToneMode, language: str = "zh") -> tuple[str, str]:
     system = {ToneMode.ROAST: ROAST_SYSTEM, ToneMode.COMFORT: COMFORT_SYSTEM}.get(tone, SERIOUS_SYSTEM)
     top = result.improvements[0].title if result.improvements else ""
     user = (
@@ -212,4 +226,4 @@ def render(result, tone: ToneMode) -> tuple[str, str]:
         "★ 硬性要求: verdict_line / top_fix / why_line 必须带本语气的鲜明性格, 和另一版(认真/毒舌)"
         "在**每个字、每一层**上都不能撞词雷同——同一件事实, 两种嘴脸。"
     )
-    return system, user
+    return system + _lang_directive(language), user

@@ -22,9 +22,9 @@ class FactSynthesis(BaseModel):
 
 def assemble(
     fingerprint: ProjectFingerprint, verified: list[VerifiedCandidate],
-    verdict: DuplicationVerdict, svc: Services,
+    verdict: DuplicationVerdict, svc: Services, language: str = "zh",
 ) -> AnalysisResult:
-    system, prompt = prompts.synthesize_factlayer(fingerprint, verdict, verified)
+    system, prompt = prompts.synthesize_factlayer(fingerprint, verdict, verified, language)
     synth = svc.llm.structured(task="synthesize_factlayer", schema_cls=FactSynthesis,
                                system=system, prompt=prompt, tier=ModelTier.STANDARD)
     return AnalysisResult(
