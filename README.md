@@ -47,9 +47,9 @@ AI 让人人都能造东西了。于是——
 
 ## 真实示例（长这样）
 
-下面是 DejaView 对一个真实开源项目 [gitingest](https://github.com/cyclotruc/gitingest) 的实际裁决——重复度表盘、一句话定性、证据、语气，一应俱全：
+下面是 DejaView 对真实开源项目 [gitingest](https://github.com/cyclotruc/gitingest) 的**完整裁决**——从重复度表盘、一句话定性，到**逐段评审全文**与**可逐条点开的证据**，一次看全：
 
-<div align="center"><img src="docs/assets/showcase-report.png" alt="DejaView 对 gitingest 的真实裁决：65% 疑似重复" width="92%"></div>
+<div align="center"><img src="docs/assets/showcase-report.png" alt="DejaView 对 gitingest 的完整裁决：65% 疑似重复，含评审全文与逐条证据" width="88%"></div>
 
 仓库内置 3 份可**秒开的真实示例**（读预生成结果，不调用模型、不花额度；英文界面下自动加载英文版）：
 

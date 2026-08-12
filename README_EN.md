@@ -17,6 +17,10 @@ Give DejaView a public website, a GitHub repository, or a one-line idea. It extr
 
 This is more than an LLM writing a harsher paragraph. DejaView builds one shared fact layer first and changes presentation last: **the tone changes; the facts do not.**
 
+## The name
+
+**DejaView = déjà vu + View.** *Déjà vu* is French for "already seen"—that eerie flash of *"wait, haven't I seen this before?"* It is exactly the moment every builder dreads: you ship after three sleepless nights, and the first reply is *"isn't this just XXX?"* DejaView holds your project up against the whole web and answers that question calmly: **has someone genuinely already built this?** The eye in the logo is that mirror.
+
 ## See it first
 
 | 💰 Gilt · Wall Street | 🤡 Roast · Circus | 🌈 Comfort · Cheer Squad |
@@ -25,6 +29,22 @@ This is more than an LLM writing a harsher paragraph. DejaView builds one shared
 | <img src="docs/assets/world-serious.png" alt="Gilt theme" width="270"> | <img src="docs/assets/world-roast.png" alt="Roast theme" width="270"> | <img src="docs/assets/world-comfort.png" alt="Comfort theme" width="270"> |
 
 The repository ships with pre-generated reports for Gitingest, Excalidraw, and Kutt. Start the frontend and open a demo from the homepage—no model call or API key required. A permanent hosted instance is not currently promised; see the [self-hosting guide](docs/DEPLOYMENT.md).
+
+## A real example
+
+Here is DejaView's actual verdict on a real open-source project, [gitingest](https://github.com/cyclotruc/gitingest)—from the duplication dial and one-line call all the way to the **full written critique** and **per-finding evidence** you can expand:
+
+<div align="center"><img src="docs/assets/showcase-report.png" alt="DejaView's full verdict on gitingest: 65% likely duplicate, with the complete critique and per-finding evidence" width="88%"></div>
+
+Three **instant demos** ship in the repo (they read pre-generated results—no model call, no cost; the English UI loads the English versions automatically):
+
+| Project | Duplication | One-line call |
+|---|:--:|---|
+| **gitingest** | 65% · Likely a duplicate | One-off URL trick, already widely covered by peers, thin moat |
+| **excalidraw** | 60% · Déjà vu | Crowded hand-drawn-whiteboard space; differentiate on UX & ecosystem |
+| **kutt** | 15% · Something here | Short-link space is mature, but self-hosting + customization is a real edge |
+
+Start the frontend and click a demo on the homepage; the **中 / EN** toggle (top-right) switches languages.
 
 ## How it works
 
