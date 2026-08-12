@@ -16,6 +16,7 @@ import FindingCard from "./FindingCard";
 import ShareModal from "./ShareCard";
 import { useTone } from "@/lib/tone";
 import { useLang, type TFunc } from "@/lib/i18n";
+import { caseNo, orderedFindings, subjectName, toPercent, verdictStamp } from "@/lib/report-format";
 
 function levelLabel(level: string | undefined, t: TFunc): string {
   switch (level) {
@@ -59,47 +60,9 @@ function relationInfo(relation: string, t: TFunc): { cls: string; label: string 
   }
 }
 
-// score 容错：可能是 0..1 小数或 0..100 整数。
-function toPercent(score: number): number {
-  const n = score <= 1 ? score * 100 : score;
-  return Math.max(0, Math.min(100, Math.round(n)));
-}
-
 function formatTokens(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
   return String(n);
-}
-
-// 印章文案：随重复度分档 + 语气变化（同一事实，两种嘴脸）。
-function verdictStamp(pct: number, tone: Tone, t: TFunc): string {
-  const roast = tone === "roast";
-  if (pct >= 60) return roast ? t("verdictStamp.repeatRoast") : t("verdictStamp.repeat");
-  if (pct >= 40) return roast ? t("verdictStamp.warnRoast") : t("verdictStamp.warn");
-  return roast ? t("verdictStamp.okRoast") : t("verdictStamp.ok");
-}
-
-// 从请求派生"被告项目"的显示名（仅用于卷宗抬头，纯装饰）。
-function subjectName(job: Job, t: TFunc): string {
-  const gh = job.request?.github_url;
-  const web = job.request?.website_url;
-  if (gh) {
-    const m = gh.match(/github\.com\/([^/]+\/[^/#?]+)/i);
-    if (m) return m[1].replace(/\.git$/, "");
-  }
-  if (web) {
-    try {
-      return new URL(web).hostname.replace(/^www\./, "");
-    } catch {
-      /* 忽略非法 URL */
-    }
-  }
-  if (gh) return gh;
-  return t("report.subjectFallback");
-}
-
-function caseNo(job: Job): string {
-  const slug = (job.id || "").replace(/[^a-z0-9]/gi, "").slice(0, 6).toUpperCase();
-  return `DV-${slug || "000000"}`;
 }
 
 /* ---------------------------------- 表盘 ---------------------------------- */
@@ -562,7 +525,7 @@ export default function ReportView({ job }: { job: Job }) {
   }
 
   // 事实层（共享，语气无关）：问题在前、优点在后。切换语气不改这里。
-  const findings = [...(result?.issues ?? []), ...(result?.strengths ?? [])];
+  const findings = orderedFindings(result);
   const signal = trackSignal(result?.candidates, t);
 
   // 维度：已知顺序在前，未知 key 追加在后。
@@ -579,7 +542,7 @@ export default function ReportView({ job }: { job: Job }) {
         <div className="hero-grid">
           <div>
             <div className="subject">
-              {t("hero.caseLine", { caseNo: caseNo(job) })} <b>{subjectName(job, t)}</b>
+              {t("hero.caseLine", { caseNo: caseNo(job) })} <b>{subjectName(job, t("report.subjectFallback"))}</b>
             </div>
             <h1 className="verdict">{report.headline}</h1>
           </div>
