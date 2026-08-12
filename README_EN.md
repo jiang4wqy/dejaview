@@ -26,9 +26,9 @@ This is more than an LLM writing a harsher paragraph. DejaView builds one shared
 The same gitingest verdict, handed to three personas—wildly different wording, **yet not one new unverified claim**:
 
 | 💰 Gilt · Wall Street | 🤡 Roast · Circus | 🌈 Comfort · Cheer Squad |
-|---|---|---|
+|:--:|:--:|:--:|
 | Calm diligence and valuation | Sharp, but aimed only at the project | Pure emotional encouragement |
-| "Not ready for our investment committee. Pass." | "Stitched together the buzzwords, forgot to stitch on the core." | "Zero-config is genuinely lovely—already so thoughtful!" |
+| <img src="docs/assets/world-serious.png" alt="Gilt theme" width="270"> | <img src="docs/assets/world-roast.png" alt="Roast theme" width="270"> | <img src="docs/assets/world-comfort.png" alt="Comfort theme" width="270"> |
 
 The repository ships with pre-generated reports for Gitingest, Excalidraw, and Kutt. Start the frontend and open a demo from the homepage—no model call or API key required. A permanent hosted instance is not currently promised; see the [self-hosting guide](docs/DEPLOYMENT.md).
 

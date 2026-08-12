@@ -7,28 +7,7 @@ import { toPng } from "html-to-image";
 import type { Job, Tone } from "@/lib/types";
 import { personaOf } from "@/lib/tone";
 import { useLang } from "@/lib/i18n";
-
-function pct(v?: number): number {
-  if (v == null) return 0;
-  const n = v <= 1 ? v * 100 : v;
-  return Math.round(Math.max(0, Math.min(100, n)));
-}
-function subjectName(job: Job, fallback: string): string {
-  const gh = job.request?.github_url;
-  const web = job.request?.website_url;
-  if (gh) {
-    const m = gh.match(/github\.com\/([^/]+\/[^/#?]+)/i);
-    if (m) return m[1].replace(/\.git$/, "");
-  }
-  if (web) {
-    try { return new URL(web).hostname.replace(/^www\./, ""); } catch { /* ignore */ }
-  }
-  return gh || fallback;
-}
-function caseNo(job: Job): string {
-  const slug = (job.id || "").replace(/[^a-z0-9]/gi, "").slice(0, 6).toUpperCase();
-  return `DV-${slug || "000000"}`;
-}
+import { caseNo, subjectName, toPercent, verdictStamp } from "@/lib/report-format";
 
 export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Tone; onClose: () => void }) {
   const { t } = useLang();
@@ -36,15 +15,11 @@ export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Ton
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
   const report = job.reports?.[tone];
-  const p = pct(job.result?.duplication?.duplication_score);
+  const p = toPercent(job.result?.duplication?.duplication_score);
   const persona = personaOf(t, tone);
   const subject = subjectName(job, t("report.subjectFallback"));
-  // 裁决词(与百分比绑定)、一句 zinger、语气标签 —— 海报的重点内容
-  const roast = tone === "roast";
-  const verdictWord =
-    p >= 60 ? (roast ? t("verdictStamp.repeatRoast") : t("verdictStamp.repeat"))
-    : p >= 40 ? (roast ? t("verdictStamp.warnRoast") : t("verdictStamp.warn"))
-    : (roast ? t("verdictStamp.okRoast") : t("verdictStamp.ok"));
+  // 裁决词(与百分比、语气绑定, 与报告页共用同一套阈值)、一句 zinger、语气标签 —— 海报重点。
+  const verdictWord = verdictStamp(p, tone, t);
   const zinger = report?.verdict_line || report?.headline || "";
   const tag = tone === "roast" ? t("share.tagRoast")
     : tone === "comfort" ? t("share.tagComfort") : t("share.tagSerious");
@@ -108,7 +83,8 @@ export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Ton
                   <span className="sc-glabel">{t("metric.dupProb")}</span>
                 </div>
               </div>
-              {zinger ? <p className="sc-line">{zinger}</p> : null}
+              {/* zinger 与 points/topFix 表达重叠; 有要点时省去它, 既去冗余又避免整体溢出裁切 */}
+              {zinger && !points.length ? <p className="sc-line">{zinger}</p> : null}
               {points.length ? (
                 <ul className="sc-points">
                   {points.map((pt, i) => (
