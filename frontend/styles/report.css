@@ -914,37 +914,64 @@ h1.verdict {
 .sharecard { width: 1080px; height: 1080px; box-sizing: border-box; padding: 92px 84px; display: flex; flex-direction: column; overflow: hidden; font-family: "PingFang SC","Microsoft YaHei","Songti SC",system-ui,sans-serif; }
 .sharecard[data-tone="roast"] { background: radial-gradient(120% 92% at 12% -6%, #3d1257, #170a2b 60%); color: #fdf0ff; }
 .sharecard[data-tone="serious"] { background: radial-gradient(120% 92% at 88% -6%, #26200f, #09090b 58%); color: #f4ecd8; }
+.sharecard[data-tone="comfort"] { background: radial-gradient(120% 92% at 88% -6%, #ffd9ec, #ffe9f4 60%); color: #4a2740; }
 .sc-top { display: flex; align-items: baseline; gap: 20px; }
-.sc-brand { font-family: "Bungee","Arial Black",sans-serif; font-size: 48px; letter-spacing: -.01em; }
+.sc-brand { font-family: "Bungee","Arial Black",sans-serif; font-size: 44px; letter-spacing: -.01em; }
 .sharecard[data-tone="roast"] .sc-brand { color: #ffe600; }
 .sharecard[data-tone="serious"] .sc-brand { font-family: "Playfair",Georgia,serif; font-weight: 850; color: #e9c96a; }
-.sc-kicker { font-family: ui-monospace,monospace; font-size: 24px; opacity: .6; letter-spacing: .12em; }
-/* 内容区: 在 brand 与 foot 之间垂直居中 */
-.sc-body { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
-.sc-ontrial { font-family: ui-monospace,monospace; font-size: 27px; letter-spacing: .2em; opacity: .5; text-transform: uppercase; }
+.sharecard[data-tone="comfort"] .sc-brand { color: #e0439a; }
+.sc-kicker { font-family: ui-monospace,monospace; font-size: 22px; opacity: .6; letter-spacing: .12em; }
+/* 内容区: 在 brand 与 foot 之间垂直居中; 内容变多后按顺序纵向铺开 */
+.sc-body { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+.sc-ontrial { font-family: ui-monospace,monospace; font-size: 25px; letter-spacing: .2em; opacity: .5; text-transform: uppercase; }
 /* 主角: 被审项目名, 大 */
-.sc-subject { font-size: 82px; font-weight: 850; line-height: 1.04; letter-spacing: -.02em; margin: 12px 0 46px; word-break: break-word;
+.sc-subject { font-size: 74px; font-weight: 850; line-height: 1.04; letter-spacing: -.02em; margin: 10px 0 8px; word-break: break-word;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .sharecard[data-tone="serious"] .sc-subject { font-family: "Playfair",Georgia,"Songti SC",serif; }
+/* 一句话定性: 让人看懂"这是个什么项目" */
+.sc-about { font-size: 34px; line-height: 1.34; opacity: .82; font-weight: 500; margin: 0 0 26px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sc-about i { font-style: normal; font-family: ui-monospace,monospace; font-size: 24px; letter-spacing: .06em; opacity: .6; margin-right: 14px; }
 /* 核心结果: 百分比 + 裁决词, 绑在一起 */
-.sc-verdict { display: flex; align-items: center; gap: 36px; }
-.sc-pct { font-family: ui-monospace,monospace; font-weight: 800; font-size: 172px; line-height: .82; letter-spacing: -.04em; flex: none; }
+.sc-verdict { display: flex; align-items: center; gap: 32px; }
+.sc-pct { font-family: ui-monospace,monospace; font-weight: 800; font-size: 132px; line-height: .82; letter-spacing: -.04em; flex: none; }
 .sharecard[data-tone="roast"] .sc-pct { color: #ff2e88; }
 .sharecard[data-tone="serious"] .sc-pct { color: #e9c96a; }
-.sc-pct i { font-size: 82px; font-style: normal; opacity: .85; }
-.sc-vmeta { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.sc-word { font-weight: 850; font-size: 46px; line-height: 1.08; letter-spacing: -.01em;
+.sharecard[data-tone="comfort"] .sc-pct { color: #e0439a; }
+.sc-pct i { font-size: 62px; font-style: normal; opacity: .85; }
+.sc-vmeta { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.sc-word { font-weight: 850; font-size: 42px; line-height: 1.08; letter-spacing: -.01em;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .sharecard[data-tone="roast"] .sc-word { color: #ffe600; }
 .sharecard[data-tone="serious"] .sc-word { color: #e9c96a; }
-.sc-glabel { font-family: ui-monospace,monospace; font-size: 26px; opacity: .55; letter-spacing: .08em; }
-/* 一句 zinger: 限 4 行, 永不溢出裁切 */
-.sc-line { font-size: 38px; line-height: 1.42; margin: 46px 0 0; opacity: .92; font-weight: 600;
-  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.sharecard[data-tone="comfort"] .sc-word { color: #e0439a; }
+.sc-glabel { font-family: ui-monospace,monospace; font-size: 24px; opacity: .55; letter-spacing: .08em; }
+/* 一句 zinger: 限 2 行, 永不溢出裁切 */
+.sc-line { font-size: 34px; line-height: 1.38; margin: 26px 0 0; opacity: .92; font-weight: 600;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .sharecard[data-tone="serious"] .sc-line { font-family: "Playfair",Georgia,"Songti SC",serif; }
-.sc-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 18px; font-family: ui-monospace,monospace; font-size: 26px; padding-top: 34px; border-top: 2px solid rgba(255,255,255,.16); }
+/* 关键结论: 问题(⚠)在前, 优点(✓)在后; 各取自统一事实层 */
+.sc-points { list-style: none; margin: 26px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.sc-points li { display: flex; align-items: flex-start; gap: 18px; font-size: 32px; line-height: 1.28; font-weight: 600;
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.sc-pt-ic { flex: none; width: 46px; height: 46px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 900; }
+.sc-points li.warn .sc-pt-ic { background: rgba(255,120,90,.18); color: #ff8a5c; }
+.sc-points li.up .sc-pt-ic { background: rgba(120,220,150,.18); color: #58d18b; }
+.sc-pt-tx { min-width: 0; }
+/* 最该改的一件事 */
+.sc-fix { font-size: 32px; line-height: 1.32; margin: 26px 0 0; font-weight: 700;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sc-fix i { font-style: normal; font-family: ui-monospace,monospace; font-size: 24px; letter-spacing: .06em; opacity: .7; margin-right: 14px;
+  padding: 3px 14px; border-radius: 999px; border: 2px solid currentColor; }
+.sharecard[data-tone="roast"] .sc-fix i { color: #ffe600; }
+.sharecard[data-tone="serious"] .sc-fix i { color: #e9c96a; }
+.sharecard[data-tone="comfort"] .sc-fix i { color: #e0439a; }
+.sc-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 18px; font-family: ui-monospace,monospace; font-size: 26px; padding-top: 30px; border-top: 2px solid rgba(255,255,255,.16); }
+.sharecard[data-tone="comfort"] .sc-foot { border-top-color: rgba(74,39,64,.18); }
 .sharecard[data-tone="roast"] .sc-tag { color: #ffe600; font-weight: 700; }
 .sharecard[data-tone="serious"] .sc-tag { color: #e9c96a; font-weight: 700; }
+.sharecard[data-tone="comfort"] .sc-tag { color: #e0439a; font-weight: 700; }
 /* 报告里的"生成战报" + "复制报告链接"按钮 */
 .hero-actions { margin-top: 14px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .share-btn {

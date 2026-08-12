@@ -48,6 +48,16 @@ export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Ton
   const zinger = report?.verdict_line || report?.headline || "";
   const tag = tone === "roast" ? t("share.tagRoast")
     : tone === "comfort" ? t("share.tagComfort") : t("share.tagSerious");
+  // 让海报"看得懂项目 + 看得到评审要点": 一句话定性 + 关键结论(问题在前/优点在后) + 最该改的一件事。
+  // 全部取自统一事实层 / 本语气报告, 不新增未经证实的说法(见 pipeline/report.py 不变量)。
+  const oneLiner = job.result?.fingerprint?.one_liner || "";
+  const points = [
+    ...(job.result?.issues ?? []).map((f) => ({ kind: "warn" as const, title: f.title })),
+    ...(job.result?.strengths ?? []).map((f) => ({ kind: "up" as const, title: f.title })),
+  ]
+    .filter((p) => p.title)
+    .slice(0, 3);
+  const topFix = report?.top_fix || "";
 
   async function download() {
     if (!cardRef.current) return;
@@ -88,6 +98,9 @@ export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Ton
             <div className="sc-body">
               <div className="sc-ontrial">{t("share.onTrial")} · {caseNo(job)}</div>
               <div className="sc-subject">{subject}</div>
+              {oneLiner ? (
+                <p className="sc-about"><i>{t("share.about")}</i>{oneLiner}</p>
+              ) : null}
               <div className="sc-verdict">
                 <div className="sc-pct">{p}<i>%</i></div>
                 <div className="sc-vmeta">
@@ -96,6 +109,19 @@ export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Ton
                 </div>
               </div>
               {zinger ? <p className="sc-line">{zinger}</p> : null}
+              {points.length ? (
+                <ul className="sc-points">
+                  {points.map((pt, i) => (
+                    <li key={i} className={pt.kind}>
+                      <span className="sc-pt-ic" aria-hidden="true">{pt.kind === "up" ? "✓" : "⚠"}</span>
+                      <span className="sc-pt-tx">{pt.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              {topFix ? (
+                <p className="sc-fix"><i>{t("share.fixLabel")}</i>{topFix}</p>
+              ) : null}
             </div>
             <div className="sc-foot">
               <span className="sc-persona">{persona.emoji} {persona.name} · {persona.venue}</span>
