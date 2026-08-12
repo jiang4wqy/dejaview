@@ -21,20 +21,35 @@ This is more than an LLM writing a harsher paragraph. DejaView builds one shared
 
 **DejaView = déjà vu + View.** *Déjà vu* is French for "already seen"—that eerie flash of *"wait, haven't I seen this before?"* It is exactly the moment every builder dreads: you ship after three sleepless nights, and the first reply is *"isn't this just XXX?"* DejaView holds your project up against the whole web and answers that question calmly: **has someone genuinely already built this?** The eye in the logo is that mirror.
 
-## See it first
+## One fact, three faces
+
+The same gitingest verdict, handed to three personas—wildly different wording, **yet not one new unverified claim**:
 
 | 💰 Gilt · Wall Street | 🤡 Roast · Circus | 🌈 Comfort · Cheer Squad |
-|:--:|:--:|:--:|
+|---|---|---|
 | Calm diligence and valuation | Sharp, but aimed only at the project | Pure emotional encouragement |
-| <img src="docs/assets/world-serious.png" alt="Gilt theme" width="270"> | <img src="docs/assets/world-roast.png" alt="Roast theme" width="270"> | <img src="docs/assets/world-comfort.png" alt="Comfort theme" width="270"> |
+| "Not ready for our investment committee. Pass." | "Stitched together the buzzwords, forgot to stitch on the core." | "Zero-config is genuinely lovely—already so thoughtful!" |
 
 The repository ships with pre-generated reports for Gitingest, Excalidraw, and Kutt. Start the frontend and open a demo from the homepage—no model call or API key required. A permanent hosted instance is not currently promised; see the [self-hosting guide](docs/DEPLOYMENT.md).
 
-## A real example
+## A real example: what a full verdict looks like
 
-Here is DejaView's actual verdict on a real open-source project, [gitingest](https://github.com/cyclotruc/gitingest)—from the duplication dial and one-line call all the way to the **full written critique** and **per-finding evidence** you can expand:
+Take real open-source project [gitingest](https://github.com/cyclotruc/gitingest). A "full verdict" is not a blurb—it is a **layered case file where every layer can be checked**:
 
-<div align="center"><img src="docs/assets/showcase-report.png" alt="DejaView's full verdict on gitingest: 65% likely duplicate, with the complete critique and per-finding evidence" width="88%"></div>
+| Layer | What you see | What it guarantees |
+|---|---|---|
+| 🎯 **Duplication dial** | `65% · Likely a duplicate · Medium confidence` | The call **and** how sure the system is, at a glance |
+| 💬 **One-line call** | "One-off URL trick, already widely covered, thin moat" | The persona changes; the fact under this line does not |
+| 📝 **Full written critique** | Overview → overlap with peers → the "moat" → conclusion | A complete roast you can expand, not a one-liner |
+| 🔍 **Per-finding evidence** | Expand any finding: source / locator / quote / confidence | Traceable conclusions, not text you cannot verify |
+| 📡 **Track signal** | Direct competitors, top stars, whether it's stale | A deterministic (no-LLM) signal on whether to keep going |
+
+<details>
+<summary>📸 Expand the full-page verdict screenshot for gitingest</summary>
+
+<div align="center"><img src="docs/assets/showcase-report.png" alt="DejaView's full verdict on gitingest: 65% likely duplicate, with the complete critique and per-finding evidence" width="80%"></div>
+
+</details>
 
 Three **instant demos** ship in the repo (they read pre-generated results—no model call, no cost; the English UI loads the English versions automatically):
 
