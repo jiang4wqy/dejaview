@@ -4,7 +4,7 @@ import DemoPicker from "@/components/DemoPicker";
 import Intro from "@/components/Intro";
 import ProjectForm from "@/components/ProjectForm";
 import WorldGate from "@/components/WorldGate";
-import { HERO } from "@/lib/showcase-data";
+import { getHero } from "@/lib/showcase-data";
 import { useTone } from "@/lib/tone";
 import { useLang } from "@/lib/i18n";
 
@@ -18,7 +18,7 @@ export default function HomePage() {
   if (!seenIntro) return <Intro />;
   if (!tone) return <WorldGate />;
 
-  const hero = HERO[tone];
+  const hero = getHero(t)[tone];
   return (
     <div className="home">
       <button type="button" className="home-back" onClick={reset}>

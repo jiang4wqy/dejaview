@@ -301,6 +301,98 @@ const zh = {
   "share.linkCopied": "✓ 链接已复制",
   "share.copyLink": "🔗 复制公开链接",
   "share.close": "关闭",
+
+  // ===== 人格 PERSONA（lib/tone.tsx 的 personaOf()：审判官名字/场所，随语言）=====
+  "persona.seriousName": "镀金",
+  "persona.seriousVenue": "华尔街 · 评级委员会",
+  "persona.roastName": "毒舌",
+  "persona.roastVenue": "马戏团 · 嘲讽现场",
+  "persona.comfortName": "彩虹",
+  "persona.comfortVenue": "夸夸群 · 无条件捧场",
+
+  // ===== 首页 Hero（lib/showcase-data.ts 的 getHero()）=====
+  "hero.currentJudge": "当前审判官",
+  "hero.roastLead": "把项目交出来，",
+  "hero.roastHighlight": "当众处刑",
+  "hero.roastDescription": "马戏团今晚开庭：扒项目指纹、翻竞品、拆穿那点「创新」——每句嘲讽都钉着证据。",
+  "hero.roastSubmit": "拉开帷幕，开嘲 →",
+  "hero.seriousLead": "递上你的项目，",
+  "hero.seriousHighlight": "接受估值",
+  "hero.seriousDescription": "评级委员会开始尽调：提炼指纹、对标竞品、给出重复度评级与改进优先级——每条结论皆可追溯。",
+  "hero.seriousSubmit": "呈上评审，开鉴 →",
+  "hero.comfortLead": "把项目交出来，",
+  "hero.comfortHighlight": "被夸到起飞",
+  "hero.comfortDescription": "夸夸群全员为你拍彩虹屁：只夸不评、无条件捧场、专治 emo——纯情绪价值，不替代事实判断。",
+  "hero.comfortSubmit": "求夸，走一个 →",
+
+  // ===== 世界之门 WorldGate（lib/showcase-data.ts 的 getWorldOptions()）=====
+  "gate.title": "选择你的审判官",
+  "gate.sub": "同一份事实，三副面孔。今天，想让谁来锐评你的项目？",
+  "gate.back": "← 返回介绍",
+  "gate.footPrefix": "进去之后随时能在报告里一键切换 ·",
+  "gate.footBold": "事实不变，只换脸",
+  "gate.seriousDesc": "西装、黄金与股票机。体面地告诉你，这轮子值几个钱。",
+  "gate.seriousAction": "推门而入 →",
+  "gate.roastDesc": "彩带、汽笛与暴击。当着全场，把你的轮子拆穿。",
+  "gate.roastAction": "掀开帐篷 →",
+  "gate.comfortDesc": "只夸不评、彩虹屁拉满。专治 emo，给你无条件的爱。",
+  "gate.comfortAction": "抱抱我 →",
+
+  // ===== 公开示例项目（lib/showcase-data.ts 的 getExampleProjects()，供表单一键填充）=====
+  "example.gitingestUsers": "用 LLM 处理代码库的开发者",
+  "example.gitingestProblem": "把 GitHub 仓库转成适合喂给 LLM 的文本",
+  "example.gitingestNovelty": "改 URL 的 hub→ingest 一键转换",
+  "example.excalidrawUsers": "需要快速画图的团队",
+  "example.excalidrawProblem": "手绘风白板 / 图表",
+  "example.excalidrawNovelty": "手绘质感 + 端到端加密协作",
+  "example.umamiUsers": "在意隐私的网站主",
+  "example.umamiProblem": "隐私友好的网站分析",
+  "example.umamiNovelty": "无 cookie / 可自托管",
+
+  // ===== 介绍页 Intro =====
+  "intro.step1Title": "提取指纹",
+  "intro.step1Desc": "扒出项目的真正内核，不看营销话术",
+  "intro.step2Title": "检索同类",
+  "intro.step2Desc": "全网找出在做同一件事的项目",
+  "intro.step3Title": "判重复度",
+  "intro.step3Desc": "六个维度打分，算清重合与新意",
+  "intro.step4Title": "出锐评",
+  "intro.step4Desc": "给出有出处的问题与改进建议",
+  "intro.titleLine1": "你的项目，是不是",
+  "intro.titleLead": "又一个",
+  "intro.titleHighlight": "「轮子」",
+  "intro.titleSuffix": "？",
+  "intro.ledePrefix": "把公开网址或 GitHub 丢进来，DejaView 会提取项目指纹、搜索并核验同类，再用六个维度判断",
+  "intro.ledeBold": "重复造轮子",
+  "intro.ledeSuffix": "的程度——结论带证据，语气会变，事实不会变。",
+  "intro.vsLabel": "同一份事实，三副面孔 →",
+  "intro.teaserSeriousLabel": "镀金 · 华尔街",
+  "intro.teaserSeriousDesc": "体面地告诉你值几个钱",
+  "intro.teaserRoastLabel": "毒舌 · 马戏团",
+  "intro.teaserRoastDesc": "当着全场拆穿你的轮子",
+  "intro.teaserComfortLabel": "彩虹 · 夸夸群",
+  "intro.teaserComfortDesc": "无条件捧你、专治 emo",
+  "intro.cta": "开始审判 · 选择人格 →",
+  "intro.note": "MIT 开源 · 默认 mock 零成本运行 · 锐评项目，不攻击开发者",
+
+  // ===== 过堂问答 Quiz（StageProgress 彩蛋的微文案；44 条题库正文体量大，
+  // 按语言整份存在 components/StageProgress.tsx 的 QUIZ_ZH/QUIZ_EN 里，
+  // 同样是 Lang 机制，只是不适合拆成上百个零散 DictKey）=====
+  "stage.quizNarrRoast": "🤡 后台正在扒你的皮，先来道题醒醒神（答对有惊喜）：",
+  "stage.quizNarrSerious": "💰 分析师正在给你估值，顺便做份问卷（答对有彩头）：",
+  "stage.quizNarrComfort": "🌈 夸夸群正在集合，先来道暖心小题（答对有抱抱）：",
+  "quiz.hitRoast": "🎉 答对！",
+  "quiz.hitSerious": "🥂 高见。",
+  "quiz.hitComfort": "💖 抱抱！",
+  "quiz.missRoast": "🃏 ",
+  "quiz.missSerious": "— ",
+  "quiz.missComfort": "🌈 ",
+  "quiz.next": "换一题 →",
+  "quiz.count": "已过堂 {count} 题 · 答对 {right} · 纯属娱乐，不影响分析结论",
+
+  // ===== 明暗切换 ThemeToggle（当前未接入页面，预留组件，文案仍需随语言走）=====
+  "theme.toggleAria": "切换明暗主题",
+  "theme.toggleLabel": "◐ 明 / 暗",
 } as const;
 
 export type DictKey = keyof typeof zh;
@@ -578,6 +670,100 @@ const en: Record<DictKey, string> = {
   "share.linkCopied": "✓ Link copied",
   "share.copyLink": "🔗 Copy public link",
   "share.close": "Close",
+
+  "persona.seriousName": "Gilt",
+  "persona.seriousVenue": "Wall Street · Ratings Committee",
+  "persona.roastName": "Roast",
+  "persona.roastVenue": "The Big Top · Public Execution",
+  "persona.comfortName": "Rainbow",
+  "persona.comfortVenue": "Cheer Squad · Unconditional Hype",
+
+  "hero.currentJudge": "Current judge",
+  "hero.roastLead": "Hand over your project, ",
+  "hero.roastHighlight": "face public execution.",
+  "hero.roastDescription":
+    "The circus opens tonight: we strip your project down to its fingerprint, dig up the competition, and call that “innovation” out for what it is — every jab backed by receipts.",
+  "hero.roastSubmit": "Raise the curtain, let's roast →",
+  "hero.seriousLead": "Submit your project, ",
+  "hero.seriousHighlight": "get valued.",
+  "hero.seriousDescription":
+    "The ratings committee opens due diligence: distilling your fingerprint, benchmarking the competition, and issuing a duplication rating with prioritized fixes — every conclusion fully traceable.",
+  "hero.seriousSubmit": "Present the case, begin appraisal →",
+  "hero.comfortLead": "Hand over your project, ",
+  "hero.comfortHighlight": "get praised into orbit.",
+  "hero.comfortDescription":
+    "The whole cheer squad shows up to shower you in rainbow-colored compliments — all praise, zero critique, unconditional hype, guaranteed emo relief. Pure emotional support, not a substitute for actual judgment.",
+  "hero.comfortSubmit": "Come get complimented →",
+
+  "gate.title": "Choose your judge",
+  "gate.sub": "Same facts, three different faces. Who's judging your project today?",
+  "gate.back": "← Back to intro",
+  "gate.footPrefix": "Switch anytime from the report page ·",
+  "gate.footBold": "facts stay put, only the face changes",
+  "gate.seriousDesc":
+    "Suits, gold, and a ticker tape machine. We'll tell you — very politely — exactly what your wheel is worth.",
+  "gate.seriousAction": "Step through the door →",
+  "gate.roastDesc":
+    "Confetti, air horns, and a gut-punch or two. We'll dismantle your wheel — in front of everyone.",
+  "gate.roastAction": "Pull back the tent flap →",
+  "gate.comfortDesc":
+    "All praise, zero critique, rainbow compliments maxed out. A cure for your emo spiral and unconditional love, on the house.",
+  "gate.comfortAction": "Bring it in for a hug →",
+
+  "example.gitingestUsers": "Developers feeding codebases to an LLM",
+  "example.gitingestProblem": "Turns a GitHub repo into LLM-ready text",
+  "example.gitingestNovelty": "One click: swap “hub” for “ingest” in the URL",
+  "example.excalidrawUsers": "Teams that need to sketch fast",
+  "example.excalidrawProblem": "Hand-drawn-style whiteboarding and diagrams",
+  "example.excalidrawNovelty": "Hand-drawn feel plus end-to-end encrypted collaboration",
+  "example.umamiUsers": "Site owners who care about privacy",
+  "example.umamiProblem": "Privacy-friendly website analytics",
+  "example.umamiNovelty": "Cookie-free and self-hostable",
+
+  "intro.step1Title": "Extract fingerprint",
+  "intro.step1Desc": "Dig out the project's real core — no marketing spin allowed.",
+  "intro.step2Title": "Search look-alikes",
+  "intro.step2Desc": "Scour the entire web for projects already doing the same thing.",
+  "intro.step3Title": "Score the overlap",
+  "intro.step3Desc": "Six dimensions, scored — separating real overlap from genuine novelty.",
+  "intro.step4Title": "Deliver the verdict",
+  "intro.step4Desc": "Sourced findings, concrete fixes — nothing hand-waved.",
+  "intro.titleLine1": "Is your project",
+  "intro.titleLead": "just another ",
+  "intro.titleHighlight": "wheel",
+  "intro.titleSuffix": "?",
+  "intro.ledePrefix":
+    "Drop in a public URL or a GitHub repo, and DejaView extracts its fingerprint, hunts down and verifies the look-alikes, then scores across six dimensions just how much of ",
+  "intro.ledeBold": "a reinvented wheel",
+  "intro.ledeSuffix":
+    " it really is — every conclusion comes with receipts. The tone changes; the facts never do.",
+  "intro.vsLabel": "Same facts, three faces →",
+  "intro.teaserSeriousLabel": "Gilt · Wall Street",
+  "intro.teaserSeriousDesc": "politely prices your wheel",
+  "intro.teaserRoastLabel": "Roast · The Big Top",
+  "intro.teaserRoastDesc": "exposes your wheel, live",
+  "intro.teaserComfortLabel": "Rainbow · Cheer Squad",
+  "intro.teaserComfortDesc": "unconditional hype, zero judgment",
+  "intro.cta": "Start the trial · pick your judge →",
+  "intro.note": "MIT licensed · runs free in mock mode by default · we roast projects, never developers",
+
+  "stage.quizNarrRoast":
+    "🤡 Backstage they're already skinning you alive — here's a quick question to wake you up (answer right, get a surprise):",
+  "stage.quizNarrSerious":
+    "💰 The analyst is valuing you as we speak — here's a quick questionnaire on the side (answer right, get a bonus):",
+  "stage.quizNarrComfort":
+    "🌈 The cheer squad is assembling — here's a warm little question first (answer right, get a hug):",
+  "quiz.hitRoast": "🎉 Nailed it!",
+  "quiz.hitSerious": "🥂 Well played.",
+  "quiz.hitComfort": "💖 Hugs!",
+  "quiz.missRoast": "🃏 ",
+  "quiz.missSerious": "— ",
+  "quiz.missComfort": "🌈 ",
+  "quiz.next": "Next question →",
+  "quiz.count": "{count} question(s) faced · {right} correct · purely for fun, doesn't affect the verdict",
+
+  "theme.toggleAria": "Toggle light / dark theme",
+  "theme.toggleLabel": "◐ Light / Dark",
 };
 
 const DICTS: Record<Lang, Record<DictKey, string>> = { zh, en };

@@ -3,8 +3,8 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { analyze } from "@/lib/api";
-import { EXAMPLE_PROJECTS } from "@/lib/showcase-data";
-import { PERSONA } from "@/lib/tone";
+import { getExampleProjects, type ExampleProject } from "@/lib/showcase-data";
+import { personaOf } from "@/lib/tone";
 import { useLang } from "@/lib/i18n";
 import type { Tone } from "@/lib/types";
 
@@ -24,6 +24,8 @@ function parseClue(raw: string): {
 export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitLabel: string }) {
   const router = useRouter();
   const { t } = useLang();
+  const exampleProjects = getExampleProjects(t);
+  const persona = personaOf(t, tone);
   const [clue, setClue] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
   const [targetUsers, setTargetUsers] = useState("");
@@ -34,7 +36,7 @@ export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitL
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function fillExample(example: (typeof EXAMPLE_PROJECTS)[number]) {
+  function fillExample(example: ExampleProject) {
     setClue(example.website);
     setGithubUrl(example.github);
     setTargetUsers(example.users);
@@ -85,7 +87,7 @@ export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitL
     <form className="panel form" onSubmit={onSubmit} aria-busy={submitting}>
       <div className="home-examples">
         <span className="mono faint">{t("form.examplesLabel")}</span>
-        {EXAMPLE_PROJECTS.map((example) => (
+        {exampleProjects.map((example) => (
           <button
             key={example.label}
             type="button"
@@ -190,7 +192,7 @@ export default function ProjectForm({ tone, submitLabel }: { tone: Tone; submitL
           {submitting ? t("form.submitting") : submitLabel}
         </button>
         <span className="mono faint small">
-          {t("form.judgeLabel")}{PERSONA[tone].emoji} {PERSONA[tone].name} {t("form.judgeSwitchHint")}
+          {t("form.judgeLabel")}{persona.emoji} {persona.name} {t("form.judgeSwitchHint")}
         </span>
       </div>
     </form>

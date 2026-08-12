@@ -3,7 +3,7 @@
 // 客户端外壳：注入世界主题上下文、语言上下文、世界感知的顶栏、全局特效层。
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { PERSONA, TONE_CYCLE, ToneProvider, useTone } from "@/lib/tone";
+import { personaOf, TONE_CYCLE, ToneProvider, useTone } from "@/lib/tone";
 import { LangProvider, useLang } from "@/lib/i18n";
 import AccessGate from "./AccessGate";
 import WorldFx from "./WorldFx";
@@ -64,12 +64,12 @@ function TopBar() {
                 <button
                   className="persona-pill"
                   onClick={() => setTone(next)}
-                  title={t("topbar.personaSwitchTitle", { name: PERSONA[next].name })}
+                  title={t("topbar.personaSwitchTitle", { name: personaOf(t, next).name })}
                 >
-                  <span className="persona-emoji">{PERSONA[tone].emoji}</span>
-                  <span className="persona-name">{PERSONA[tone].name}</span>
+                  <span className="persona-emoji">{personaOf(t, tone).emoji}</span>
+                  <span className="persona-name">{personaOf(t, tone).name}</span>
                   <span className="persona-swap">
-                    {t("topbar.personaSwap", { emoji: PERSONA[next].emoji })}
+                    {t("topbar.personaSwap", { emoji: personaOf(t, next).emoji })}
                   </span>
                 </button>
               </>

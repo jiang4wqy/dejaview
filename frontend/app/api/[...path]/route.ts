@@ -38,7 +38,7 @@ async function proxy(req: NextRequest, path: string[]): Promise<Response> {
     });
   } catch {
     return new Response(
-      JSON.stringify({ detail: "分析服务暂时不可用，请稍后重试。" }),
+      JSON.stringify({ detail: "Analysis service is temporarily unavailable, please try again later." }),
       { status: 502, headers: { "content-type": "application/json" } },
     );
   }

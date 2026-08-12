@@ -5,25 +5,26 @@ import AppChrome from "@/components/AppChrome";
 
 export const metadata: Metadata = {
   title: {
-    default: "DejaView · 证据化项目锐评",
+    default: "DejaView · Evidence-Based Project Roast",
     template: "%s · DejaView",
   },
-  description: "输入公开网站或 GitHub 仓库，用可追溯证据分析项目指纹、同类竞品与重复度；事实不变，镀金、毒舌和彩虹三种语气任选。",
+  description:
+    "Drop in a public website or GitHub repo and get a fully sourced verdict on its fingerprint, look-alikes, and duplication score — the facts stay put, only the tone changes, across Gilt, Roast, and Rainbow.",
   applicationName: "DejaView",
-  keywords: ["项目分析", "竞品分析", "GitHub", "AI", "开源"],
+  keywords: ["project analysis", "competitive analysis", "GitHub", "AI", "open source"],
   authors: [{ name: "jiang4wqy" }],
   icons: { icon: "/icon.svg" },
   openGraph: {
-    title: "DejaView · 证据化项目锐评",
-    description: "搜索、核验并裁判项目重复度。语气会变，事实不会变。",
+    title: "DejaView · Evidence-Based Project Roast",
+    description: "Search, verify, and judge duplication. The tone changes. The facts don't.",
     type: "website",
-    locale: "zh_CN",
+    locale: "en_US",
     siteName: "DejaView",
   },
   twitter: {
     card: "summary",
-    title: "DejaView · 证据化项目锐评",
-    description: "搜索、核验并裁判项目重复度。语气会变，事实不会变。",
+    title: "DejaView · Evidence-Based Project Roast",
+    description: "Search, verify, and judge duplication. The tone changes. The facts don't.",
   },
 };
 

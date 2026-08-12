@@ -5,7 +5,7 @@
 import { useRef, useState } from "react";
 import { toPng } from "html-to-image";
 import type { Job, Tone } from "@/lib/types";
-import { PERSONA } from "@/lib/tone";
+import { personaOf } from "@/lib/tone";
 import { useLang } from "@/lib/i18n";
 
 function pct(v?: number): number {
@@ -37,7 +37,7 @@ export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Ton
   const [copied, setCopied] = useState(false);
   const report = job.reports?.[tone];
   const p = pct(job.result?.duplication?.duplication_score);
-  const persona = PERSONA[tone];
+  const persona = personaOf(t, tone);
   const subject = subjectName(job, t("report.subjectFallback"));
 
   async function download() {
@@ -53,7 +53,7 @@ export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Ton
       a.download = `DejaView-${subject.replace(/[^\w-]/g, "_")}-${tone}.png`;
       a.click();
     } catch (e) {
-      console.error("生成战报失败", e);
+      console.error("Failed to generate share card", e);
     } finally {
       setBusy(false);
     }

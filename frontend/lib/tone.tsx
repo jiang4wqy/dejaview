@@ -12,6 +12,7 @@ import {
   type ReactNode,
 } from "react";
 import type { Tone } from "./types";
+import type { TFunc } from "./i18n";
 
 const KEY = "dejaview_tone";
 
@@ -37,11 +38,21 @@ const Ctx = createContext<ToneCtx>({
   restart: () => {},
 });
 
-export const PERSONA: Record<Tone, { name: string; venue: string; emoji: string }> = {
-  serious: { name: "镀金", venue: "华尔街 · 评级委员会", emoji: "💰" },
-  roast: { name: "毒舌", venue: "马戏团 · 嘲讽现场", emoji: "🤡" },
-  comfort: { name: "彩虹", venue: "夸夸群 · 无条件捧场", emoji: "🌈" },
-};
+// 三个人格的 emoji 与语言无关，名字/场所随界面语言变(见 lib/i18n.ts 的 persona.* 键)。
+const PERSONA_EMOJI: Record<Tone, string> = { serious: "💰", roast: "🤡", comfort: "🌈" };
+
+/** 取某语气在当前语言下的人格展示(名字/场所/emoji)。t 来自调用方的 useLang()。 */
+export function personaOf(t: TFunc, tone: Tone): { name: string; venue: string; emoji: string } {
+  const emoji = PERSONA_EMOJI[tone];
+  switch (tone) {
+    case "serious":
+      return { name: t("persona.seriousName"), venue: t("persona.seriousVenue"), emoji };
+    case "roast":
+      return { name: t("persona.roastName"), venue: t("persona.roastVenue"), emoji };
+    case "comfort":
+      return { name: t("persona.comfortName"), venue: t("persona.comfortVenue"), emoji };
+  }
+}
 
 // 三世界循环顺序(顶栏"换脸"按钮用)
 export const TONE_CYCLE: Tone[] = ["serious", "roast", "comfort"];

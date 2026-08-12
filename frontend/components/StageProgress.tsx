@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { Job, Tone } from "@/lib/types";
 import { useTone } from "@/lib/tone";
-import { useLang, type TFunc } from "@/lib/i18n";
+import { useLang, type TFunc, type Lang } from "@/lib/i18n";
 
 // stage id → 展示文案：语言相关，交由组件内用 t() 现取，见 stageLabel()。
 function stageLabel(stage: string, t: TFunc): string {
@@ -27,9 +27,15 @@ const STAGE_ORDER = [
 
 // 过堂问答：correct = 最诚实/自省的那个选项，选中即"答对"→ 触发本世界特效 + 表扬；
 // 其余选项被毒舌。只嘲项目/创业话术，不涉及个人。
+//
+// 题库正文体量很大（三种语气 × 逐题逐选项，上百条短句），塞进扁平的 i18n 词典会让
+// DictKey 联合类型爆炸且难以维护，所以延续 lib/showcase-data.ts 的做法——内容按语言
+// 整份分叉存放在这里，用同一个 Lang 类型选择，而不是每条短句都开一个 key。
+// 短小、可复用的微文案（旁白开场白、命中/未命中前缀、"换一题"按钮等）仍然走 lib/i18n.ts
+// 的 stage.quizNarr*/quiz.* 键，和其余界面外壳保持一致。
 type QA = { q: string; correct: number; opts: { t: string; r: string }[] };
 
-const QUIZ: Record<Tone, QA[]> = {
+const QUIZ_ZH: Record<Tone, QA[]> = {
   roast: [
     { q: "讲真，你这项目的灵感哪来的？", correct: 0, opts: [
       { t: "深夜 emo 拍脑门想的", r: "🎯 承认冲动，至少真诚——加分。" },
@@ -163,14 +169,151 @@ const QUIZ: Record<Tone, QA[]> = {
   ],
 };
 
-const NARR: Record<Tone, string> = {
-  roast: "🤡 后台正在扒你的皮，先来道题醒醒神（答对有惊喜）：",
-  serious: "💰 分析师正在给你估值，顺便做份问卷（答对有彩头）：",
-  comfort: "🌈 夸夸群正在集合，先来道暖心小题（答对有抱抱）：",
+const QUIZ_EN: Record<Tone, QA[]> = {
+  roast: [
+    { q: "Real talk — where'd the idea for this actually come from?", correct: 0, opts: [
+      { t: "Late-night emo brainstorm", r: "🎯 Owning the impulse — at least it's honest. Points for that." },
+      { t: "Jealous of someone else's funding round", r: "Green with envy, and the copy's worse than the original." },
+      { t: "Rode a trending repo", r: "Opportunistic borrowing — and you grabbed a sickly one." },
+      { t: "It's a homage, not a copy", r: "A homage so faithful it kept the original's bugs." }]},
+    { q: "How many times does \"disruptive\" or \"revolutionary\" show up in your README?", correct: 0, opts: [
+      { t: "Zero — I'd feel too guilty", r: "🎯 Guilt is clarity. Beats bragging any day." },
+      { t: "1–3, kept it restrained", r: "Restrained, sure, but the product doesn't earn even those three." },
+      { t: "4–9, straight-up marketing copy", r: "You'd have a brighter future writing clickbait headlines." },
+      { t: "It's in every sentence", r: "King of the pitch deck. Where's the actual product?" }]},
+    { q: "What's the biggest difference between you and the competition?", correct: 2, opts: [
+      { t: "Recolored the UI", r: "Confirmed: reskin goblin." },
+      { t: "Bolted on an AI button", r: "It's 2026 and \"bolt on an AI button\" is still the whole strategy?" },
+      { t: "Honestly? Not much", r: "🎯 Takes guts to admit there's no difference. Respect." },
+      { t: "We just care more", r: "Passion isn't a moat." }]},
+    { q: "How long has your project actually been live?", correct: 1, opts: [
+      { t: "Not yet — still polishing", r: "Polishing so long the trend already died." },
+      { t: "It's live, basically nobody uses it", r: "🎯 Staring down grim numbers head-on — that deserves a toast." },
+      { t: "A few friends use it", r: "Mercy users. Pull the favor and it's zero overnight." },
+      { t: "Great numbers (that I inflated myself)", r: "Fabricated growth is the least durable kind." }]},
+    { q: "Slap a label on your codebase:", correct: 0, opts: [
+      { t: "Frankenstein's monster / a hill of tech debt", r: "🎯 Self-aware — even a hill of tech debt can be saved." },
+      { t: "It runs, that's enough", r: "It runs, until the first load test knocks it flat." },
+      { t: "I actually think it's elegant", r: "You're the only person on Earth who thinks so." },
+      { t: "Trade secret", r: "Secret my foot — you just don't want anyone to see the mess." }]},
+    { q: "An investor asks about your moat. You say?", correct: 3, opts: [
+      { t: "Change the subject", r: "They're already deleting your contact." },
+      { t: "\"We just understand users better\"", r: "You don't even understand yourself." },
+      { t: "Whip out an architecture diagram to dazzle them", r: "Slick on paper, falls apart the moment it runs." },
+      { t: "Honestly? Don't have one yet", r: "🎯 Heartbreakingly honest. Respect." }]},
+    { q: "Someone says \"didn't [X] already do this?\" You respond:", correct: 3, opts: [
+      { t: "They did it badly", r: "You did it worse. Call it even." },
+      { t: "We're targeting a niche", r: "Niche enough that you're the only user left in it." },
+      { t: "The timing's different", r: "They're eating steak, you're sipping the broth." },
+      { t: "Fair point, let me think about that", r: "🎯 Willing to reflect — still salvageable." }]},
+    { q: "Which question from users terrifies you most?", correct: 0, opts: [
+      { t: "\"How's this different from [X]?\"", r: "🎯 Correctly terrified — that's exactly your weak spot." },
+      { t: "\"How much does it cost?\"", r: "Charge money? You wouldn't dare." },
+      { t: "\"Is this safe?\"", r: "...let's not dig into that one." },
+      { t: "\"How long will you guys even last?\"", r: "Ouch. Straight for the heart." }]},
+    { q: "What's driving your growth?", correct: 2, opts: [
+      { t: "Chart manipulation / mutual clicking", r: "Fake prosperity — pops the second you poke it." },
+      { t: "Friends sharing it around", r: "Friends use it once and leave." },
+      { t: "Honestly, there is no growth yet", r: "🎯 Admitting the stall is step one of a comeback." },
+      { t: "Word-of-mouth exploded (in my imagination)", r: "Exploded in your imagination, dead silent in reality." }]},
+    { q: "What's your project's real core competitive edge?", correct: 3, opts: [
+      { t: "First-mover advantage", r: "The grass on that first-mover's grave is two meters tall." },
+      { t: "Technical superiority", r: "Open source it and the competition catches up in two weeks." },
+      { t: "An all-star team", r: "An all-star team building this is even more embarrassing." },
+      { t: "...still looking for it", r: "🎯 At least you're looking. Beats faking it." }]},
+    { q: "What if the funding doesn't come through tomorrow?", correct: 1, opts: [
+      { t: "Hang in there, it'll happen", r: "Belief doesn't pay the cash-flow bill." },
+      { t: "Honestly? It might just die", r: "🎯 Facing reality is the first move in any comeback." },
+      { t: "Pivot to a whole new space", r: "Serial-founder-in-training." },
+      { t: "That won't happen (ostrich mode)", r: "Head in the sand, rear end still exposed." }]},
+    { q: "What do you think this roast is about to give you?", correct: 0, opts: [
+      { t: "A gut punch, but a useful one", r: "🎯 Tough and clear-eyed — teachable material." },
+      { t: "Nothing but bias", r: "The evidence is right there. Some bias." },
+      { t: "Whatever, I don't believe any of it", r: "Not believing it won't save you from the duplication score." },
+      { t: "Compliments (dream on)", r: "This is the Big Top, not the Cheer Squad." }]},
+  ],
+  serious: [
+    { q: "If your project were a stock, what rating would the analysts give it?", correct: 0, opts: [
+      { t: "Strong sell", r: "📈 Rare honesty — the committee is noting this in your favor." },
+      { t: "Underweight, watch and wait", r: "Watch and wait, all the way to delisting." },
+      { t: "Hold (for pride's sake)", r: "What you're holding is stubbornness, not value." },
+      { t: "Time to IPO", r: "Prove you survive the next round first." }]},
+    { q: "During due diligence, which question do you dread most?", correct: 0, opts: [
+      { t: "\"Are you actually profitable?\"", r: "📈 Facing the profitability question head-on. Professional." },
+      { t: "\"What's your retention?\"", r: "Below industry average — don't even bring up growth." },
+      { t: "\"Where's the barrier to entry?\"", r: "Something that can be cloned in two weeks?" },
+      { t: "\"Why should it be you?\"", r: "Can't answer that, and the valuation gets cut in half on the spot." }]},
+    { q: "What's the logic behind your valuation?", correct: 3, opts: [
+      { t: "Benchmark against a unicorn, times 0.1", r: "Even times 0.1 is generous." },
+      { t: "Whatever number's in the deck", r: "A pitch deck is art, not a balance sheet." },
+      { t: "Gut feeling", r: "Your valuation is worth exactly what your gut is worth." },
+      { t: "Honestly? Can't quite work it out", r: "📈 Admitting the uncertainty actually makes you more credible." }]},
+    { q: "How much runway do you have left?", correct: 1, opts: [
+      { t: "18 months (padded)", r: "Padded months get a 70% haircut." },
+      { t: "Honestly? 6 months, and it's tight", r: "📈 A clear-eyed number. Now we can actually talk." },
+      { t: "Next month's payroll depends on this raise", r: "That's not a startup, that's a bet at the table." },
+      { t: "We don't track that — we track the vision", r: "Vision doesn't clear payroll." }]},
+    { q: "List the ingredients in your moat:", correct: 3, opts: [
+      { t: "First-mover advantage", r: "The grass on that grave is two meters tall." },
+      { t: "Network effects (hand-drawn, on a whiteboard)", r: "A drawn effect scatters the moment the wind blows." },
+      { t: "Technical barriers", r: "Open source it, matched in two weeks." },
+      { t: "Honestly? Still pretty thin", r: "📈 Only by admitting it's thin can you actually build it up." }]},
+    { q: "After the pitch, the investor says \"let's stay in touch.\" That means:", correct: 1, opts: [
+      { t: "There's still a chance", r: "Naive. That's the politest form of rejection there is." },
+      { t: "A polite no — I get it", r: "📈 Reading the subtext correctly. Mature." },
+      { t: "Let me think it over", r: "Think it over until you're out of runway." },
+      { t: "Go home and wait to hear back", r: "The word \"back\" is doing a lot of waiting." }]},
+    { q: "What's the one lesson you most need to learn?", correct: 0, opts: [
+      { t: "Figure out who's actually paying", r: "📈 Grasping the fundamentals. Points earned." },
+      { t: "Raise more money", r: "Money doesn't fix the root problem." },
+      { t: "Hire more people", r: "Headcount isn't the same as getting things done." },
+      { t: "Shoot another promo video", r: "A promo video won't save your retention." }]},
+    { q: "Your competitor has more money and more people. You:", correct: 2, opts: [
+      { t: "Go head-to-head", r: "An egg against a rock." },
+      { t: "Latch onto a bigger player", r: "Latch on hard enough and you get absorbed." },
+      { t: "Find the niche they can't be bothered with", r: "📈 Horse-racing strategy — clever." },
+      { t: "Raise more to match their burn", r: "A cash-burning war has no winners." }]},
+  ],
+  comfort: [
+    { q: "Looking at everything so far, how do you feel about yourself?", correct: 0, opts: [
+      { t: "I've worked really hard, I deserve a hug", r: "💖 Yes! Hug yourself first — you truly are amazing." },
+      { t: "Still so far to go, I'm anxious", r: "🌈 No rush — you're already stronger than yesterday's you." },
+      { t: "I want to give up again", r: "🌈 It's okay to rest — I'll be here when you come back." },
+      { t: "I don't even know if it matters", r: "💖 The fact that you were willing to start already means everything." }]},
+    { q: "Nobody's using your project yet. Do you:", correct: 1, opts: [
+      { t: "Doubt yourself", r: "🌈 Don't doubt — you just haven't been seen yet." },
+      { t: "Keep going, because I love it", r: "💖 That's the spirit! Love alone is unstoppable." },
+      { t: "Have a quiet little emo moment", r: "🌈 Once you're done, come back — the treasure's waiting." },
+      { t: "Delete the repo and vanish", r: "💖 Don't delete it! It's proof of how hard you tried." }]},
+    { q: "Someone says \"you're just reinventing the wheel.\" You:", correct: 2, opts: [
+      { t: "Feel really hurt", r: "🌈 They just don't get it — your wheel has your warmth in it." },
+      { t: "Start doubting yourself", r: "💖 Every great thing has been told \"someone already did this.\"" },
+      { t: "So what if it's a wheel, I'm having fun building it", r: "💖 That's exactly right! Joy plus growth beats everything else." },
+      { t: "Want to argue back but don't feel sure enough", r: "🌈 You don't have to prove anything to anyone — you're already on the road." }]},
+    { q: "Right now, which words do you most want to hear?", correct: 0, opts: [
+      { t: "You're already doing great", r: "💖 You. Are. Already. Doing. Great. Really." },
+      { t: "Just hang on a little longer", r: "🌈 Hang on a little longer, and remember to be gentle with yourself too." },
+      { t: "It's okay, take your time", r: "💖 It's okay. Take your time. There's still time for everything." },
+      { t: "I believe in you", r: "🌈 I. Believe. In you. No conditions attached." }]},
+    { q: "What score would you give yourself right now?", correct: 3, opts: [
+      { t: "A 60, just passing", r: "💖 At least a 90! You're way too hard on yourself." },
+      { t: "I'm scared to score it, might make me sad", r: "🌈 Then let me score it for you — full marks, because you're still here, still trying." },
+      { t: "Zero, I've given up", r: "💖 Even giving up scores 100 — you're just tired, not incapable." },
+      { t: "Full marks! I'm proud of myself", r: "🌈 Now that's the spirit! So proud of you!!" }]},
+  ],
 };
 
+const QUIZ: Record<Lang, Record<Tone, QA[]>> = { zh: QUIZ_ZH, en: QUIZ_EN };
+
+function narrFor(tone: Tone, t: TFunc): string {
+  if (tone === "roast") return t("stage.quizNarrRoast");
+  if (tone === "comfort") return t("stage.quizNarrComfort");
+  return t("stage.quizNarrSerious");
+}
+
 function Quiz({ tone }: { tone: Tone }) {
-  const bank = QUIZ[tone];
+  const { t, lang } = useLang();
+  const bank = QUIZ[lang][tone];
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [count, setCount] = useState(0);
@@ -200,7 +343,7 @@ function Quiz({ tone }: { tone: Tone }) {
 
   return (
     <div className="quiz">
-      <div className="quiz-narr">{NARR[tone]}</div>
+      <div className="quiz-narr">{narrFor(tone, t)}</div>
       <div className="quiz-q">{q.q}</div>
       <div className="quiz-opts">
         {q.opts.map((o, i) => {
@@ -220,15 +363,15 @@ function Quiz({ tone }: { tone: Tone }) {
         <div className={`quiz-reaction${correctPicked ? " hit" : ""}`}>
           <span className="quiz-verdict">
             {correctPicked
-              ? tone === "roast" ? "🎉 答对！" : tone === "comfort" ? "💖 抱抱！" : "🥂 高见。"
-              : tone === "roast" ? "🃏 " : tone === "comfort" ? "🌈 " : "— "}
+              ? tone === "roast" ? t("quiz.hitRoast") : tone === "comfort" ? t("quiz.hitComfort") : t("quiz.hitSerious")
+              : tone === "roast" ? t("quiz.missRoast") : tone === "comfort" ? t("quiz.missComfort") : t("quiz.missSerious")}
             {q.opts[picked].r}
           </span>
-          <button type="button" className="quiz-next" onClick={next}>换一题 →</button>
+          <button type="button" className="quiz-next" onClick={next}>{t("quiz.next")}</button>
         </div>
       ) : null}
       <div className="quiz-count">
-        已过堂 {count} 题 · 答对 {right} · 纯属娱乐，不影响分析结论
+        {t("quiz.count", { count, right })}
       </div>
     </div>
   );
