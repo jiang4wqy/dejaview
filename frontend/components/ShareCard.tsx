@@ -108,7 +108,8 @@ export default function ShareModal({ job, tone, onClose }: { job: Job; tone: Ton
                   <span className="sc-glabel">{t("metric.dupProb")}</span>
                 </div>
               </div>
-              {zinger ? <p className="sc-line">{zinger}</p> : null}
+              {/* zinger 与 points/topFix 表达重叠; 有要点时省去它, 既去冗余又避免整体溢出裁切 */}
+              {zinger && !points.length ? <p className="sc-line">{zinger}</p> : null}
               {points.length ? (
                 <ul className="sc-points">
                   {points.map((pt, i) => (
