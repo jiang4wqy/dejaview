@@ -77,15 +77,23 @@ class StubRepoMapper(RepoMapper):
                              note="stub repomap(未真实读取)")
 
 
+# Parent dir for ephemeral shallow clones. Portable + CI-safe by default (a host
+# with no writable /root can still run the tests); override with DEJAVIEW_REPO_WORKDIR
+# to point at a roomier disk on a constrained host.
+_DEFAULT_REPO_WORKDIR = os.environ.get("DEJAVIEW_REPO_WORKDIR") or os.path.join(
+    tempfile.gettempdir(), "dejaview-repos"
+)
+
+
 class BuiltinRepoMapper(RepoMapper):
     """git clone --depth 1 → 入口探测 + 符号签名 + 语言直方图 + 精简配置。免 key, 预算封顶。"""
     name = "builtin"
 
-    def __init__(self, workdir: str = "/root/autodl-tmp/dejaview/.cache/repos",
+    def __init__(self, workdir: str = "",
                  timeout: int = 120, max_files: int = 2000,
                  budget_chars: int = 12000, signature_files: int = 6,
                  max_readme: int = 3500, max_config: int = 700, per_file_sig: int = 1000) -> None:
-        self._workdir = workdir
+        self._workdir = workdir or _DEFAULT_REPO_WORKDIR
         self._timeout = timeout
         self._max_files = max_files
         self._budget = budget_chars
@@ -94,10 +102,13 @@ class BuiltinRepoMapper(RepoMapper):
         self._max_config = max_config
         self._per_file_sig = per_file_sig
         self._log = get_logger("repomap.builtin")
-        os.makedirs(self._workdir, exist_ok=True)
+        # NB: the workdir is created lazily in build(), not here — constructing the
+        # provider must stay side-effect free (a bare Settings(repomap="builtin") is
+        # built during registry checks and must not touch the filesystem).
 
     # ---- 对外: clone 再 map ----
     def build(self, url: str) -> RepoMapResult:
+        os.makedirs(self._workdir, exist_ok=True)   # lazily create only when we actually clone
         dest = tempfile.mkdtemp(prefix="repo-", dir=self._workdir)
         try:
             self._clone(url, dest)
