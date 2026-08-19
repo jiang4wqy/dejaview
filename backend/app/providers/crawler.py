@@ -255,9 +255,18 @@ def _find_chrome() -> str:
     if env and os.path.exists(env):
         return env
     home = os.path.expanduser("~")
-    for pat in (f"{home}/.cache/ms-playwright/chromium_headless_shell-*/chrome-linux/headless_shell",
-                f"{home}/.cache/ms-playwright/chromium-*/chrome-linux/chrome",
-                "/root/autodl-tmp/.cache/puppeteer/chrome/*/chrome-linux64/chrome"):
+    patterns = [
+        f"{home}/.cache/ms-playwright/chromium_headless_shell-*/chrome-linux/headless_shell",
+        f"{home}/.cache/ms-playwright/chromium-*/chrome-linux/chrome",
+    ]
+    # puppeteer installs under $PUPPETEER_CACHE_DIR (defaults to ~/.cache/puppeteer) —
+    # honour the env var instead of hard-coding one machine's data disk.
+    for cache in (os.getenv("PUPPETEER_CACHE_DIR"), os.path.join(home, ".cache", "puppeteer")):
+        if not cache:
+            continue
+        patterns.append(f"{cache}/chrome/*/chrome-linux64/chrome")
+        patterns.append(f"{cache}/chrome-headless-shell/*/chrome-headless-shell-linux64/chrome-headless-shell")
+    for pat in patterns:
         for c in sorted(glob.glob(pat)):
             if os.path.exists(c):
                 return c
