@@ -45,7 +45,7 @@ website/
 ├── src/
 │   ├── main.tsx           # entry, wraps App in <LanguageProvider>
 │   ├── App.tsx            # section assembly
-│   ├── styles.css         # the whole "digital forensics lab" design system
+│   ├── styles.css         # the whole "neon scanner / 霓虹扫描仪" design system (magenta·cyan·amber)
 │   ├── content/copy.ts    # ALL strings, zh + en, same shape (real report data)
 │   ├── lib/lang.tsx       # language context + localStorage persistence
 │   ├── hooks/             # useInView, usePrefersReducedMotion

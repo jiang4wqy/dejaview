@@ -40,8 +40,8 @@ function Dial({ play }: { play: boolean }) {
       <svg viewBox="0 0 180 180" width="180" height="180">
         <defs>
           <linearGradient id="dial-g" x1="0" y1="0" x2="1" y2="1">
-            <stop stopColor="#FF4D45" />
-            <stop offset="1" stopColor="#FF4D8D" />
+            <stop stopColor="#FFB020" />
+            <stop offset="1" stopColor="#FF6A00" />
           </linearGradient>
         </defs>
         <circle cx="90" cy="90" r={R} className="dial-track" />
