@@ -184,10 +184,10 @@ const zh: Copy = {
     langToggleTo: 'EN',
   },
   hero: {
-    badge: '证据化项目鉴定 · 项目照妖镜',
+    badge: '证据化项目查重 · 项目照妖镜',
     titleLines: ['在你 all in 之前，', '先照照这轮子', '有没有人造过。'],
     sub: 'DejaView 是一面项目照妖镜：把你的网站、GitHub 或一句话想法往全网照一照，用可核对的证据，替你冷静回答那句最扎心的——「这不就是 XXX 吗？」',
-    primaryCta: 'Star on GitHub',
+    primaryCta: '去 GitHub 点亮 Star',
     secondaryCta: '看它怎么工作',
     note: '开源 · MIT · 本地 mock 零成本跑通 · 不调用模型、不花额度',
   },
@@ -351,7 +351,7 @@ const zh: Copy = {
       { title: 'mock 零成本', desc: '内置 3 份预生成报告，秒开，不调用模型、不花额度。' },
       { title: '中英双语', desc: '界面与报告一键切换中 / EN，文档双语齐备。' },
     ],
-    primaryCta: 'Star on GitHub',
+    primaryCta: '去 GitHub 点亮 Star',
     secondaryCta: '阅读架构文档',
   },
   footer: {
