@@ -12,8 +12,11 @@
 
 <sub>DejaView = déjà vu + view · “我是不是见过这个？”</sub>
 
+### [🔮 在线体验 · Live Demo ↗](https://jiang4wqy.github.io/dejaview/)
+
 [English](README_EN.md) · [架构](docs/ARCHITECTURE.md) · [部署](docs/DEPLOYMENT.md) · [贡献指南](CONTRIBUTING.md)
 
+[![Live Demo](https://img.shields.io/badge/在线体验-Live_Demo-FF2E97?style=for-the-badge&logo=github)](https://jiang4wqy.github.io/dejaview/)
 [![CI](https://github.com/jiang4wqy/dejaview/actions/workflows/ci.yml/badge.svg)](https://github.com/jiang4wqy/dejaview/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f2c94c.svg)](LICENSE)
 
